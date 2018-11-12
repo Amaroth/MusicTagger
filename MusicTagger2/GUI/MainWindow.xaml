@@ -1,0 +1,211 @@
+﻿<Window x:Class="MusicTagger2.GUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:MusicTagger2.GUI"
+        mc:Ignorable="d"
+        Title="Music Tagger 2.0 dev" Height="600" MinHeight="600" Width="1024" MinWidth="1024">
+    <Grid Margin="5, 0, 5, 5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="8*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="85*"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="70"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_File">
+                    <MenuItem Name="SaveMenuItem" Header="_Save" Click="SaveMenuItem_Click"/>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+
+        <ListView Grid.Column="0" Grid.Row="1" Name="tagListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" SelectionChanged="tagListView_SelectionChanged">
+            <ListView.Resources>
+                <Style TargetType="{x:Type GridViewColumnHeader}">
+                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                </Style>
+            </ListView.Resources>
+            <ListView.View>
+                <GridView>
+                    <GridView.Columns>
+                        <GridViewColumn>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox Tag="{Binding ID}" IsChecked="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Path=IsSelected}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn DisplayMemberBinding="{Binding ID}" Header="ID" />
+                        <GridViewColumn DisplayMemberBinding="{Binding Name}" Header="Name" />
+                    </GridView.Columns>
+                </GridView>
+            </ListView.View>
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ListView.GroupStyle>
+        </ListView>
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <RadioButton Name="andFilterRadio" VerticalAlignment="Center" Margin="7" IsChecked="True">AND filter</RadioButton>
+            <RadioButton Name="orFilterRadio" VerticalAlignment="Center" Margin="7">OR filter</RadioButton>
+        </StackPanel>
+
+
+
+        <TabControl Grid.Row="1" Grid.Column="1" Grid.RowSpan="2">
+            <TabItem Header="Play">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="32"/>
+                    </Grid.RowDefinitions>
+                    <ListView Name="playListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" MouseDoubleClick="playListView_MouseDoubleClick" SelectionChanged="playListView_SelectionChanged">
+                        <ListView.Resources>
+                            <Style TargetType="{x:Type GridViewColumnHeader}">
+                                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                            </Style>
+                        </ListView.Resources>
+                        <ListView.View>
+                            <GridView>
+                                <GridView.Columns>
+                                    <GridViewColumn DisplayMemberBinding="{Binding SongName}" Header="Name" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding TagNames}" Header="Tag Names" />
+                                </GridView.Columns>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <StackPanel Orientation="Horizontal" Grid.Row="1">
+                        <Button Grid.Column="0" Name="filterButt" Padding="10,0,10,0" Margin="0,1,1,1" Click="filterButt_Click" Grid.ColumnSpan="2">Build playlist by tags</Button>
+                        <Button Grid.Column="1" Name="retagSongsButt" Padding="10,0,10,0" Margin="1" Click="retagSongsButt_Click" Grid.ColumnSpan="2">Retag songs</Button>
+                        <Button Grid.Column="2" Name="renameSongButton" Padding="10,0,10,0" Margin="1" Click="renameSongButton_Click" Grid.ColumnSpan="2">Move/rename</Button>
+                        <Button Grid.Column="3" Name="moveSongsButt" Padding="10,0,10,0" Margin="1" Click="moveSongsButt_Click" Grid.ColumnSpan="2">Move to dir</Button>
+                        <Button Grid.Column="4" Name="removeSongButton" Padding="10,0,10,0" Margin="1"  Click="removeSongButton_Click" Grid.ColumnSpan="2">Remove</Button>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Tag songs">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="32"/>
+                    </Grid.RowDefinitions>
+
+                    <ListView Name="importListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" SelectionChanged="importListView_SelectionChanged" AllowDrop="True" Drop="importListView_Drop" MouseDoubleClick="importListView_MouseDoubleClick">
+                        <ListView.Resources>
+                            <Style TargetType="{x:Type GridViewColumnHeader}">
+                                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                            </Style>
+                        </ListView.Resources>
+                        <ListView.View>
+                            <GridView>
+                                <GridView.Columns>
+                                    <GridViewColumn DisplayMemberBinding="{Binding SongName}" Header="Name" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding SubPath}" Header="SubPath" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding TagIds}" Header="Tag IDs" />
+                                </GridView.Columns>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox Name="overwriteTagsCheckbox" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,3,0">Overwrite</CheckBox>
+                        <CheckBox Name="removeFromImportCheckbox" Grid.Column="2" VerticalAlignment="Center" Margin="0,0,3,0" IsChecked="True">Assign+Remove</CheckBox>
+                        <Button Name="clearImportButt" Grid.Column="3" Margin="1" Padding="10,0,10,0" Click="clearImportButt_Click">Clear</Button>
+                        <Button Name="removeFromImportButt" Grid.Column="4" Margin="1" Padding="10,0,10,0" Click="removeFromImportButt_Click">Remove</Button>
+                        <Button Name="assignButt" Grid.Column="5" Margin="1,1,0,1" Padding="10,0,10,0" Click="assignButt_Click">Assign</Button>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Tag management">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" VerticalAlignment="Center">ID</TextBlock>
+                    <TextBox Grid.Row="0" Grid.Column="1" Name="tagIDIntUpDown" Margin="3,1,0,1" TextAlignment="Left" IsEnabled="False" Text="Auto increment"/>
+                    <TextBlock Grid.Row="1" VerticalAlignment="Center">Name</TextBlock>
+                    <TextBox Grid.Row="1" Grid.Column="1" Name="tagNameTextBox" Margin="3,1,0,1" TextAlignment="Left"/>
+                    <TextBlock Grid.Row="2" VerticalAlignment="Center">Category</TextBlock>
+                    <TextBox Grid.Row="2" Grid.Column="1" Name="tagCategoryTextBox" Margin="3,1,0,1" TextAlignment="Left"/>
+                    <Grid Grid.Row="3" Grid.ColumnSpan="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Margin="1" Name="createTagButt" Click="createTagButt_Click">Create new</Button>
+                        <Button Grid.Column="1" Margin="1" Name="editTagButt" Click="editTagButt_Click">Edit selected</Button>
+                        <Button Grid.Column="2" Margin="1" Name="removeTagButt" Click="removeTagButt_Click">Remove selected</Button>
+                    </Grid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <Grid Grid.Row="3" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="9*"/>
+                <ColumnDefinition Width="9*"/>
+                <ColumnDefinition Width="9*"/>
+                <ColumnDefinition Width="9*"/>
+                <ColumnDefinition Width="9*"/>
+                <ColumnDefinition Width="18*"/>
+                <ColumnDefinition Width="9*"/>
+                <ColumnDefinition Width="9*"/>
+                <ColumnDefinition Width="9*"/>
+                <ColumnDefinition Width="18*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="5*"/>
+            </Grid.RowDefinitions>
+            <ProgressBar Grid.ColumnSpan="10" Name="progressBar" Margin="2" MouseDown="progressBar_MouseDown"/>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Name="nameText" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="5" Name="timeText" HorizontalAlignment="Center" VerticalAlignment="Center">0:00:00 / 0:00:00</TextBlock>
+
+            <DockPanel Grid.Row="2" Grid.Column="0">
+                <CheckBox Name="randomCheckBox" IsChecked="True" DockPanel.Dock="Top" Checked="randomCheckBox_Checked" Unchecked="randomCheckBox_Checked">Random</CheckBox>
+                <CheckBox Name="repeatCheckBox" IsChecked="True" Checked="repeatCheckBox_Checked" Unchecked="repeatCheckBox_Checked">Repeat</CheckBox>
+            </DockPanel>
+            <Button Grid.Row="2" Grid.Column="1" Name="fadeButt" Margin="1" Click="fadeButt_Click">Fade</Button>
+            <Button Grid.Row="2" Grid.Column="2" Name="stopButt" Margin="1" Click="stopButt_Click">Stop</Button>
+            <Button Grid.Row="2" Grid.Column="3" Name="firstButt" Margin="1" Click="firstButt_Click">First</Button>
+            <Button Grid.Row="2" Grid.Column="4" Name="prevButt" Margin="1" Click="prevButt_Click">Prev</Button>
+            <Button Grid.Row="2" Grid.Column="5" Name="playButt" Margin="1" Click="playButt_Click">Play</Button>
+            <Button Grid.Row="2" Grid.Column="6" Name="nextButt" Margin="1" Click="nextButt_Click">Next</Button>
+            <Button Grid.Row="2" Grid.Column="7" Name="lastButt" Margin="1" Click="lastButt_Click">Last</Button>
+            <Button Grid.Row="2" Grid.Column="8" Name="muteButt" Margin="1" Click="muteButt_Click">Mute</Button>
+            <Slider Grid.Row="2" Grid.Column="9" Name="volumeSlider" VerticalAlignment="Center" Margin="3, 0, 3, 0" Minimum="0" Maximum="100" Value="50" AutoToolTipPlacement="TopLeft" ValueChanged="volumeSlider_ValueChanged"/>
+        </Grid>
+    </Grid>
+</Window>
