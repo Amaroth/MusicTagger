@@ -168,6 +168,18 @@
                     </Grid>
                 </Grid>
             </TabItem>
+            <TabItem Header="Sounds">
+                <Label>Play random group of sound once, play random group of sounds continuously, search for group by keywords.</Label>
+            </TabItem>
+            <TabItem Header="Tag sounds">
+                <Label>Add sound, add groups to sound.</Label>
+            </TabItem>
+            <TabItem Header="Ambiences">
+                <Label>Add groups to ambiences. CRUD ambiences?</Label>
+            </TabItem>
+            <TabItem Header="Sound groups">
+                <Label>CRUD sound groups, add keywords.</Label>
+            </TabItem>
         </TabControl>
 
         <Grid Grid.Row="3" Grid.ColumnSpan="2">
