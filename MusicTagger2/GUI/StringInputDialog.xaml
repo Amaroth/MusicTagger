@@ -11,10 +11,10 @@
         </Grid.RowDefinitions>
 
         <TextBlock Name="QuestionTextBlock" TextWrapping="Wrap" Margin="0,0,0,5" Width="250">Question:</TextBlock>
-        <TextBox Name="txtAnswer" Grid.Row="1" Width="250">Answer</TextBox>
+        <TextBox Name="AnswerTextBox" Grid.Row="1" Width="250">Answer</TextBox>
 
         <WrapPanel Grid.Row="2" HorizontalAlignment="Right" Margin="0,5,0,0">
-            <Button IsDefault="True" Name="btnDialogOk" Click="btnDialogOk_Click" MinWidth="60" Margin="0,0,10,0">_Ok</Button>
+            <Button IsDefault="True" Name="OKButton" Click="OKButton_Click" MinWidth="60" Margin="0,0,10,0">_Ok</Button>
             <Button IsCancel="True" MinWidth="60">_Cancel</Button>
         </WrapPanel>
     </Grid>
