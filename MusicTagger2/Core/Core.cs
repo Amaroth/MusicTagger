@@ -34,6 +34,7 @@ namespace MusicTagger2.Core
         public Dictionary<string, Song> allSongs = new Dictionary<string, Song>();
         public bool Random { get; set; }
         public bool Repeat { get; set; }
+        public string filePath;
         public string rootDir;
         private bool supposedToBePlaying;
 
@@ -63,6 +64,7 @@ namespace MusicTagger2.Core
         /// <param name="file">New settings XML file to be created.</param>
         public void NewSettings(string file, string root)
         {
+            filePath = file;
             rootDir = root;
             conf.NewSettings(file, root);
         }
@@ -75,6 +77,7 @@ namespace MusicTagger2.Core
         {
             try
             {
+                filePath = file;
                 conf.LoadSettings(file);
             }
             catch (Exception e) { MessageBox.Show(string.Format("Could not load settings from {0}. Error message:\n\n{1}", file, e.ToString())); }

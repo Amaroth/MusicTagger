@@ -77,6 +77,11 @@ namespace MusicTagger2.GUI
             }
         }
 
+        private void SaveFile()
+        {
+            core.SaveSettings(core.filePath);
+        }
+
         private void SaveAsFile()
         {
             var saveFileDialog = new SaveFileDialog
@@ -312,6 +317,11 @@ namespace MusicTagger2.GUI
         private void NewMenuItem_Click(object sender, RoutedEventArgs e)
         {
             NewFile();
+        }
+
+        private void SaveMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFile();
         }
 
         private void SaveAsMenuItem_Click(object sender, RoutedEventArgs e)
