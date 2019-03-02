@@ -34,7 +34,7 @@ namespace MusicTagger2.Core
         public Dictionary<string, Song> allSongs = new Dictionary<string, Song>();
         public bool Random { get; set; }
         public bool Repeat { get; set; }
-        public string filePath;
+        public string filePath = "";
         public string rootDir;
         private bool supposedToBePlaying;
 
@@ -77,8 +77,8 @@ namespace MusicTagger2.Core
         {
             try
             {
-                filePath = file;
                 conf.LoadSettings(file);
+                filePath = file;
             }
             catch (Exception e) { MessageBox.Show(string.Format("Could not load settings from {0}. Error message:\n\n{1}", file, e.ToString())); }
         }
@@ -92,6 +92,7 @@ namespace MusicTagger2.Core
             try
             {
                 conf.SaveUserSettings(tags, allSongs, rootDir, file);
+                filePath = file;
             }
             catch (Exception e) { MessageBox.Show(string.Format("Could not save settings into {0}. Error message:\n\n{1}", file, e.ToString())); }
         }

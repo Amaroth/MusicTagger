@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -29,11 +28,18 @@ namespace MusicTagger2.GUI
         public MainWindow()
         {
             InitializeComponent();
+            LoadWindowTitle();
         }
 
         private void LoadWindowTitle()
         {
             Title = "Music Tagger 2.0";
+            if (core.filePath != "")
+                try
+                {
+                    Title += " - " + Path.GetFileName(core.filePath);
+                }
+                catch { }
         }
 
         public void NewFile()
@@ -51,7 +57,7 @@ namespace MusicTagger2.GUI
                 CheckFileExists = false,
                 CheckPathExists = true,
                 FileName = "Folder Selection."
-        };
+            };
 
             if (saveFileDialog.ShowDialog() == true)
             {
@@ -62,6 +68,7 @@ namespace MusicTagger2.GUI
                     StartTimer();
                 }
             }
+            LoadWindowTitle();
         }
 
         private void OpenFile()
@@ -75,11 +82,13 @@ namespace MusicTagger2.GUI
                 LoadData();
                 StartTimer();
             }
+            LoadWindowTitle();
         }
 
         private void SaveFile()
         {
             core.SaveSettings(core.filePath);
+            LoadWindowTitle();
         }
 
         private void SaveAsFile()
@@ -90,6 +99,7 @@ namespace MusicTagger2.GUI
             };
             if (saveFileDialog.ShowDialog() == true)
                 core.SaveSettings(saveFileDialog.FileName);
+            LoadWindowTitle();
         }
 
         private void LoadData()
