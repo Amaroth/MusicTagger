@@ -8,6 +8,13 @@ namespace MusicTagger2.GUI
     /// </summary>
     public partial class StringInputDialog : Window
     {
+        public StringInputDialog(string question)
+        {
+            InitializeComponent();
+            QuestionTextBlock.Text = question;
+            AnswerTextBox.Text = "";
+        }
+
         public StringInputDialog(string question, string defaultAnswer = "")
         {
             InitializeComponent();
