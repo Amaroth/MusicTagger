@@ -10,7 +10,6 @@ namespace MusicTagger2.GUI
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             var login = new MainWindow();
-            login.Load();
             login.Show();
         }
     }

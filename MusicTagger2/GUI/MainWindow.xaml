@@ -6,7 +6,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:MusicTagger2.GUI"
         mc:Ignorable="d"
-        Title="Music Tagger 2.0 dev" Height="600" MinHeight="600" Width="1024" MinWidth="1024">
+        Height="600" MinHeight="600" Width="1024" MinWidth="1024">
     <Grid Margin="5, 0, 5, 5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
@@ -22,6 +22,8 @@
         <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
+                    <MenuItem Name="NewMenuItem" Header="_New" Click="NewMenuItem_Click"/>
+                    <MenuItem Name="OpenMenuItem" Header="_Open" Click="OpenMenuItem_Click"/>
                     <MenuItem Name="SaveMenuItem" Header="_Save" Click="SaveMenuItem_Click"/>
                 </MenuItem>
             </Menu>

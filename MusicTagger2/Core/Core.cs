@@ -58,6 +58,15 @@ namespace MusicTagger2.Core
 
         #region Input and output file handling...
         /// <summary>
+        /// Creates a new XML file for settings to be saved into.
+        /// </summary>
+        /// <param name="file">New settings XML file to be created.</param>
+        public void NewFile(string file)
+        {
+            conf.NewSettings(file);
+        }
+
+        /// <summary>
         /// Loads all data from file.
         /// </summary>
         /// <param name="file">Input settings XML file.</param>

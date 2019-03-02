@@ -1,4 +1,5 @@
-﻿using MusicTagger2.Core;
+﻿using Microsoft.Win32;
+using MusicTagger2.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -30,19 +31,51 @@ namespace MusicTagger2.GUI
             InitializeComponent();
         }
 
-        public void Load()
+        private void LoadWindowTitle()
         {
-            core.LoadSettings("Saves/Config.xml");
+            Title = "Music Tagger 2.0";
+        }
+
+        public void NewFile()
+        {
+            timer.Stop();
+            var saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Xml file (*.xml)|*.xml";
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                core.NewFile(saveFileDialog.FileName);
+                LoadData();
+                StartTimer();
+            }
+        }
+
+        private void OpenFile()
+        {
+            timer.Stop();
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Xml file (*.xml)|*.xml";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                core.LoadSettings(openFileDialog.FileName);
+                LoadData();
+                StartTimer();
+            }
+        }
+
+        private void LoadData()
+        {
             importListView.ItemsSource = core.importList;
             tagListView.ItemsSource = core.tags;
             CollectionView playView = (CollectionView)CollectionViewSource.GetDefaultView(tagListView.ItemsSource);
             PropertyGroupDescription groupDescription = new PropertyGroupDescription("Category");
             playView.GroupDescriptions.Add(groupDescription);
+        }
 
+        private void StartTimer()
+        {
             timer.Tick += new EventHandler(timer_Tick);
             timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             timer.Start();
-
             fadeTimer.Tick += new EventHandler(fadeTimer_Tick);
         }
 
@@ -251,9 +284,19 @@ namespace MusicTagger2.GUI
                 core.PlaySong(playListView.SelectedItems[0] as Song);
         }
 
+        private void NewMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            NewFile();
+        }
+
         private void SaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
             core.SaveSettings("Saves/Config.xml");
+        }
+
+        private void OpenMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFile();
         }
 
         private void importListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)

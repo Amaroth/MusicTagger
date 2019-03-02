@@ -30,8 +30,21 @@ namespace MusicTagger2.Core
             }
         }
 
-        private XmlDocument xml = new XmlDocument();
-        List<Song> missing = new List<Song>();
+        private XmlDocument xml;
+        List<Song> missing;
+
+        private void Reset()
+        {
+            xml = new XmlDocument();
+            missing = new List<Song>();
+            Core.Instance.tags.Clear();
+            Core.Instance.allSongs.Clear();
+        }
+
+        public void NewSettings(string file)
+        {
+            Reset();
+        }
 
         /// <summary>
         /// Loads all data from settings file and pushes them into Core.
@@ -39,6 +52,8 @@ namespace MusicTagger2.Core
         /// <param name="file">Path to XML save file.</param>
         public void LoadSettings(string file)
         {
+            Reset();
+
             // Read file and load XML.
             try
             {
