@@ -98,6 +98,7 @@ namespace MusicTagger2.GUI
             tagListView.ItemsSource = core.tags;
             CollectionView playView = (CollectionView)CollectionViewSource.GetDefaultView(tagListView.ItemsSource);
             PropertyGroupDescription groupDescription = new PropertyGroupDescription("Category");
+            playView.GroupDescriptions.Clear();
             playView.GroupDescriptions.Add(groupDescription);
         }
 
