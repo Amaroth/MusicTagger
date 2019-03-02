@@ -22,7 +22,7 @@ namespace MusicTagger2.GUI
         public StringInputDialog(string question, string defaultAnswer = "")
         {
             InitializeComponent();
-            lblQuestion.Content = question;
+            QuestionTextBlock.Text = question;
             txtAnswer.Text = defaultAnswer;
         }
 

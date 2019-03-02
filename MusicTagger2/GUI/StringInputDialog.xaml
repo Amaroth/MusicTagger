@@ -17,7 +17,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Name="lblQuestion" Grid.Column="1" TextWrapping="Wrap" Margin="0,0,0,5" Width="250">Question:</TextBlock>
+        <TextBlock Name="QuestionTextBlock" Grid.Column="1" TextWrapping="Wrap" Margin="0,0,0,5" Width="250">Question:</TextBlock>
         <TextBox Name="txtAnswer" Grid.Column="1" Grid.Row="1" Width="250">Answer</TextBox>
 
         <WrapPanel Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0,5,0,0">
