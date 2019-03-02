@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Windows;
 
 namespace MusicTagger2.Core
 {
