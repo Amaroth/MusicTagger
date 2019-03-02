@@ -41,9 +41,10 @@ namespace MusicTagger2.Core
             Core.Instance.allSongs.Clear();
         }
 
-        public void NewSettings(string file)
+        public void NewSettings(string file, string root)
         {
             Reset();
+            MessageBox.Show(string.Format("File path: {0}\n\nRoot path: {1}", file, root));
         }
 
         /// <summary>

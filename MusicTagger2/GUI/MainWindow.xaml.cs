@@ -39,13 +39,28 @@ namespace MusicTagger2.GUI
         public void NewFile()
         {
             timer.Stop();
-            var saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Xml file (*.xml)|*.xml";
+
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Xml file (*.xml)|*.xml"
+            };
+
+            OpenFileDialog folderBrowser = new OpenFileDialog
+            {
+                ValidateNames = false,
+                CheckFileExists = false,
+                CheckPathExists = true,
+                FileName = "Folder Selection."
+        };
+
             if (saveFileDialog.ShowDialog() == true)
             {
-                core.NewFile(saveFileDialog.FileName);
-                LoadData();
-                StartTimer();
+                if (folderBrowser.ShowDialog() == true)
+                {
+                    core.NewFile(saveFileDialog.FileName, Path.GetDirectoryName(folderBrowser.FileName));
+                    LoadData();
+                    StartTimer();
+                }
             }
         }
 

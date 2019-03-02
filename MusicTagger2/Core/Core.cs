@@ -61,9 +61,9 @@ namespace MusicTagger2.Core
         /// Creates a new XML file for settings to be saved into.
         /// </summary>
         /// <param name="file">New settings XML file to be created.</param>
-        public void NewFile(string file)
+        public void NewFile(string file, string root)
         {
-            conf.NewSettings(file);
+            conf.NewSettings(file, root);
         }
 
         /// <summary>
