@@ -61,8 +61,9 @@ namespace MusicTagger2.Core
         /// Creates a new XML file for settings to be saved into.
         /// </summary>
         /// <param name="file">New settings XML file to be created.</param>
-        public void NewFile(string file, string root)
+        public void NewSettings(string file, string root)
         {
+            rootDir = root;
             conf.NewSettings(file, root);
         }
 
@@ -182,20 +183,20 @@ namespace MusicTagger2.Core
         /// <param name="filePaths">Paths to input files.</param>
         public void AddIntoImport(List<string> filePaths)
         {
-            try
+            //try
             {
                 // Clean up paths to standart appearance.
-                try
+                //try
                 {
                     for (int i = 0; i < filePaths.Count; i++)
                     {
                         filePaths[i] = filePaths[i].Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
                     }
                 }
-                catch (Exception e) { throw new Exception("Could not clean directory separators in import paths.", e); }
+                //catch (Exception e) { throw new Exception("Could not clean directory separators in import paths.", e); }
 
                 // Check whether files are under root directory, whether they exist and whether they are supported. In that case, create song objects and add them into import.
-                try
+                //try
                 {
                     int errorCount = 0;
                     foreach (var s in filePaths)
@@ -218,9 +219,9 @@ namespace MusicTagger2.Core
                     if (errorCount > 0)
                         MessageBox.Show(string.Format("There were {0} supported files found in import which are not under root directory {1}, which means they could not be imported.", errorCount, rootDir));
                 }
-                catch (Exception e) { throw new Exception("Error occured while attempting to create song objects from provided import paths.", e); }
+                //catch (Exception e) { throw new Exception("Error occured while attempting to create song objects from provided import paths.", e); }
             }
-            catch (Exception e) { MessageBox.Show(string.Format("Could not add at least some of provided file paths into import list. Error message:\n\n{0}", e.ToString())); }
+            //catch (Exception e) { MessageBox.Show(string.Format("Could not add at least some of provided file paths into import list. Error message:\n\n{0}", e.ToString())); }
         }
 
         /// <summary>

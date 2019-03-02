@@ -57,7 +57,7 @@ namespace MusicTagger2.GUI
             {
                 if (folderBrowser.ShowDialog() == true)
                 {
-                    core.NewFile(saveFileDialog.FileName, Path.GetDirectoryName(folderBrowser.FileName));
+                    core.NewSettings(saveFileDialog.FileName, Path.GetDirectoryName(folderBrowser.FileName));
                     LoadData();
                     StartTimer();
                 }
@@ -75,6 +75,16 @@ namespace MusicTagger2.GUI
                 LoadData();
                 StartTimer();
             }
+        }
+
+        private void SaveAsFile()
+        {
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Xml file (*.xml)|*.xml"
+            };
+            if (saveFileDialog.ShowDialog() == true)
+                core.SaveSettings(saveFileDialog.FileName);
         }
 
         private void LoadData()
@@ -304,9 +314,9 @@ namespace MusicTagger2.GUI
             NewFile();
         }
 
-        private void SaveMenuItem_Click(object sender, RoutedEventArgs e)
+        private void SaveAsMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            core.SaveSettings("Saves/Config.xml");
+            SaveAsFile();
         }
 
         private void OpenMenuItem_Click(object sender, RoutedEventArgs e)

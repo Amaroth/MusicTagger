@@ -41,10 +41,15 @@ namespace MusicTagger2.Core
             Core.Instance.allSongs.Clear();
         }
 
+        /// <summary>
+        /// Sets a given root path and creates a new settings file in given file path.
+        /// </summary>
+        /// <param name="file">Path to new XML save file.</param>
+        /// <param name="root">Root path of songs.</param>
         public void NewSettings(string file, string root)
         {
             Reset();
-            MessageBox.Show(string.Format("File path: {0}\n\nRoot path: {1}", file, root));
+            SaveUserSettings(Core.Instance.tags, Core.Instance.allSongs, root, file);
         }
 
         /// <summary>

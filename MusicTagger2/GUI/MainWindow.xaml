@@ -22,19 +22,19 @@
         <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
-                    <MenuItem Name="NewMenuItem" Header="_New" Click="NewMenuItem_Click" IsCheckable="True" InputGestureText="Ctrl+N">
+                    <MenuItem Name="NewMenuItem" Header="_New" Click="NewMenuItem_Click" InputGestureText="Ctrl+N">
                         <MenuItem.InputBindings>
                             <KeyBinding Key="N" Modifiers="Ctrl"/>
                         </MenuItem.InputBindings>
                     </MenuItem>
-                    <MenuItem Name="OpenMenuItem" Header="_Open" Click="OpenMenuItem_Click" IsCheckable="True" InputGestureText="Ctrl+O">
+                    <MenuItem Name="OpenMenuItem" Header="_Open" Click="OpenMenuItem_Click" InputGestureText="Ctrl+O">
                         <MenuItem.InputBindings>
                             <KeyBinding Key="O" Modifiers="Ctrl"/>
                         </MenuItem.InputBindings>
                     </MenuItem>
-                    <MenuItem Name="SaveMenuItem" Header="_Save" Click="SaveMenuItem_Click" IsCheckable="True" InputGestureText="Ctrl+S">
+                    <MenuItem Name="SaveAsMenuItem" Header="_Save As" Click="SaveAsMenuItem_Click" InputGestureText="Ctrl+Shift+S">
                         <MenuItem.InputBindings>
-                            <KeyBinding Key="S" Modifiers="Ctrl"/>
+                            <KeyBinding Key="S" Modifiers="Ctrl+Shift"/>
                         </MenuItem.InputBindings>
                     </MenuItem>
                 </MenuItem>
