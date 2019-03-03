@@ -35,13 +35,7 @@ namespace MusicTagger2.Core
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("ID: ");
-            sb.Append(ID);
-            sb.Append(", Name: ");
-            sb.Append(Name);
-            sb.Append(", Category: ");
-            sb.Append(Category);
-            sb.Append(", SongNames: ");
+            sb.AppendFormat("ID: {0}, Name: {1}, Category: {2}, SongNames: ", ID, Name, Category);
             foreach (var song in songs)
             {
                 sb.Append(song.Value.FileName);
