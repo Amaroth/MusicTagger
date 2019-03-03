@@ -39,6 +39,13 @@ namespace MusicTagger2.Core
 
         private MediaPlayer.MediaPlayer mp = new MediaPlayer.MediaPlayer();
 
+        public enum FilterType
+        {
+            Standard,
+            And,
+            Or
+        }
+
         private Core()
         {
             mp.Volume = -2000;
@@ -103,11 +110,10 @@ namespace MusicTagger2.Core
         /// <param name="tags">Filter tags which songs have to have.</param>
         /// <param name="useAndFilter">Use AND between HasTags?</param>
         /// <returns></returns>
-        public ObservableCollection<Song> CreatePlaylist(ObservableCollection<Tag> tags, bool useAndFilter)
+        public ObservableCollection<Song> CreatePlaylist(ObservableCollection<Tag> tags, FilterType filterType)
         {
             // Stop playing if anything is playing.
             Stop();
-
             var result = new ObservableCollection<Song>();
 
             try
@@ -115,8 +121,46 @@ namespace MusicTagger2.Core
                 // If there is at least one tag, filter.
                 if (tags.Count > 0)
                 {
-                    // If use AND filter, make sure every song in output has all filter tags.
-                    if (useAndFilter)
+                    // If use Standard filter, apply OR between tags with the same category and AND between categories of tags.
+                    if (filterType == FilterType.Standard)
+                    {
+                        // Split filters by categories.
+                        var cats = new List<List<Tag>>();
+                        foreach (var t in tags)
+                        {
+                            bool found = false;
+                            foreach (var l in cats)
+                                if (l[0].Category == t.Category)
+                                {
+                                    found = true;
+                                    l.Add(t);
+                                }
+                            if (!found)
+                                cats.Add(new List<Tag>() { t });
+                        }
+                        foreach (var s in allSongs.Values)
+                        {
+                            // Does at least 1 of song's tags match tags in category?
+                            var finds = new List<bool>();
+                            foreach (var c in cats)
+                            {
+                                finds.Add(false);
+                                foreach (var t in c)
+                                    if (s.tags.ContainsKey(t.ID))
+                                        finds[finds.Count - 1] = true;
+                            }
+                            // Was song matching for at least 1 tag per category?
+                            var correct = true;
+                            foreach (var b in finds)
+                                if (!b)
+                                    correct = b;
+
+                            if (correct)
+                                result.Add(s);
+                        }
+                    }
+                    // If use And filter, make sure every song in output has all filter tags.
+                    else if (filterType == FilterType.And)
                     {
                         foreach (var s in allSongs.Values)
                         {
@@ -127,11 +171,12 @@ namespace MusicTagger2.Core
                                     matches = false;
                                     break;
                                 }
+
                             if (matches)
                                 result.Add(s);
                         }
                     }
-                    // If use OR filter, make sure every song in output has at least one of filter tags.
+                    // If use Or filter, make sure every song in output has at least one of filter tags.
                     else
                         foreach (var t in tags)
                             foreach (var s in t.songs)

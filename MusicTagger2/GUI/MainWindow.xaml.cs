@@ -213,7 +213,14 @@ namespace MusicTagger2.GUI
 
         private void filterButt_Click(object sender, RoutedEventArgs e)
         {
-            playListView.ItemsSource = core.CreatePlaylist(selectedTags, (bool)andFilterRadio.IsChecked);
+            Core.Core.FilterType filter;
+            if (standardFilterRadio.IsChecked == true)
+                filter = Core.Core.FilterType.Standard;
+            else if (andFilterRadio.IsChecked == true)
+                filter = Core.Core.FilterType.And;
+            else
+                filter = Core.Core.FilterType.Or;
+            playListView.ItemsSource = core.CreatePlaylist(selectedTags, filter);
             ReloadColumnWidths();
         }
 
