@@ -31,12 +31,15 @@ namespace MusicTagger2.GUI
             LoadWindowTitle();
             importListView.ItemsSource = core.importList;
             tagListView.ItemsSource = core.tags;
-            ReloadTagGroups();
+            ReloadViews();
         }
 
+        /// <summary>
+        /// Update window title and include opened settings file name.
+        /// </summary>
         private void LoadWindowTitle()
         {
-            Title = "Music Tagger 2.0";
+            Title = "Music Tagger 2.1";
             if (core.SettingsFilePath != null && core.SettingsFilePath != "")
                 Title += " - " + Path.GetFileName(core.SettingsFilePath);
         }
@@ -53,7 +56,7 @@ namespace MusicTagger2.GUI
             if (saveFileDialog.ShowDialog() == true)
             {
                 core.NewSettings(saveFileDialog.FileName);
-                ReloadTagGroups();
+                ReloadViews();
                 StartTimer();
             }
             LoadWindowTitle();
@@ -67,7 +70,7 @@ namespace MusicTagger2.GUI
             if (openFileDialog.ShowDialog() == true)
             {
                 core.LoadSettings(openFileDialog.FileName);
-                ReloadTagGroups();
+                ReloadViews();
                 StartTimer();
             }
             LoadWindowTitle();
@@ -95,7 +98,7 @@ namespace MusicTagger2.GUI
             LoadWindowTitle();
         }
 
-        private void ReloadTagGroups()
+        private void ReloadViews()
         {
             CollectionView playView = (CollectionView)CollectionViewSource.GetDefaultView(tagListView.ItemsSource);
             PropertyGroupDescription groupDescription = new PropertyGroupDescription("Category");
@@ -114,6 +117,7 @@ namespace MusicTagger2.GUI
                 tagNameTextBox.Text = "";
                 tagCategoryTextBox.Text = "";
             }
+            ReloadColumnWidths();
         }
 
         private void StartTimer()

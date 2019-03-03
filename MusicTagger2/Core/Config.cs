@@ -38,7 +38,10 @@ namespace MusicTagger2.Core
             xml = new XmlDocument();
             missing = new List<Song>();
             Core.Instance.tags.Clear();
+            Core.Instance.importList.Clear();
+            Core.Instance.currentPlaylist.Clear();
             Core.Instance.allSongs.Clear();
+            Core.Instance.randomIndexList.Clear();
         }
 
         /// <summary>

@@ -25,7 +25,7 @@ namespace MusicTagger2.Core
         public ObservableCollection<Song> importList = new ObservableCollection<Song>();
         public ObservableCollection<Song> currentPlaylist = new ObservableCollection<Song>();
 
-        private List<int> randomIndexList = new List<int>();
+        public List<int> randomIndexList = new List<int>();
         private Song currentSong;
         private Song previewSong;
         public int currentSongIndex = -1;
