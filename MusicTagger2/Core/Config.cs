@@ -14,7 +14,6 @@ namespace MusicTagger2.Core
     class Config
     {
         private static Config instance;
-        private XmlDocument currentSettingsXml;
         private List<Song> missingOnDrive = new List<Song>();
 
         private Config() { }
@@ -36,7 +35,6 @@ namespace MusicTagger2.Core
         /// <param name="root">Root path of songs.</param>
         public void NewSettings(string file)
         {
-            currentSettingsXml = new XmlDocument();
             missingOnDrive = new List<Song>();
             SaveUserSettings(Core.Instance.tags, Core.Instance.allSongs, file);
         }
@@ -44,19 +42,19 @@ namespace MusicTagger2.Core
         /// <summary>
         /// Loads all data from settings file and pushes them into Core.
         /// </summary>
-        /// <param name="file">Path to XML save file.</param>
-        public void LoadSettings(string file)
+        /// <param name="filePath">Path to XML save file.</param>
+        public void LoadSettings(string filePath)
         {
-            currentSettingsXml = new XmlDocument();
+            var xml = new XmlDocument();
             missingOnDrive = new List<Song>();
 
             // Read file and load XML.
             try
             {
-                using (var sr = new StreamReader(file))
+                using (var sr = new StreamReader(filePath))
                 {
                     string xmlString = sr.ReadToEnd();
-                    currentSettingsXml.LoadXml(xmlString);
+                    xml.LoadXml(xmlString);
                 }
             }
             catch (Exception e) { throw new Exception("An error occured while attempting to read or load XML file. Provided file may be corrupted.", e); }
@@ -65,7 +63,7 @@ namespace MusicTagger2.Core
             Dictionary<int, SongTag> songTags = new Dictionary<int, SongTag>();
             try
             {
-                foreach (XmlNode node in currentSettingsXml.GetElementsByTagName("SongTags")[0].ChildNodes)
+                foreach (XmlNode node in xml.GetElementsByTagName("SongTags")[0].ChildNodes)
                 {
                     var tag = new SongTag()
                     {
@@ -82,7 +80,7 @@ namespace MusicTagger2.Core
             // Get all songs from XML, assign them to tags and pass them to Core. If some songs are not existing on drive, notify user to determine what to do with them.
             try
             {
-                foreach (XmlNode node in currentSettingsXml.GetElementsByTagName("Songs")[0].ChildNodes)
+                foreach (XmlNode node in xml.GetElementsByTagName("Songs")[0].ChildNodes)
                 {
                     var newSong = new Song(node.Attributes["FilePath"].Value);
 
