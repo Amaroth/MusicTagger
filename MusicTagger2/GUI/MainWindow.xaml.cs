@@ -31,8 +31,8 @@ namespace MusicTagger2.GUI
         {
             InitializeComponent();
             LoadWindowTitle();
-            importListView.ItemsSource = core.importList;
-            tagListView.ItemsSource = core.tags;
+            ImportListView.ItemsSource = core.importList;
+            TagListView.ItemsSource = core.tags;
             ReloadViews();
         }
 
@@ -206,20 +206,20 @@ namespace MusicTagger2.GUI
         private void BuildPlaylistButton_Click(object sender, RoutedEventArgs e)
         {
             Core.Core.FilterType filter;
-            if (standardFilterRadio.IsChecked == true)
+            if (StandardFilterRadio.IsChecked == true)
                 filter = Core.Core.FilterType.Standard;
-            else if (andFilterRadio.IsChecked == true)
+            else if (AndFilterRadio.IsChecked == true)
                 filter = Core.Core.FilterType.And;
             else
                 filter = Core.Core.FilterType.Or;
 
-            playListView.ItemsSource = core.CreatePlaylist(selectedTags, filter);
+            PlayListView.ItemsSource = core.CreatePlaylist(selectedTags, filter);
             ReloadColumnWidths();
         }
 
         private void RetagSongsButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (Song s in playListView.SelectedItems)
+            foreach (Song s in PlayListView.SelectedItems)
                 if (!core.importList.Contains(s))
                     core.importList.Add(s);
 
@@ -256,7 +256,7 @@ namespace MusicTagger2.GUI
         private void RemoveSongsButton_Click(object sender, RoutedEventArgs e)
         {
             var selectedItems = new List<Song>();
-            foreach (Song s in playListView.SelectedItems)
+            foreach (Song s in PlayListView.SelectedItems)
                 selectedItems.Add(s);
 
             if (selectedItems.Count > 0)
@@ -304,7 +304,7 @@ namespace MusicTagger2.GUI
 
         private void ReloadViews()
         {
-            CollectionView playView = (CollectionView)CollectionViewSource.GetDefaultView(tagListView.ItemsSource);
+            CollectionView playView = (CollectionView)CollectionViewSource.GetDefaultView(TagListView.ItemsSource);
             PropertyGroupDescription groupDescription = new PropertyGroupDescription("Category");
             playView.GroupDescriptions.Clear();
             playView.GroupDescriptions.Add(groupDescription);
@@ -356,7 +356,7 @@ namespace MusicTagger2.GUI
 
         
 
-        private void importListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ImportListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             foreach (Song item in e.RemovedItems)
                 selectedImportSongs.Remove(item);
@@ -364,7 +364,7 @@ namespace MusicTagger2.GUI
                 selectedImportSongs.Add(item);
         }
 
-        private void tagListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void TagListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             foreach (Tag item in e.RemovedItems)
                 selectedTags.Remove(item);
@@ -380,7 +380,7 @@ namespace MusicTagger2.GUI
                 TagIDTextBox.Text = "Auto increment";
         }
 
-        private void playListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void PlayListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             foreach (Song item in e.RemovedItems)
                 selectedPlaylistSongs.Remove(item);
@@ -388,7 +388,7 @@ namespace MusicTagger2.GUI
                 selectedPlaylistSongs.Add(item);
         }
 
-        private void importListView_Drop(object sender, DragEventArgs e)
+        private void ImportListView_Drop(object sender, DragEventArgs e)
         {
             var files = (string[])e.Data.GetData(DataFormats.FileDrop);
             var importList = new List<string>();
@@ -408,7 +408,7 @@ namespace MusicTagger2.GUI
 
         private void ReloadColumnWidths()
         {
-            foreach (var c in (tagListView.View as GridView).Columns)
+            foreach (var c in (TagListView.View as GridView).Columns)
             {
                 if (double.IsNaN(c.Width))
                 {
@@ -416,7 +416,7 @@ namespace MusicTagger2.GUI
                 }
                 c.Width = double.NaN;
             }
-            foreach (var c in (playListView.View as GridView).Columns)
+            foreach (var c in (PlayListView.View as GridView).Columns)
             {
                 if (double.IsNaN(c.Width))
                 {
@@ -424,7 +424,7 @@ namespace MusicTagger2.GUI
                 }
                 c.Width = double.NaN;
             }
-            foreach (var c in (importListView.View as GridView).Columns)
+            foreach (var c in (ImportListView.View as GridView).Columns)
             {
                 if (double.IsNaN(c.Width))
                 {
@@ -434,25 +434,25 @@ namespace MusicTagger2.GUI
             }
         }
 
-        private void volumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             core.SetVolume(volumeSlider.Value);
         }
 
         
 
-        private void playListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void PlayListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (playListView.SelectedItems.Count > 0)
-                core.PlaySong(playListView.SelectedItems[0] as Song);
+            if (PlayListView.SelectedItems.Count > 0)
+                core.PlaySong(PlayListView.SelectedItems[0] as Song);
         }
 
         
 
-        private void importListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void ImportListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (importListView.SelectedItems.Count > 0)
-                core.PlayPreview(importListView.SelectedItems[0] as Song);
+            if (ImportListView.SelectedItems.Count > 0)
+                core.PlayPreview(ImportListView.SelectedItems[0] as Song);
         }
 
 
@@ -506,16 +506,16 @@ namespace MusicTagger2.GUI
                     timeText.Text = "0:00:00 / 0:00:00";
                 }
 
-                if (playListView.Items.Count > 0)
+                if (PlayListView.Items.Count > 0)
                 {
-                    for (int i = 0; i < playListView.Items.Count; i++)
+                    for (int i = 0; i < PlayListView.Items.Count; i++)
                     {
-                        if (((ListViewItem)playListView.ItemContainerGenerator.ContainerFromItem(core.currentPlaylist[i])) != null)
-                            ((ListViewItem)playListView.ItemContainerGenerator.ContainerFromItem(core.currentPlaylist[i])).Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF042271"));
+                        if (((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.currentPlaylist[i])) != null)
+                            ((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.currentPlaylist[i])).Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF042271"));
                     }
-                    if (core.currentSongIndex > -1 && core.currentSongIndex < playListView.Items.Count)
-                        if (((ListViewItem)(playListView.ItemContainerGenerator.ContainerFromIndex(core.currentSongIndex))) != null)
-                            ((ListViewItem)(playListView.ItemContainerGenerator.ContainerFromIndex(core.currentSongIndex))).Foreground = new SolidColorBrush(Colors.Red);
+                    if (core.currentSongIndex > -1 && core.currentSongIndex < PlayListView.Items.Count)
+                        if (((ListViewItem)(PlayListView.ItemContainerGenerator.ContainerFromIndex(core.currentSongIndex))) != null)
+                            ((ListViewItem)(PlayListView.ItemContainerGenerator.ContainerFromIndex(core.currentSongIndex))).Foreground = new SolidColorBrush(Colors.Red);
                 }
 
                 if (core.IsReallyPlaying())

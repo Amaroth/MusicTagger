@@ -44,7 +44,7 @@
             </Menu>
         </DockPanel>
 
-        <ListView Grid.Column="0" Grid.Row="1" Name="tagListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" SelectionChanged="tagListView_SelectionChanged">
+        <ListView Grid.Column="0" Grid.Row="1" Name="TagListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" SelectionChanged="tagListView_SelectionChanged">
             <ListView.Resources>
                 <Style TargetType="{x:Type GridViewColumnHeader}">
                     <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -76,9 +76,9 @@
             </ListView.GroupStyle>
         </ListView>
         <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <RadioButton Name="standardFilterRadio" VerticalAlignment="Center" Margin="7" IsChecked="True">Standard filter</RadioButton>
-            <RadioButton Name="andFilterRadio" VerticalAlignment="Center" Margin="7">And filter</RadioButton>
-            <RadioButton Name="orFilterRadio" VerticalAlignment="Center" Margin="7">Or filter</RadioButton>
+            <RadioButton Name="StandardFilterRadio" VerticalAlignment="Center" Margin="7" IsChecked="True">Standard filter</RadioButton>
+            <RadioButton Name="AndFilterRadio" VerticalAlignment="Center" Margin="7">And filter</RadioButton>
+            <RadioButton Name="OrFilterRadio" VerticalAlignment="Center" Margin="7">Or filter</RadioButton>
         </StackPanel>
 
 
@@ -90,7 +90,7 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="32"/>
                     </Grid.RowDefinitions>
-                    <ListView Name="playListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" MouseDoubleClick="playListView_MouseDoubleClick" SelectionChanged="playListView_SelectionChanged">
+                    <ListView Name="PlayListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" MouseDoubleClick="PlayListView_MouseDoubleClick" SelectionChanged="PlayListView_SelectionChanged">
                         <ListView.Resources>
                             <Style TargetType="{x:Type GridViewColumnHeader}">
                                 <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -121,7 +121,7 @@
                         <RowDefinition Height="32"/>
                     </Grid.RowDefinitions>
 
-                    <ListView Name="importListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" SelectionChanged="importListView_SelectionChanged" AllowDrop="True" Drop="importListView_Drop" MouseDoubleClick="importListView_MouseDoubleClick">
+                    <ListView Name="ImportListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" SelectionChanged="ImportListView_SelectionChanged" AllowDrop="True" Drop="ImportListView_Drop" MouseDoubleClick="ImportListView_MouseDoubleClick">
                         <ListView.Resources>
                             <Style TargetType="{x:Type GridViewColumnHeader}">
                                 <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -263,7 +263,7 @@
             <Button Grid.Row="2" Grid.Column="8" Grid.RowSpan="2" Name="MuteUnmuteButton" Margin="1" Click="MuteUnmuteButton_Click">Mute</Button>
             <TextBlock Grid.Row="2" Grid.Column="9" TextAlignment="Right">Songs:</TextBlock>
             <TextBlock Grid.Row="3" Grid.Column="9" TextAlignment="Right">Sounds:</TextBlock>
-            <Slider Grid.Row="2" Grid.Column="10" Name="volumeSlider" VerticalAlignment="Center" Margin="3, 0, 3, 0" Minimum="0" Maximum="100" Value="50" AutoToolTipPlacement="TopLeft" ValueChanged="volumeSlider_ValueChanged"/>
+            <Slider Grid.Row="2" Grid.Column="10" Name="volumeSlider" VerticalAlignment="Center" Margin="3, 0, 3, 0" Minimum="0" Maximum="100" Value="50" AutoToolTipPlacement="TopLeft" ValueChanged="VolumeSlider_ValueChanged"/>
             <Slider Grid.Row="3" Grid.Column="10" Name="SoundsVolumeSlider" VerticalAlignment="Center" Margin="3, 0, 3, 0" Minimum="0" Maximum="100" Value="50" AutoToolTipPlacement="TopLeft" ValueChanged="SoundsVolumeSlider_ValueChanged"/>
         </Grid>
     </Grid>
