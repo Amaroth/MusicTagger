@@ -30,17 +30,6 @@ namespace MusicTagger2.Core
             }
         }
 
-        private void Reset()
-        {
-            currentSettingsXml = new XmlDocument();
-            missingOnDrive = new List<Song>();
-            Core.Instance.tags.Clear();
-            Core.Instance.importList.Clear();
-            Core.Instance.currentPlaylist.Clear();
-            Core.Instance.allSongs.Clear();
-            Core.Instance.randomIndexList.Clear();
-        }
-
         /// <summary>
         /// Sets a given root path and creates a new settings file in given file path.
         /// </summary>
@@ -48,7 +37,8 @@ namespace MusicTagger2.Core
         /// <param name="root">Root path of songs.</param>
         public void NewSettings(string file)
         {
-            Reset();
+            currentSettingsXml = new XmlDocument();
+            missingOnDrive = new List<Song>();
             SaveUserSettings(core.tags, core.allSongs, file);
         }
 
@@ -58,7 +48,8 @@ namespace MusicTagger2.Core
         /// <param name="file">Path to XML save file.</param>
         public void LoadSettings(string file)
         {
-            Reset();
+            currentSettingsXml = new XmlDocument();
+            missingOnDrive = new List<Song>();
 
             // Read file and load XML.
             try

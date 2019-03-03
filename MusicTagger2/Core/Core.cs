@@ -75,6 +75,7 @@ namespace MusicTagger2.Core
         /// <param name="file">New settings XML file to be created.</param>
         public void NewSettings(string file)
         {
+            ClearAll();
             SettingsFilePath = file;
             conf.NewSettings(file);
         }
@@ -87,6 +88,7 @@ namespace MusicTagger2.Core
         {
             try
             {
+                ClearAll();
                 conf.LoadSettings(file);
                 SettingsFilePath = file;
             }
@@ -107,6 +109,15 @@ namespace MusicTagger2.Core
             catch (Exception e) { MessageBox.Show(string.Format("Could not save settings into {0}. Error message:\n\n{1}", file, e.ToString())); }
         }
         #endregion
+
+        private void ClearAll()
+        {
+            tags.Clear();
+            importList.Clear();
+            currentPlaylist.Clear();
+            allSongs.Clear();
+            randomIndexList.Clear();
+        }
 
         #region Playlist generation...
         /// <summary>
