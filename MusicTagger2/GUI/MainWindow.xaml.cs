@@ -108,6 +108,180 @@ namespace MusicTagger2.GUI
         }
         #endregion
 
+        #region Event handlers...
+        #region Menu event handlers...
+        private void NewMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            NewFile();
+        }
+
+        private void OpenMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFile();
+        }
+
+        private void SaveMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFile();
+        }
+
+        private void SaveAsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            SaveAsFile();
+        }
+        #endregion
+
+        #region Play panel event handlers...
+        private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!core.IsReallyPlaying())
+                core.Play();
+            else
+                core.Pause();
+        }
+
+        private void PreviousButton_Click(object sender, RoutedEventArgs e)
+        {
+            core.Previous();
+        }
+
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+            core.Next();
+        }
+
+        private void FirstButton_Click(object sender, RoutedEventArgs e)
+        {
+            core.First();
+        }
+
+        private void LastButton_Click(object sender, RoutedEventArgs e)
+        {
+            core.Last();
+        }
+
+        private void StopButton_Click(object sender, RoutedEventArgs e)
+        {
+            core.Stop();
+        }
+
+        private void MuteUnmuteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (volumeSlider.IsEnabled)
+            {
+                MuteUnmuteButton.Content = "Unmute";
+                volumeSlider.IsEnabled = false;
+                core.Mute();
+            }
+            else
+            {
+                MuteUnmuteButton.Content = "Mute";
+                volumeSlider.IsEnabled = true;
+                core.Unmute();
+            }
+        }
+        #endregion
+
+        #region Tag management event handlers...
+        private void createTagButt_Click(object sender, RoutedEventArgs e)
+        {
+            core.CreateTag(tagNameTextBox.Text, tagCategoryTextBox.Text);
+            ReloadColumnWidths();
+        }
+
+        private void editTagButt_Click(object sender, RoutedEventArgs e)
+        {
+            core.EditTag(GetFirstSelectedTag(), tagNameTextBox.Text, tagCategoryTextBox.Text);
+            ReloadColumnWidths();
+        }
+
+        private void removeTagButt_Click(object sender, RoutedEventArgs e)
+        {
+            core.RemoveTag(GetFirstSelectedTag());
+            ReloadColumnWidths();
+        }
+        #endregion
+
+        #region Playlist event handlers...
+        private void BuildPlaylistButton_Click(object sender, RoutedEventArgs e)
+        {
+            Core.Core.FilterType filter;
+            if (standardFilterRadio.IsChecked == true)
+                filter = Core.Core.FilterType.Standard;
+            else if (andFilterRadio.IsChecked == true)
+                filter = Core.Core.FilterType.And;
+            else
+                filter = Core.Core.FilterType.Or;
+
+            playListView.ItemsSource = core.CreatePlaylist(selectedTags, filter);
+            ReloadColumnWidths();
+        }
+
+        private void RetagSongsButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (Song s in playListView.SelectedItems)
+                if (!core.importList.Contains(s))
+                    core.importList.Add(s);
+            ReloadColumnWidths();
+        }
+
+        private void RenameSongButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (selectedPlaylistSongs.Count > 0)
+            {
+                var selectedSong = GetFirstSelectedPlaylistSong();
+                var inputDialog = new StringInputDialog("Change name and/or path of the first selected song:", selectedSong.FullPath);
+                if (inputDialog.ShowDialog() == true)
+                    core.MoveSong(selectedSong, inputDialog.Answer);
+            }
+        }
+
+        private void MoveSongsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (selectedPlaylistSongs.Count > 0)
+            {
+                var selectedSong = GetFirstSelectedPlaylistSong();
+                var inputDialog = new StringInputDialog("Choose new path of selected songs:", selectedSong.FullPath);
+                if (inputDialog.ShowDialog() == true)
+                {
+                    var result = inputDialog.Answer;
+                    if (!result.EndsWith("\\"))
+                        result += "\\";
+                    core.MoveSongs(selectedPlaylistSongs, result);
+                }
+            }
+        }
+
+        private void RemoveSongsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedItems = new List<Song>();
+            foreach (Song s in playListView.SelectedItems)
+                selectedItems.Add(s);
+
+            if (selectedItems.Count > 0)
+            {
+                var oid = new OptionsInputDialog("Remove songs",
+                    string.Format("Are you sure? Do you want to delete {0} song files only from settings, or from drive as well?", selectedItems.Count),
+                    new string[] { "Settings only", "Drive as well", "Abort" });
+                if (oid.ShowDialog() == true)
+                {
+                    if (oid.GetAnswer() != "Abort")
+                    {
+                        foreach (Song s in selectedItems)
+                            core.RemoveSong(s);
+                    }
+                    if (oid.GetAnswer() == "Drive as well")
+                        foreach (Song s in selectedItems)
+                            try
+                            {
+                                File.Delete(s.FullPath);
+                            }
+                            catch { }
+                }
+            }
+        }
+        #endregion
+        #endregion
 
 
 
@@ -165,85 +339,7 @@ namespace MusicTagger2.GUI
             return null;
         }
 
-        private void playButt_Click(object sender, RoutedEventArgs e)
-        {
-            if (!core.IsReallyPlaying())
-                core.Play();
-            else
-                core.Pause();
-        }
-
-        private void prevButt_Click(object sender, RoutedEventArgs e)
-        {
-            core.Previous();
-        }
-
-        private void nextButt_Click(object sender, RoutedEventArgs e)
-        {
-            core.Next();
-        }
-
-        private void firstButt_Click(object sender, RoutedEventArgs e)
-        {
-            core.First();
-        }
-
-        private void lastButt_Click(object sender, RoutedEventArgs e)
-        {
-            core.Last();
-        }
-
-        private void stopButt_Click(object sender, RoutedEventArgs e)
-        {
-            core.Stop();
-        }
-
-        private void muteButt_Click(object sender, RoutedEventArgs e)
-        {
-            if (volumeSlider.IsEnabled)
-            {
-                muteButt.Content = "Unmute";
-                volumeSlider.IsEnabled = false;
-                core.Mute();
-            }
-            else
-            {
-                muteButt.Content = "Mute";
-                volumeSlider.IsEnabled = true;
-                core.Unmute();
-            }
-        }
-
-        private void createTagButt_Click(object sender, RoutedEventArgs e)
-        {
-            core.CreateTag(tagNameTextBox.Text, tagCategoryTextBox.Text);
-            ReloadColumnWidths();
-        }
-
-        private void editTagButt_Click(object sender, RoutedEventArgs e)
-        {
-            core.EditTag(GetFirstSelectedTag(), tagNameTextBox.Text, tagCategoryTextBox.Text);
-            ReloadColumnWidths();
-        }
-
-        private void removeTagButt_Click(object sender, RoutedEventArgs e)
-        {
-            core.RemoveTag(GetFirstSelectedTag());
-            ReloadColumnWidths();
-        }
-
-        private void filterButt_Click(object sender, RoutedEventArgs e)
-        {
-            Core.Core.FilterType filter;
-            if (standardFilterRadio.IsChecked == true)
-                filter = Core.Core.FilterType.Standard;
-            else if (andFilterRadio.IsChecked == true)
-                filter = Core.Core.FilterType.And;
-            else
-                filter = Core.Core.FilterType.Or;
-            playListView.ItemsSource = core.CreatePlaylist(selectedTags, filter);
-            ReloadColumnWidths();
-        }
+        
 
         private void assignButt_Click(object sender, RoutedEventArgs e)
         {
@@ -357,25 +453,7 @@ namespace MusicTagger2.GUI
                 core.PlaySong(playListView.SelectedItems[0] as Song);
         }
 
-        private void NewMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            NewFile();
-        }
-
-        private void SaveMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            SaveFile();
-        }
-
-        private void SaveAsMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            SaveAsFile();
-        }
-
-        private void OpenMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFile();
-        }
+        
 
         private void importListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -383,69 +461,13 @@ namespace MusicTagger2.GUI
                 core.PlayPreview(importListView.SelectedItems[0] as Song);
         }
 
-        private void retagSongsButt_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (Song s in playListView.SelectedItems)
-                if (!core.importList.Contains(s))
-                    core.importList.Add(s);
-            ReloadColumnWidths();
-        }
+        
 
-        private void renameSongButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (selectedPlaylistSongs.Count > 0)
-            {
-                var selectedSong = GetFirstSelectedPlaylistSong();
-                var inputDialog = new StringInputDialog("Change name and/or path of the first selected song:", selectedSong.FullPath);
-                if (inputDialog.ShowDialog() == true)
-                    core.MoveSong(selectedSong, inputDialog.Answer);
-            }
-        }
+        
 
-        private void moveSongsButt_Click(object sender, RoutedEventArgs e)
-        {
-            if (selectedPlaylistSongs.Count > 0)
-            {
-                var selectedSong = GetFirstSelectedPlaylistSong();
-                var inputDialog = new StringInputDialog("Choose new path of selected songs:", selectedSong.FullPath);
-                if (inputDialog.ShowDialog() == true)
-                {
-                    var result = inputDialog.Answer;
-                    if (!result.EndsWith("\\"))
-                        result += "\\";
-                    core.MoveSongs(selectedPlaylistSongs, result);
-                }
-            }
-        }
+        
 
-        private void removeSongButton_Click(object sender, RoutedEventArgs e)
-        {
-            var selectedItems = new List<Song>();
-            foreach (Song s in playListView.SelectedItems)
-                selectedItems.Add(s);
-
-            if (selectedItems.Count > 0)
-            {
-                var oid = new OptionsInputDialog("Remove songs",
-                    string.Format("Are you sure? Do you want to delete {0} song files only from settings, or from drive as well?", selectedItems.Count),
-                    new string[] { "Settings only", "Drive as well", "Abort" });
-                if (oid.ShowDialog() == true)
-                {
-                    if (oid.GetAnswer() != "Abort")
-                    {
-                        foreach (Song s in selectedItems)
-                            core.RemoveSong(s);
-                    }
-                    if (oid.GetAnswer() == "Drive as well")
-                        foreach (Song s in selectedItems)
-                            try
-                            {
-                                File.Delete(s.FullPath);
-                            }
-                            catch { }
-                }
-            }
-        }
+        
 
         private void removeFromImportButt_Click(object sender, RoutedEventArgs e)
         {
@@ -518,9 +540,9 @@ namespace MusicTagger2.GUI
                 }
 
                 if (core.IsReallyPlaying())
-                    playButt.Content = "Pause";
+                    PlayPauseButton.Content = "Pause";
                 else
-                    playButt.Content = "Play";
+                    PlayPauseButton.Content = "Play";
             }
         }
 

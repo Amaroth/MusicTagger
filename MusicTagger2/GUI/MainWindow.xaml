@@ -106,11 +106,11 @@
                         </ListView.View>
                     </ListView>
                     <StackPanel Orientation="Horizontal" Grid.Row="1">
-                        <Button Grid.Column="0" Name="filterButt" Padding="10,0,10,0" Margin="0,1,1,1" Click="filterButt_Click" Grid.ColumnSpan="2">Build playlist by tags</Button>
-                        <Button Grid.Column="1" Name="retagSongsButt" Padding="10,0,10,0" Margin="1" Click="retagSongsButt_Click" Grid.ColumnSpan="2">Retag songs</Button>
-                        <Button Grid.Column="2" Name="renameSongButton" Padding="10,0,10,0" Margin="1" Click="renameSongButton_Click" Grid.ColumnSpan="2">Move/rename</Button>
-                        <Button Grid.Column="3" Name="moveSongsButt" Padding="10,0,10,0" Margin="1" Click="moveSongsButt_Click" Grid.ColumnSpan="2">Move to dir</Button>
-                        <Button Grid.Column="4" Name="removeSongButton" Padding="10,0,10,0" Margin="1"  Click="removeSongButton_Click" Grid.ColumnSpan="2">Remove</Button>
+                        <Button Grid.Column="0" Name="BuildPlaylistButton" Padding="10,0,10,0" Margin="0,1,1,1" Click="BuildPlaylistButton_Click" Grid.ColumnSpan="2">Build playlist by tags</Button>
+                        <Button Grid.Column="1" Name="RetagSongsButton" Padding="10,0,10,0" Margin="1" Click="RetagSongsButton_Click" Grid.ColumnSpan="2">Retag songs</Button>
+                        <Button Grid.Column="2" Name="RenameSongButton" Padding="10,0,10,0" Margin="1" Click="RenameSongButton_Click" Grid.ColumnSpan="2">Move/rename</Button>
+                        <Button Grid.Column="3" Name="MoveSongsButton" Padding="10,0,10,0" Margin="1" Click="MoveSongsButton_Click" Grid.ColumnSpan="2">Move to dir</Button>
+                        <Button Grid.Column="4" Name="RemoveSongsButton" Padding="10,0,10,0" Margin="1"  Click="RemoveSongsButton_Click" Grid.ColumnSpan="2">Remove</Button>
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -254,13 +254,13 @@
                 <CheckBox Name="repeatCheckBox" IsChecked="True" Checked="repeatCheckBox_Checked" Unchecked="repeatCheckBox_Checked">Repeat</CheckBox>
             </DockPanel>
             <Button Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" Name="fadeButt" Margin="1" Click="fadeButt_Click">Fade</Button>
-            <Button Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" Name="stopButt" Margin="1" Click="stopButt_Click">Stop</Button>
-            <Button Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Name="firstButt" Margin="1" Click="firstButt_Click">First</Button>
-            <Button Grid.Row="2" Grid.Column="4" Grid.RowSpan="2" Name="prevButt" Margin="1" Click="prevButt_Click">Prev</Button>
-            <Button Grid.Row="2" Grid.Column="5" Grid.RowSpan="2" Name="playButt" Margin="1" Click="playButt_Click">Play</Button>
-            <Button Grid.Row="2" Grid.Column="6" Grid.RowSpan="2" Name="nextButt" Margin="1" Click="nextButt_Click">Next</Button>
-            <Button Grid.Row="2" Grid.Column="7" Grid.RowSpan="2" Name="lastButt" Margin="1" Click="lastButt_Click">Last</Button>
-            <Button Grid.Row="2" Grid.Column="8" Grid.RowSpan="2" Name="muteButt" Margin="1" Click="muteButt_Click">Mute</Button>
+            <Button Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" Name="StopButton" Margin="1" Click="StopButton_Click">Stop</Button>
+            <Button Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Name="FirstButton" Margin="1" Click="FirstButton_Click">First</Button>
+            <Button Grid.Row="2" Grid.Column="4" Grid.RowSpan="2" Name="PreviousButton" Margin="1" Click="PreviousButton_Click">Prev</Button>
+            <Button Grid.Row="2" Grid.Column="5" Grid.RowSpan="2" Name="PlayPauseButton" Margin="1" Click="PlayPauseButton_Click">Play</Button>
+            <Button Grid.Row="2" Grid.Column="6" Grid.RowSpan="2" Name="NextButton" Margin="1" Click="NextButton_Click">Next</Button>
+            <Button Grid.Row="2" Grid.Column="7" Grid.RowSpan="2" Name="LastButton" Margin="1" Click="LastButton_Click">Last</Button>
+            <Button Grid.Row="2" Grid.Column="8" Grid.RowSpan="2" Name="MuteUnmuteButton" Margin="1" Click="MuteUnmuteButton_Click">Mute</Button>
             <TextBlock Grid.Row="2" Grid.Column="9" TextAlignment="Right">Songs:</TextBlock>
             <TextBlock Grid.Row="3" Grid.Column="9" TextAlignment="Right">Sounds:</TextBlock>
             <Slider Grid.Row="2" Grid.Column="10" Name="volumeSlider" VerticalAlignment="Center" Margin="3, 0, 3, 0" Minimum="0" Maximum="100" Value="50" AutoToolTipPlacement="TopLeft" ValueChanged="volumeSlider_ValueChanged"/>
