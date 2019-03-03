@@ -33,22 +33,11 @@ namespace MusicTagger2.GUI
             LoadWindowTitle();
             ImportListView.ItemsSource = core.importList;
             TagListView.ItemsSource = core.tags;
-            ReloadViews();
 
             playSongTimer.Tick += new EventHandler(Timer_Tick);
             playSongTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             playSongTimer.Start();
             fadeTimer.Tick += new EventHandler(FadeTimer_Tick);
-        }
-
-        /// <summary>
-        /// Update window title and include opened settings file name.
-        /// </summary>
-        private void LoadWindowTitle()
-        {
-            Title = "Music Tagger 2.1";
-            if ((core.SettingsFilePath != null) && (core.SettingsFilePath != ""))
-                Title += " - " + Path.GetFileName(core.SettingsFilePath);
         }
 
         #region Menu functions...
@@ -60,10 +49,7 @@ namespace MusicTagger2.GUI
             core.Stop();
             var saveFileDialog = new SaveFileDialog { Filter = "Xml file (*.xml)|*.xml" };
             if (saveFileDialog.ShowDialog() == true)
-            {
                 core.NewSettings(saveFileDialog.FileName);
-                ReloadViews();
-            }
 
             LoadWindowTitle();
         }
@@ -112,6 +98,25 @@ namespace MusicTagger2.GUI
         #endregion
 
         #region Update UI elements functions...
+        private void LoadWindowTitle()
+        {
+            Title = "Music Tagger 2.1";
+            if ((core.SettingsFilePath != null) && (core.SettingsFilePath != ""))
+                Title += " - " + Path.GetFileName(core.SettingsFilePath);
+        }
+
+        private void ReloadViews()
+        {
+            var playView = (CollectionView)CollectionViewSource.GetDefaultView(TagListView.ItemsSource);
+            var groupDescription = new PropertyGroupDescription("Category");
+            playView.GroupDescriptions.Clear();
+            playView.GroupDescriptions.Add(groupDescription);
+            LoadTagAdministrationFields(GetFirstSelectedTag());
+            ReloadTagListViewColWidths();
+            ReloadPlayListViewColWidths();
+            ReloadImportListViewColWidths();
+        }
+
         private void UpdatePlayingSongInfo()
         {
             Song currentSong = core.GetCurrentSong();
@@ -161,9 +166,60 @@ namespace MusicTagger2.GUI
                 TagCategoryTextBox.Text = "";
             }
         }
+
+        private void ReloadImportListViewColWidths()
+        {
+            foreach (var c in (ImportListView.View as GridView).Columns)
+            {
+                if (double.IsNaN(c.Width))
+                    c.Width = c.ActualWidth;
+                c.Width = double.NaN;
+            }
+        }
+
+        private void ReloadPlayListViewColWidths()
+        {
+            foreach (var c in (PlayListView.View as GridView).Columns)
+            {
+                if (double.IsNaN(c.Width))
+                    c.Width = c.ActualWidth;
+                c.Width = double.NaN;
+            }
+        }
+
+        private void ReloadTagListViewColWidths()
+        {
+            foreach (var c in (TagListView.View as GridView).Columns)
+            {
+                if (double.IsNaN(c.Width))
+                    c.Width = c.ActualWidth;
+                c.Width = double.NaN;
+            }
+        }
         #endregion
 
-        #region Event handlers...
+        #region Get first selected functions...
+        private Tag GetFirstSelectedTag()
+        {
+            if (selectedTags.Count < 1)
+                return null;
+            foreach (var t in core.tags)
+                if (selectedTags.Contains(t))
+                    return t;
+            return null;
+        }
+
+        private Song GetFirstSelectedPlaylistSong()
+        {
+            if (selectedPlaylistSongs.Count < 1)
+                return null;
+            foreach (var s in core.currentPlaylist)
+                if (selectedPlaylistSongs.Contains(s))
+                    return s;
+            return null;
+        }
+        #endregion
+
         #region Menu event handlers...
         private void NewMenuItem_Click(object sender, RoutedEventArgs e) => NewFile();
 
@@ -435,70 +491,6 @@ namespace MusicTagger2.GUI
 
             PlayPauseButton.Content = core.IsReallyPlaying() ? "Pause" : "Play";
         }
-        #endregion
-        #endregion
-
-
-        private void ReloadViews()
-        {
-            var playView = (CollectionView)CollectionViewSource.GetDefaultView(TagListView.ItemsSource);
-            var groupDescription = new PropertyGroupDescription("Category");
-            playView.GroupDescriptions.Clear();
-            playView.GroupDescriptions.Add(groupDescription);
-            LoadTagAdministrationFields(GetFirstSelectedTag());
-            ReloadTagListViewColWidths();
-            ReloadPlayListViewColWidths();
-            ReloadImportListViewColWidths();
-        }
-
-        private void ReloadImportListViewColWidths()
-        {
-            foreach (var c in (ImportListView.View as GridView).Columns)
-            {
-                if (double.IsNaN(c.Width))
-                    c.Width = c.ActualWidth;
-                c.Width = double.NaN;
-            }
-        }
-
-        private void ReloadPlayListViewColWidths()
-        {
-            foreach (var c in (PlayListView.View as GridView).Columns)
-            {
-                if (double.IsNaN(c.Width))
-                    c.Width = c.ActualWidth;
-                c.Width = double.NaN;
-            }
-        }
-
-        private void ReloadTagListViewColWidths()
-        {
-            foreach (var c in (TagListView.View as GridView).Columns)
-            {
-                if (double.IsNaN(c.Width))
-                    c.Width = c.ActualWidth;
-                c.Width = double.NaN;
-            }
-        }
-
-        private Tag GetFirstSelectedTag()
-        {
-            if (selectedTags.Count < 1)
-                return null;
-            foreach (var t in core.tags)
-                if (selectedTags.Contains(t))
-                    return t;
-            return null;
-        }
-
-        private Song GetFirstSelectedPlaylistSong()
-        {
-            if (selectedPlaylistSongs.Count < 1)
-                return null;
-            foreach (var s in core.currentPlaylist)
-                if (selectedPlaylistSongs.Contains(s))
-                    return s;
-            return null;
-        }
+        #endregion   
     }
 }
