@@ -512,5 +512,10 @@ namespace MusicTagger2.GUI
         {
 
         }
+
+        private void SoundsVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
+        }
     }
 }

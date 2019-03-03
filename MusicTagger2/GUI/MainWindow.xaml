@@ -14,7 +14,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="85*"/>
             <RowDefinition Height="35"/>
-            <RowDefinition Height="70"/>
+            <RowDefinition Height="80"/>
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
@@ -226,40 +226,45 @@
 
         <Grid Grid.Row="3" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="9*"/>
+                <ColumnDefinition Width="18*"/>
                 <ColumnDefinition Width="9*"/>
                 <ColumnDefinition Width="9*"/>
                 <ColumnDefinition Width="9*"/>
                 <ColumnDefinition Width="9*"/>
                 <ColumnDefinition Width="18*"/>
+                <ColumnDefinition Width="9*"/>
                 <ColumnDefinition Width="9*"/>
                 <ColumnDefinition Width="9*"/>
                 <ColumnDefinition Width="9*"/>
                 <ColumnDefinition Width="18*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="3*"/>
-                <RowDefinition Height="3*"/>
-                <RowDefinition Height="5*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <ProgressBar Grid.ColumnSpan="10" Name="progressBar" Margin="2" MouseDown="progressBar_MouseDown"/>
+            <ProgressBar Grid.ColumnSpan="11" Name="progressBar" Margin="2" MouseDown="progressBar_MouseDown"/>
 
             <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Name="nameText" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
             <TextBlock Grid.Row="1" Grid.Column="5" Name="timeText" HorizontalAlignment="Center" VerticalAlignment="Center">0:00:00 / 0:00:00</TextBlock>
 
-            <DockPanel Grid.Row="2" Grid.Column="0">
+            <DockPanel Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" VerticalAlignment="Center">
                 <CheckBox Name="randomCheckBox" IsChecked="True" DockPanel.Dock="Top" Checked="randomCheckBox_Checked" Unchecked="randomCheckBox_Checked">Random</CheckBox>
                 <CheckBox Name="repeatCheckBox" IsChecked="True" Checked="repeatCheckBox_Checked" Unchecked="repeatCheckBox_Checked">Repeat</CheckBox>
             </DockPanel>
-            <Button Grid.Row="2" Grid.Column="1" Name="fadeButt" Margin="1" Click="fadeButt_Click">Fade</Button>
-            <Button Grid.Row="2" Grid.Column="2" Name="stopButt" Margin="1" Click="stopButt_Click">Stop</Button>
-            <Button Grid.Row="2" Grid.Column="3" Name="firstButt" Margin="1" Click="firstButt_Click">First</Button>
-            <Button Grid.Row="2" Grid.Column="4" Name="prevButt" Margin="1" Click="prevButt_Click">Prev</Button>
-            <Button Grid.Row="2" Grid.Column="5" Name="playButt" Margin="1" Click="playButt_Click">Play</Button>
-            <Button Grid.Row="2" Grid.Column="6" Name="nextButt" Margin="1" Click="nextButt_Click">Next</Button>
-            <Button Grid.Row="2" Grid.Column="7" Name="lastButt" Margin="1" Click="lastButt_Click">Last</Button>
-            <Button Grid.Row="2" Grid.Column="8" Name="muteButt" Margin="1" Click="muteButt_Click">Mute</Button>
-            <Slider Grid.Row="2" Grid.Column="9" Name="volumeSlider" VerticalAlignment="Center" Margin="3, 0, 3, 0" Minimum="0" Maximum="100" Value="50" AutoToolTipPlacement="TopLeft" ValueChanged="volumeSlider_ValueChanged"/>
+            <Button Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" Name="fadeButt" Margin="1" Click="fadeButt_Click">Fade</Button>
+            <Button Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" Name="stopButt" Margin="1" Click="stopButt_Click">Stop</Button>
+            <Button Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Name="firstButt" Margin="1" Click="firstButt_Click">First</Button>
+            <Button Grid.Row="2" Grid.Column="4" Grid.RowSpan="2" Name="prevButt" Margin="1" Click="prevButt_Click">Prev</Button>
+            <Button Grid.Row="2" Grid.Column="5" Grid.RowSpan="2" Name="playButt" Margin="1" Click="playButt_Click">Play</Button>
+            <Button Grid.Row="2" Grid.Column="6" Grid.RowSpan="2" Name="nextButt" Margin="1" Click="nextButt_Click">Next</Button>
+            <Button Grid.Row="2" Grid.Column="7" Grid.RowSpan="2" Name="lastButt" Margin="1" Click="lastButt_Click">Last</Button>
+            <Button Grid.Row="2" Grid.Column="8" Grid.RowSpan="2" Name="muteButt" Margin="1" Click="muteButt_Click">Mute</Button>
+            <TextBlock Grid.Row="2" Grid.Column="9" TextAlignment="Right">Songs:</TextBlock>
+            <TextBlock Grid.Row="3" Grid.Column="9" TextAlignment="Right">Sounds:</TextBlock>
+            <Slider Grid.Row="2" Grid.Column="10" Name="volumeSlider" VerticalAlignment="Center" Margin="3, 0, 3, 0" Minimum="0" Maximum="100" Value="50" AutoToolTipPlacement="TopLeft" ValueChanged="volumeSlider_ValueChanged"/>
+            <Slider Grid.Row="3" Grid.Column="10" Name="SoundsVolumeSlider" VerticalAlignment="Center" Margin="3, 0, 3, 0" Minimum="0" Maximum="100" Value="50" AutoToolTipPlacement="TopLeft" ValueChanged="SoundsVolumeSlider_ValueChanged"/>
         </Grid>
     </Grid>
 </Window>
