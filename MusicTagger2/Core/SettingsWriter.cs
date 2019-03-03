@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -12,23 +12,13 @@ namespace MusicTagger2.Core
         XmlDocument outputDocument;
         XmlElement rootElement;
 
-        public SettingsWriter() { }
-
-        /// <summary>
-        /// Calls WriteSettings on creation.
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="songs"></param>
-        /// <param name="songTags"></param>
-        public SettingsWriter(string filePath, HashSet<Song> songs, HashSet<SongTag> songTags) => WriteSettings(filePath, songs, songTags);
-
         /// <summary>
         /// Saves provided data to provided file.
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="songs"></param>
         /// <param name="songTags"></param>
-        public void WriteSettings(string filePath, HashSet<Song> songs, HashSet<SongTag> songTags)
+        public void WriteSettings(string filePath, ObservableCollection<Song> songs, ObservableCollection<SongTag> songTags)
         {
             try
             {
@@ -84,7 +74,7 @@ namespace MusicTagger2.Core
         /// Adds song tag data into output XML.
         /// </summary>
         /// <param name="songTags"></param>
-        private void WriteTagData(HashSet<SongTag> songTags)
+        private void WriteTagData(ObservableCollection<SongTag> songTags)
         {
             try
             {
@@ -109,7 +99,7 @@ namespace MusicTagger2.Core
         /// Adds song data into output XML.
         /// </summary>
         /// <param name="songs"></param>
-        private void WriteSongData(HashSet<Song> songs)
+        private void WriteSongData(ObservableCollection<Song> songs)
         {
             try
             {

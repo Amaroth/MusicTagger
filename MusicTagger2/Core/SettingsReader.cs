@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml;
 
@@ -8,14 +8,6 @@ namespace MusicTagger2.Core
     class SettingsReader
     {
         private XmlDocument xml;
-
-        public SettingsReader() { }
-
-        /// <summary>
-        /// Calls ReadSettings on creation.
-        /// </summary>
-        /// <param name="filePath"></param>
-        public SettingsReader(string filePath) => ReadSettings(filePath);
 
         /// <summary>
         /// Reads data from provided file.
@@ -40,9 +32,9 @@ namespace MusicTagger2.Core
         /// Provides song tags from its settings file.
         /// </summary>
         /// <returns></returns>
-        public HashSet<SongTag> GetSongTags()
+        public ObservableCollection<SongTag> GetSongTags()
         {
-            var result = new HashSet<SongTag>();
+            var result = new ObservableCollection<SongTag>();
             try
             {
                 foreach (XmlNode node in xml.GetElementsByTagName("SongTags")[0].ChildNodes)
@@ -68,9 +60,9 @@ namespace MusicTagger2.Core
         /// </summary>
         /// <param name="songTags"></param>
         /// <returns></returns>
-        public HashSet<Song> GetSongs(Dictionary<int, SongTag> songTags)
+        public ObservableCollection<Song> GetSongs(ObservableCollection<SongTag> songTags)
         {
-            var result = new HashSet<Song>();
+            var result = new ObservableCollection<Song>();
             try
             {
                 foreach (XmlNode node in xml.GetElementsByTagName("Songs")[0].ChildNodes)
@@ -79,8 +71,12 @@ namespace MusicTagger2.Core
                     foreach (XmlNode songTagNode in node.ChildNodes)
                     {
                         var tagID = int.Parse(songTagNode.Attributes["ID"].Value);
-                        if (songTags.ContainsKey(tagID))
-                            songTags[tagID].AddSong(newSong);
+                        foreach (var t in songTags)
+                            if (t.ID == tagID)
+                            {
+                                newSong.AddTag(t);
+                                break;
+                            }
                     }
                     result.Add(newSong);
                 }
