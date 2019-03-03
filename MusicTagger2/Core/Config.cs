@@ -76,10 +76,10 @@ namespace MusicTagger2.Core
             catch (Exception e) { throw new Exception("An error occured while attempting to read or load XML file. Provided file may be corrupted.", e); }
 
             // Get all tags from XML and pass them to Core.
-            Dictionary<int, SongTag> tags = new Dictionary<int, SongTag>();
+            Dictionary<int, SongTag> songTags = new Dictionary<int, SongTag>();
             try
             {
-                foreach (XmlNode node in xml.GetElementsByTagName("Tags")[0].ChildNodes)
+                foreach (XmlNode node in xml.GetElementsByTagName("SongTags")[0].ChildNodes)
                 {
                     var tag = new SongTag()
                     {
@@ -87,7 +87,7 @@ namespace MusicTagger2.Core
                         Name = node.Attributes["Name"].Value,
                         Category = node.Attributes["Category"].Value
                     };
-                    tags.Add(tag.ID, tag);
+                    songTags.Add(tag.ID, tag);
                     Core.Instance.tags.Add(tag);
                 }
             }
@@ -100,10 +100,10 @@ namespace MusicTagger2.Core
                 {
                     var newSong = new Song(node.Attributes["FilePath"].Value);
 
-                    foreach (XmlNode tagNode in node.ChildNodes)
+                    foreach (XmlNode songTagNode in node.ChildNodes)
                     {
-                        var tagId = int.Parse(tagNode.Attributes["ID"].Value);
-                        tags[tagId].AddSong(newSong);
+                        var tagId = int.Parse(songTagNode.Attributes["ID"].Value);
+                        songTags[tagId].AddSong(newSong);
                     }
 
                     if (File.Exists(newSong.FullPath))
@@ -132,11 +132,11 @@ namespace MusicTagger2.Core
         /// <summary>
         /// Saves provided data into given file.
         /// </summary>
-        /// <param name="tags">All tags to be saved.</param>
+        /// <param name="songTags">All tags to be saved.</param>
         /// <param name="songs">All songs to be saved.</param>
         /// <param name="rootDir">Root directory under which songs are to be found.</param>
         /// <param name="file">Destination file into which settings are to be saved,</param>
-        public void SaveUserSettings(ObservableCollection<SongTag> tags, Dictionary<string, Song> songs, string file)
+        public void SaveUserSettings(ObservableCollection<SongTag> songTags, Dictionary<string, Song> songs, string file)
         {
             // Make sure path to file exists, otherwise create it.
             try
@@ -162,11 +162,11 @@ namespace MusicTagger2.Core
             // Save tags.
             try
             {
-                XmlElement tagsElement = outputDocument.CreateElement(string.Empty, "Tags", string.Empty);
+                XmlElement tagsElement = outputDocument.CreateElement(string.Empty, "SongTags", string.Empty);
                 rootElement.AppendChild(tagsElement);
-                foreach (var t in tags)
+                foreach (var t in songTags)
                 {
-                    XmlElement newTag = outputDocument.CreateElement(string.Empty, "Tag", string.Empty);
+                    XmlElement newTag = outputDocument.CreateElement(string.Empty, "SongTag", string.Empty);
                     newTag.SetAttribute("Name", t.Name);
                     newTag.SetAttribute("ID", t.ID.ToString());
                     newTag.SetAttribute("Category", t.Category);
@@ -192,7 +192,7 @@ namespace MusicTagger2.Core
 
                         foreach (var t in s.Value.tags)
                         {
-                            XmlElement tag = outputDocument.CreateElement(string.Empty, "Tag", string.Empty);
+                            XmlElement tag = outputDocument.CreateElement(string.Empty, "SongTag", string.Empty);
                             tag.SetAttribute("ID", t.Key.ToString());
                             newSong.AppendChild(tag);
                         }
