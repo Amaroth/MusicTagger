@@ -290,7 +290,7 @@ namespace MusicTagger2.GUI
 
         private void AssignButton_Click(object sender, RoutedEventArgs e)
         {
-            core.AssignTags(selectedImportSongs, selectedTags, (bool)removeFromImportCheckbox.IsChecked, (bool)overwriteTagsCheckbox.IsChecked);
+            core.AssignTags(selectedImportSongs, selectedTags, (bool)RemoveFromImportCheckbox.IsChecked, (bool)OverwriteTagsCheckbox.IsChecked);
             ReloadColumnWidths();
         }
         #endregion
