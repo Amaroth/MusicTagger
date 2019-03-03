@@ -40,42 +40,50 @@ namespace MusicTagger2.GUI
         private void LoadWindowTitle()
         {
             Title = "Music Tagger 2.1";
-            if (core.SettingsFilePath != null && core.SettingsFilePath != "")
+            if ((core.SettingsFilePath != null) && (core.SettingsFilePath != ""))
                 Title += " - " + Path.GetFileName(core.SettingsFilePath);
         }
 
+        #region Menu functions...
+        /// <summary>
+        /// Create a new settings file.
+        /// </summary>
         public void NewFile()
         {
             timer.Stop();
 
-            var saveFileDialog = new SaveFileDialog
-            {
-                Filter = "Xml file (*.xml)|*.xml"
-            };
-
+            var saveFileDialog = new SaveFileDialog { Filter = "Xml file (*.xml)|*.xml" };
             if (saveFileDialog.ShowDialog() == true)
             {
                 core.NewSettings(saveFileDialog.FileName);
                 ReloadViews();
                 StartTimer();
             }
+
             LoadWindowTitle();
         }
 
+        /// <summary>
+        /// Open a settings file.
+        /// </summary>
         private void OpenFile()
         {
             timer.Stop();
-            var openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Xml file (*.xml)|*.xml";
+
+            var openFileDialog = new OpenFileDialog() { Filter = "Xml file (*.xml)|*.xml" };
             if (openFileDialog.ShowDialog() == true)
             {
                 core.LoadSettings(openFileDialog.FileName);
                 ReloadViews();
                 StartTimer();
             }
+
             LoadWindowTitle();
         }
 
+        /// <summary>
+        /// Save current settings file. If none is opened, go to Save As.
+        /// </summary>
         private void SaveFile()
         {
             if (core.SettingsFilePath != null)
@@ -87,16 +95,25 @@ namespace MusicTagger2.GUI
                 SaveAsFile();
         }
 
+        /// <summary>
+        /// Save current settings into new file.
+        /// </summary>
         private void SaveAsFile()
         {
-            var saveFileDialog = new SaveFileDialog
-            {
-                Filter = "Xml file (*.xml)|*.xml"
-            };
+            var saveFileDialog = new SaveFileDialog { Filter = "Xml file (*.xml)|*.xml" };
             if (saveFileDialog.ShowDialog() == true)
                 core.SaveSettings(saveFileDialog.FileName);
+
             LoadWindowTitle();
         }
+        #endregion
+
+
+
+
+
+
+
 
         private void ReloadViews()
         {
