@@ -85,7 +85,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Core\Config.cs" />
     <Compile Include="Core\Core.cs" />
     <Compile Include="Core\SettingsReader.cs" />
     <Compile Include="Core\SettingsWriter.cs" />

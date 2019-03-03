@@ -8,7 +8,6 @@ using System.Windows;
 // Sortování dle sloupců v listviewech
 // Delete z import listu a HD
 // Ukládání nastaveného volume
-// Full file saving/loading options
 
 
 namespace MusicTagger2.Core
@@ -19,43 +18,21 @@ namespace MusicTagger2.Core
     class Core
     {
         private static Core instance;
-        private Config conf = Config.Instance;
 
-        public ObservableCollection<SongTag> tags = new ObservableCollection<SongTag>();
-        public ObservableCollection<Song> importList = new ObservableCollection<Song>();
-        public ObservableCollection<Song> currentPlaylist = new ObservableCollection<Song>();
+        // Views
+        public ObservableCollection<SongTag> SongTags = new ObservableCollection<SongTag>();
+        public ObservableCollection<Song> ImportList = new ObservableCollection<Song>();
+        public ObservableCollection<Song> CurrentPlayList = new ObservableCollection<Song>();
 
-        public List<int> randomIndexList = new List<int>();
-        private Song currentSong;
-        private Song previewSong;
-        public int currentSongIndex = -1;
-        private int currentSongRandomIndex = -1;
+        // Data
+        private Dictionary<int, SongTag> allSongTags = new Dictionary<int, SongTag>();
+        private Dictionary<string, Song> allSongs = new Dictionary<string, Song>();
+        public enum FilterType { Standard, And, Or }
 
-        public Dictionary<string, Song> allSongs = new Dictionary<string, Song>();
-        public bool Random;
-        public bool Repeat;
-        public string SettingsFilePath;
-        private bool supposedToBePlaying;
-
-        private MediaPlayer.MediaPlayer mp = new MediaPlayer.MediaPlayer();
-        public bool IsReallyPlaying => mp.PlayState == MediaPlayer.MPPlayStateConstants.mpPlaying;
-        private bool IsCurrentFirst => Random ? (currentSongRandomIndex == 0) : (currentSongIndex == 0);
-        private bool IsCurrentLast => Random ? currentSongRandomIndex == (randomIndexList.Count - 1) : (currentSongIndex == currentPlaylist.Count - 1);
-        public int CurrentVolume => (mp.Volume == -10000) ? 0 : (mp.Volume / 40 + 100);
-        public int CurrentLength => (int)(mp.Duration * 10);
-
-        public enum FilterType
-        {
-            Standard,
-            And,
-            Or
-        }
-
+        #region Singleton implementation...
         private Core()
         {
-            mp.Volume = -2000;
-            Repeat = true;
-            Random = true;
+            
         }
 
         public static Core Instance
@@ -67,65 +44,75 @@ namespace MusicTagger2.Core
                 return instance;
             }
         }
+        #endregion
 
         #region Input and output file handling...
         /// <summary>
-        /// Creates a new XML file for settings to be saved into.
+        /// Create a new settings file in a given path.
         /// </summary>
-        /// <param name="file">New settings XML file to be created.</param>
-        public void NewSettings(string file)
+        /// <param name="filePath"></param>
+        public void NewSettings(string filePath)
         {
             ClearAll();
-            SettingsFilePath = file;
-            conf.NewSettings(file);
+            var writer = new SettingsWriter();
+            writer.WriteSettings(filePath, allSongs, allSongTags);
         }
 
         /// <summary>
-        /// Loads all data from file.
+        /// Load settings from file in a given path.
         /// </summary>
-        /// <param name="file">Input settings XML file.</param>
-        public void LoadSettings(string file)
+        /// <param name="filePath"></param>
+        public void LoadSettings(string filePath)
         {
             try
             {
                 ClearAll();
-                conf.LoadSettings(file);
-                SettingsFilePath = file;
+
+                var reader = new SettingsReader();
+                reader.ReadSettings(filePath);
+                allSongTags = reader.GetSongTags();
+                allSongs = reader.GetSongs(allSongTags);
+                foreach (var st in allSongTags)
+                    SongTags.Add(st.Value);
             }
-            catch (Exception e) { MessageBox.Show(string.Format("Could not load settings from {0}. Error message:\n\n{1}", file, e.ToString())); }
+            catch (Exception e)
+            {
+                MessageBox.Show(string.Format("Could not load settings from {0}. Error message:\n\n{1}", filePath, e.ToString()));
+            }
         }
 
         /// <summary>
-        /// Saves all data into file.
+        /// Save settings to file in a given path.
         /// </summary>
-        /// <param name="file">Output settings XML file.</param>
-        public void SaveSettings(string file)
+        /// <param name="filePath"></param>
+        public void SaveSettings(string filePath)
         {
             try
             {
-                conf.SaveUserSettings(tags, allSongs, file);
-                SettingsFilePath = file;
+                var writer = new SettingsWriter();
+                writer.WriteSettings(filePath, allSongs, allSongTags);
             }
-            catch (Exception e) { MessageBox.Show(string.Format("Could not save settings into {0}. Error message:\n\n{1}", file, e.ToString())); }
+            catch (Exception e)
+            {
+                MessageBox.Show(string.Format("Could not save settings into {0}. Error message:\n\n{1}", filePath, e.ToString()));
+            }
         }
-        #endregion
 
+        /// <summary>
+        /// Empty all collections.
+        /// </summary>
         private void ClearAll()
         {
-            tags.Clear();
-            importList.Clear();
-            currentPlaylist.Clear();
+            SongTags.Clear();
+            ImportList.Clear();
+            CurrentPlayList.Clear();
+            allSongTags.Clear();
             allSongs.Clear();
             randomIndexList.Clear();
         }
+        #endregion
 
-        #region Playlist generation...
-        /// <summary>
-        /// Creates new playlist by filtering songs with provided filter tags, enabling AND or OR logic between individual tags.
-        /// </summary>
-        /// <param name="tags">Filter tags which songs have to have.</param>
-        /// <param name="useAndFilter">Use AND between HasTags?</param>
-        /// <returns></returns>
+        #region Playlist management - remove to dedicated class later
         public ObservableCollection<Song> CreatePlaylist(ObservableCollection<SongTag> tags, FilterType filterType)
         {
             // Stop playing if anything is playing.
@@ -142,7 +129,7 @@ namespace MusicTagger2.Core
                     {
                         // Split filters by categories.
                         var cats = new List<List<SongTag>>();
-                        foreach (var t in tags)
+                        foreach (var t in allSongTags.Values)
                         {
                             bool found = false;
                             foreach (var l in cats)
@@ -208,17 +195,16 @@ namespace MusicTagger2.Core
                         result.Add(s);
 
                 // Remember created playlist as new current playlist and generate randomized alternative for it.
-                currentPlaylist = result;
+                CurrentPlayList = result;
                 GenerateRandomPlaylist();
             }
             catch (Exception e) { MessageBox.Show(string.Format("Something went wrong when attempting to provide filtered playlist. Error message:\n\n{0}", e.ToString())); }
 
             return result;
         }
+        #endregion
 
-        /// <summary>
-        /// Generates randomized alternative for current playlist.
-        /// </summary>
+
         private void GenerateRandomPlaylist()
         {
             try
@@ -228,7 +214,7 @@ namespace MusicTagger2.Core
                 var random = new Random();
                 var tmpList = new List<int>();
 
-                for (var i = 0; i < currentPlaylist.Count; i++)
+                for (var i = 0; i < CurrentPlayList.Count; i++)
                     tmpList.Add(i);
 
                 var amount = tmpList.Count;
@@ -241,13 +227,7 @@ namespace MusicTagger2.Core
             }
             catch (Exception e) { MessageBox.Show(string.Format("Random version of generated filtered playlist could not be created. Error message:\n\n{0}", e.ToString())); }
         }
-        #endregion
 
-        #region Import list handling...
-        /// <summary>
-        /// Checks validity of provided file paths, creates song objects for them and inserts them into import list.
-        /// </summary>
-        /// <param name="filePaths">Paths to input files.</param>
         public void AddIntoImport(List<string> filePaths)
         {
             try
@@ -271,11 +251,11 @@ namespace MusicTagger2.Core
 
                             if (!allSongs.ContainsKey(newSong.FullPath))
                             {
-                                importList.Add(newSong);
+                                ImportList.Add(newSong);
                                 allSongs.Add(newSong.FullPath, newSong);
                             }
-                            else if (!importList.Contains(allSongs[newSong.FullPath]))
-                                importList.Add(allSongs[newSong.FullPath]);
+                            else if (!ImportList.Contains(allSongs[newSong.FullPath]))
+                                ImportList.Add(allSongs[newSong.FullPath]);
                         }
                     }
                 }
@@ -284,10 +264,6 @@ namespace MusicTagger2.Core
             catch (Exception e) { MessageBox.Show(string.Format("Could not add at least one of the provided file paths into the import list. Error message:\n\n{0}", e.ToString())); }
         }
 
-        /// <summary>
-        /// Removes all given songs from current import list.
-        /// </summary>
-        /// <param name="forRemoval">Collection of songs to be removed.</param>
         public void RemoveFromImport(ObservableCollection<Song> forRemoval)
         {
             try
@@ -300,36 +276,26 @@ namespace MusicTagger2.Core
                 {
                     if (s == previewSong)
                         Stop();
-                    importList.Remove(s);
+                    ImportList.Remove(s);
                 }
             }
             catch (Exception e) { MessageBox.Show(string.Format("Could not remove provided songs from import list. Following error occured:\n\n{0}", e.ToString())); }
         }
 
-        /// <summary>
-        /// Clear all songs from import list, which already have at least one tag assigned.
-        /// </summary>
         public void ClearImport()
         {
             try
             {
                 var remove = new List<Song>();
-                foreach (var s in importList)
+                foreach (var s in ImportList)
                     if (s.tags.Count > 0)
                         remove.Add(s);
                 foreach (var s in remove)
-                    importList.Remove(s);
+                    ImportList.Remove(s);
             }
             catch (Exception e) { MessageBox.Show(string.Format("Could not clear the import list. Following error occured:\n\n{0}", e.ToString())); }
         }
 
-        /// <summary>
-        /// Assigns given tags to given songs.
-        /// </summary>
-        /// <param name="songs">Songs to be tagged.</param>
-        /// <param name="tags">Tags to be added to songs.</param>
-        /// <param name="remove">Remove songs from import list afterwards?</param>
-        /// <param name="overwrite">Remove current tags from given songs before adding new ones?</param>
         public void AssignTags(ObservableCollection<Song> songs, ObservableCollection<SongTag> tags, bool remove, bool overwrite)
         {
             try
@@ -354,7 +320,7 @@ namespace MusicTagger2.Core
                         }
                     if (!remove)
                         for (var i = 0; i < songs.Count; i++)
-                            importList[importList.IndexOf(songs[i])] = songs[i];
+                            ImportList[ImportList.IndexOf(songs[i])] = songs[i];
                 }
                 catch (Exception e) { throw new Exception("Could not assing tags to songs.", e); }
 
@@ -364,21 +330,15 @@ namespace MusicTagger2.Core
             }
             catch (Exception e) { MessageBox.Show(string.Format("Could not assign tags to songs, or something else failed during the process. Error message:\n\n{0}", e.ToString())); }
         }
-        #endregion
 
-        #region Tag management...
-        /// <summary>
-        /// Finds next free tag ID in tag collection (auto increment).
-        /// </summary>
-        /// <returns>Next free tag ID.</returns>
         public int GetNextFreeTagID()
         {
             var id = -1;
             try
             {
-                if (tags.Count > 0)
+                if (allSongTags.Count > 0)
                 {
-                    foreach (var t in tags)
+                    foreach (var t in allSongTags.Values)
                         if (t.ID > id)
                             id = t.ID;
                     id++;
@@ -390,27 +350,21 @@ namespace MusicTagger2.Core
             return id;
         }
 
-        /// <summary>
-        /// Creates a new tag.
-        /// </summary>
-        /// <param name="name">Name of tag.</param>
-        /// <param name="category">Category tag falls into.</param>
         public void CreateTag(string name, string category)
         {
             try
             {
                 if ((name.Length > 0) && (category.Length > 0))
-                    tags.Add(new SongTag() { ID = GetNextFreeTagID(), Name = name, Category = category });
+                {
+                    var id = GetNextFreeTagID();
+                    allSongTags.Add(id, new SongTag() { ID = id, Name = name, Category = category });
+                }
                 else
                     MessageBox.Show("Please, enter both name and category for new tag.");
             }
             catch (Exception e) { MessageBox.Show(string.Format("Could not create tag with name {0} and category {1}. Following error occured:\n\n{2}", name, category, e.ToString())); }
         }
 
-        /// <summary>
-        /// Deletes provided tag from both tag collection and from songs as well.
-        /// </summary>
-        /// <param name="tag">Tag to be removed.</param>
         public void RemoveTag(SongTag tag)
         {
             try
@@ -418,7 +372,7 @@ namespace MusicTagger2.Core
                 if (tag != null)
                 {
                     tag.RemoveFromSongs();
-                    tags.Remove(tag);
+                    allSongTags.Remove(tag.ID);
                 }
                 else
                     MessageBox.Show("No tag was selected - nothing to remove.");
@@ -426,12 +380,6 @@ namespace MusicTagger2.Core
             catch (Exception e) { MessageBox.Show(string.Format("Could not remove provided tag. Error message:\n\n{0}", e.ToString())); }
         }
 
-        /// <summary>
-        /// Edits provided tag's name and category.
-        /// </summary>
-        /// <param name="tag">Tag to be edited.</param>
-        /// <param name="name">Tag's new name.</param>
-        /// <param name="category">Tag's new category.</param>
         public void UpdateTag(SongTag tag, string name, string category)
         {
             try
@@ -442,7 +390,7 @@ namespace MusicTagger2.Core
                     {
                         tag.Name = name;
                         tag.Category = category;
-                        tags[tags.IndexOf(tag)] = tag;
+                        SongTags[SongTags.IndexOf(tag)] = tag;
                     }
                     else
                         MessageBox.Show("Please, make sure that both new name and category for edited tag are non-empty.");
@@ -452,19 +400,15 @@ namespace MusicTagger2.Core
             }
             catch (Exception e) { MessageBox.Show(string.Format("Could not edit provided tag. Error message:\n\n{0}", e.ToString())); }
         }
-        #endregion
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="song"></param>
+
         private void SetCurrentSong(Song song)
         {
             currentSong = song;
 
             if (song != null)
             {
-                currentSongIndex = currentPlaylist.IndexOf(song);
+                currentSongIndex = CurrentPlayList.IndexOf(song);
                 currentSongRandomIndex = randomIndexList.IndexOf(currentSongIndex);
 
                 if (File.Exists(song.FullPath))
@@ -482,48 +426,36 @@ namespace MusicTagger2.Core
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void Play()
         {
             supposedToBePlaying = true;
-            if ((currentSong == null) && (currentPlaylist.Count > 0))
-                if (Random && (currentPlaylist.Count > 0))
-                    SetCurrentSong(currentPlaylist[randomIndexList[0]]);
+            if ((currentSong == null) && (CurrentPlayList.Count > 0))
+                if (Random && (CurrentPlayList.Count > 0))
+                    SetCurrentSong(CurrentPlayList[randomIndexList[0]]);
                 else
-                    SetCurrentSong(currentPlaylist[0]);
+                    SetCurrentSong(CurrentPlayList[0]);
             if ((currentSong != null) || (previewSong != null))
                 mp.Play();
             else
                 supposedToBePlaying = false;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
+
         public void Pause()
         {
             supposedToBePlaying = false;
             mp.Pause();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="song"></param>
         public void PlaySong(Song song)
         {
             SetCurrentSong(song);
             Play();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void Next()
         {
-            if ((currentSong != null) && (currentPlaylist.Count > 0) && (previewSong == null))
+            if ((currentSong != null) && (CurrentPlayList.Count > 0) && (previewSong == null))
             {
                 mp.Stop();
 
@@ -537,21 +469,18 @@ namespace MusicTagger2.Core
                 else
                 {
                     if (Random)
-                        SetCurrentSong(currentPlaylist[randomIndexList[currentSongRandomIndex + 1]]);
+                        SetCurrentSong(CurrentPlayList[randomIndexList[currentSongRandomIndex + 1]]);
                     else
-                        SetCurrentSong(currentPlaylist[currentSongIndex + 1]);
+                        SetCurrentSong(CurrentPlayList[currentSongIndex + 1]);
                 }
             }
             if (previewSong != null)
                 Stop();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void Previous()
         {
-            if ((currentSong != null) && (currentPlaylist.Count > 0) && (previewSong == null))
+            if ((currentSong != null) && (CurrentPlayList.Count > 0) && (previewSong == null))
             {
                 if (mp.CurrentPosition < 1)
                 {
@@ -562,9 +491,9 @@ namespace MusicTagger2.Core
                     else
                     {
                         if (Random)
-                            SetCurrentSong(currentPlaylist[randomIndexList[currentSongRandomIndex - 1]]);
+                            SetCurrentSong(CurrentPlayList[randomIndexList[currentSongRandomIndex - 1]]);
                         else
-                            SetCurrentSong(currentPlaylist[currentSongIndex - 1]);
+                            SetCurrentSong(CurrentPlayList[currentSongIndex - 1]);
                     }
                 }
                 else
@@ -574,41 +503,32 @@ namespace MusicTagger2.Core
                 MoveToTime(0);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void First()
         {
-            if ((currentPlaylist.Count > 0) && (previewSong == null))
+            if ((CurrentPlayList.Count > 0) && (previewSong == null))
             {
                 if (Random)
-                    SetCurrentSong(currentPlaylist[randomIndexList[0]]);
+                    SetCurrentSong(CurrentPlayList[randomIndexList[0]]);
                 else
-                    SetCurrentSong(currentPlaylist[0]);
+                    SetCurrentSong(CurrentPlayList[0]);
             }
             if (previewSong != null)
                 MoveToTime(0);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void Last()
         {
-            if ((currentPlaylist.Count) > 0 && (previewSong == null))
+            if ((CurrentPlayList.Count) > 0 && (previewSong == null))
             {
                 if (Random)
-                    SetCurrentSong(currentPlaylist[randomIndexList[randomIndexList.Count - 1]]);
+                    SetCurrentSong(CurrentPlayList[randomIndexList[randomIndexList.Count - 1]]);
                 else
-                    SetCurrentSong(currentPlaylist[currentPlaylist.Count - 1]);
+                    SetCurrentSong(CurrentPlayList[CurrentPlayList.Count - 1]);
             }
             if (previewSong != null)
                 Stop();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void Stop()
         {
             if (currentSong != null)
@@ -625,39 +545,16 @@ namespace MusicTagger2.Core
             }
         }
 
-        #region Volume settings...
-        /// <summary>
-        /// 
-        /// </summary>
+
         public void Mute() => mp.Mute = true;
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void Unmute() => mp.Mute = false;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="volume"></param>
         public void SetVolume(double volume) => mp.Volume = (volume > 0) ? (((int)volume - 100) * 40) : -10000;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
 
-        #endregion
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="time"></param>
         public void MoveToTime(int time) => mp.CurrentPosition = time / 10;
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void CheckIsTimeForNext()
         {
             if (mp.PlayState == MediaPlayer.MPPlayStateConstants.mpStopped)
@@ -669,16 +566,6 @@ namespace MusicTagger2.Core
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         public int GetCurrentPosition()
         {
             if ((int)(mp.CurrentPosition * 10) < (int)(mp.Duration * 10))
@@ -687,16 +574,9 @@ namespace MusicTagger2.Core
                 return CurrentLength;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         public Song GetCurrentSong() => previewSong != null ? previewSong : currentSong;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="song"></param>
+
         public void PlayPreview(Song song)
         {
             if (File.Exists(song.FullPath))
@@ -709,11 +589,7 @@ namespace MusicTagger2.Core
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="song"></param>
-        /// <param name="destinationPath"></param>
+
         public void MoveSong(Song song, string destinationPath)
         {
             if (File.Exists(song.FullPath))
@@ -725,30 +601,41 @@ namespace MusicTagger2.Core
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="songs"></param>
-        /// <param name="targetDir"></param>
         public void MoveSongs(ObservableCollection<Song> songs, string targetDir)
         {
             foreach (var s in songs)
                 s.Move(targetDir + s.FileName);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="song"></param>
         public void RemoveSong(Song song)
         {
             if ((song == currentSong) || (song == previewSong))
                 Stop();
-            currentPlaylist.Remove(song);
+            CurrentPlayList.Remove(song);
             song.RemoveFromAllTags();
-            importList.Remove(song);
+            ImportList.Remove(song);
             allSongs.Remove(song.FullPath);
             randomIndexList.Remove(randomIndexList.IndexOf(randomIndexList.Count - 1));
         }
+
+        public List<int> randomIndexList = new List<int>();
+        private Song currentSong;
+        private Song previewSong;
+        public int currentSongIndex = -1;
+        private int currentSongRandomIndex = -1;
+
+        //public ObservableCollection<Song> allSongs = new ObservableCollection<Song>();
+        //private Dictionary<string, Song> songs = new Dictionary<string, Song>();
+        public bool Random = true;
+        public bool Repeat = true;
+        //public string SettingsFilePath;
+        private bool supposedToBePlaying;
+
+        private MediaPlayer.MediaPlayer mp = new MediaPlayer.MediaPlayer() { Volume = -2000 };
+        public bool IsReallyPlaying => mp.PlayState == MediaPlayer.MPPlayStateConstants.mpPlaying;
+        private bool IsCurrentFirst => Random ? (currentSongRandomIndex == 0) : (currentSongIndex == 0);
+        private bool IsCurrentLast => Random ? currentSongRandomIndex == (randomIndexList.Count - 1) : (currentSongIndex == CurrentPlayList.Count - 1);
+        public int CurrentVolume => (mp.Volume == -10000) ? 0 : (mp.Volume / 40 + 100);
+        public int CurrentLength => (int)(mp.Duration * 10);
     }
 }

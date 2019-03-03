@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -18,13 +18,13 @@ namespace MusicTagger2.Core
         /// <param name="filePath"></param>
         /// <param name="songs"></param>
         /// <param name="songTags"></param>
-        public void WriteSettings(string filePath, ObservableCollection<Song> songs, ObservableCollection<SongTag> songTags)
+        public void WriteSettings(string filePath, Dictionary<string, Song> songs, Dictionary<int, SongTag> songTags)
         {
             try
             {
                 CreateDirectory(filePath);
                 CreateHeader();
-                WriteTagData(songTags);
+                WriteSongTagData(songTags);
                 WriteSongData(songs);
                 WriteSettingsToFile(filePath);
             }
@@ -74,13 +74,13 @@ namespace MusicTagger2.Core
         /// Adds song tag data into output XML.
         /// </summary>
         /// <param name="songTags"></param>
-        private void WriteTagData(ObservableCollection<SongTag> songTags)
+        private void WriteSongTagData(Dictionary<int, SongTag> songTags)
         {
             try
             {
                 XmlElement tagsElement = outputDocument.CreateElement(string.Empty, "SongTags", string.Empty);
                 rootElement.AppendChild(tagsElement);
-                foreach (var t in songTags)
+                foreach (var t in songTags.Values)
                 {
                     XmlElement newTag = outputDocument.CreateElement(string.Empty, "SongTag", string.Empty);
                     newTag.SetAttribute("Name", t.Name);
@@ -99,13 +99,13 @@ namespace MusicTagger2.Core
         /// Adds song data into output XML.
         /// </summary>
         /// <param name="songs"></param>
-        private void WriteSongData(ObservableCollection<Song> songs)
+        private void WriteSongData(Dictionary<string, Song> songs)
         {
             try
             {
                 XmlElement songsElement = outputDocument.CreateElement(string.Empty, "Songs", string.Empty);
                 rootElement.AppendChild(songsElement);
-                foreach (var s in songs)
+                foreach (var s in songs.Values)
                 {
                     if (s.WasTagged)
                     {
