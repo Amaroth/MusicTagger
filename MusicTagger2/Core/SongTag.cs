@@ -31,9 +31,7 @@ namespace MusicTagger2.Core
         /// <param name="song"></param>
         public void AddSong(Song song)
         {
-            if (!songs.Contains(song))
-                songs.Add(song);
-
+            songs.Add(song);
             song.AddTag(this);
         }
 
