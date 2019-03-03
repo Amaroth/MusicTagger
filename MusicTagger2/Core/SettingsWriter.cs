@@ -15,7 +15,7 @@ namespace MusicTagger2.Core
         public SettingsWriter() { }
 
         /// <summary>
-        /// Calls WriteSettings after creation.
+        /// Calls WriteSettings on creation.
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="songs"></param>

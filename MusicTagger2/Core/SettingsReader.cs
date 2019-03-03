@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows;
 using System.Xml;
 
 namespace MusicTagger2.Core
@@ -12,8 +11,16 @@ namespace MusicTagger2.Core
 
         public SettingsReader() { }
 
+        /// <summary>
+        /// Calls ReadSettings on creation.
+        /// </summary>
+        /// <param name="filePath"></param>
         public SettingsReader(string filePath) => ReadSettings(filePath);
 
+        /// <summary>
+        /// Reads data from provided file.
+        /// </summary>
+        /// <param name="filePath"></param>
         public void ReadSettings(string filePath)
         {
             xml = new XmlDocument();
@@ -29,7 +36,11 @@ namespace MusicTagger2.Core
             }
         }
 
-        public HashSet<SongTag> GetTags()
+        /// <summary>
+        /// Provides song tags from its settings file.
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<SongTag> GetSongTags()
         {
             var result = new HashSet<SongTag>();
             try
@@ -46,12 +57,17 @@ namespace MusicTagger2.Core
             }
             catch (Exception e)
             {
-                MessageBox.Show("Song tags were not successfully loaded. Provided settings file may be corrupted. Error message:\n" + e.ToString());
+                throw new Exception("Song tags were not successfully loaded. Provided settings file may be corrupted.", e);
             }
 
             return result;
         }
 
+        /// <summary>
+        /// Provides songs from its settings file.
+        /// </summary>
+        /// <param name="songTags"></param>
+        /// <returns></returns>
         public HashSet<Song> GetSongs(Dictionary<int, SongTag> songTags)
         {
             var result = new HashSet<Song>();
@@ -71,7 +87,7 @@ namespace MusicTagger2.Core
             }
             catch (Exception e)
             {
-                MessageBox.Show("Songs were not successfully loaded. Provided settings file may be corrupted. Error message:\n" + e.ToString());
+                throw new Exception("Songs were not successfully loaded. Provided settings file may be corrupted.", e);
             }
 
             return result;
