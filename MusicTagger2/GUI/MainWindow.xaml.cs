@@ -110,25 +110,13 @@ namespace MusicTagger2.GUI
 
         #region Event handlers...
         #region Menu event handlers...
-        private void NewMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            NewFile();
-        }
+        private void NewMenuItem_Click(object sender, RoutedEventArgs e) => NewFile();
 
-        private void OpenMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFile();
-        }
+        private void OpenMenuItem_Click(object sender, RoutedEventArgs e) => OpenFile();
 
-        private void SaveMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            SaveFile();
-        }
+        private void SaveMenuItem_Click(object sender, RoutedEventArgs e) => SaveFile();
 
-        private void SaveAsMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            SaveAsFile();
-        }
+        private void SaveAsMenuItem_Click(object sender, RoutedEventArgs e) => SaveAsFile();
         #endregion
 
         #region Play panel event handlers...
@@ -253,11 +241,11 @@ namespace MusicTagger2.GUI
                     {
                         if (oid.GetAnswer() != "Abort")
                         {
-                            foreach (Song s in selectedItems)
+                            foreach (var s in selectedItems)
                                 core.RemoveSong(s);
                         }
                         if (oid.GetAnswer() == "Drive as well")
-                            foreach (Song s in selectedItems)
+                            foreach (var s in selectedItems)
                                 try
                                 {
                                     File.Delete(s.FullPath);
