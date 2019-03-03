@@ -6,11 +6,11 @@ namespace MusicTagger2.Core
 {
     class Song
     {
-        // Name of song (file name without extension)
+        // Name of song (file name without extension).
         public string SongName { get; set; }
-        // Name of file song is saved in on drive
+        // Name of file song is saved in on drive.
         public string FileName { get; set; }
-        // Full path to song's file on drive
+        // Full path to song's file on drive.
         public string FullPath { get; set; }
         // If song was not tagged yet since it was imported to app, do not save it to saved settings.
         public bool WasTagged { get; set; }
