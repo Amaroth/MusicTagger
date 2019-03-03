@@ -18,10 +18,12 @@ namespace MusicTagger2.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        private string CurrentFilePath;
+        private Core.Core core = Core.Core.Instance;
+
         private ObservableCollection<SongTag> selectedTags = new ObservableCollection<SongTag>();
         private ObservableCollection<Song> selectedImportSongs = new ObservableCollection<Song>();
         private ObservableCollection<Song> selectedPlaylistSongs = new ObservableCollection<Song>();
-        private Core.Core core = Core.Core.Instance;
 
         private int preFadeVolume = 0;
         private DispatcherTimer fadeTimer = new DispatcherTimer();
@@ -31,8 +33,8 @@ namespace MusicTagger2.GUI
         {
             InitializeComponent();
             LoadWindowTitle();
-            ImportListView.ItemsSource = core.importList;
-            TagListView.ItemsSource = core.tags;
+            ImportListView.ItemsSource = core.ImportList;
+            TagListView.ItemsSource = core.SongTags;
 
             playSongTimer.Tick += new EventHandler(Timer_Tick);
             playSongTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
@@ -75,9 +77,9 @@ namespace MusicTagger2.GUI
         /// </summary>
         private void SaveFile()
         {
-            if (core.SettingsFilePath != null)
+            if (CurrentFilePath != null)
             {
-                core.SaveSettings(core.SettingsFilePath);
+                core.SaveSettings(CurrentFilePath);
                 LoadWindowTitle();
             }
             else
@@ -101,8 +103,8 @@ namespace MusicTagger2.GUI
         private void LoadWindowTitle()
         {
             Title = "Music Tagger 2.1";
-            if ((core.SettingsFilePath != null) && (core.SettingsFilePath != ""))
-                Title += " - " + Path.GetFileName(core.SettingsFilePath);
+            if ((CurrentFilePath != null) && (CurrentFilePath != ""))
+                Title += " - " + Path.GetFileName(CurrentFilePath);
         }
 
         private void ReloadViews()
@@ -142,8 +144,8 @@ namespace MusicTagger2.GUI
             {
                 for (var i = 0; i < PlayListView.Items.Count; i++)
                 {
-                    if (((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.currentPlaylist[i])) != null)
-                        ((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.currentPlaylist[i])).Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF042271"));
+                    if (((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.CurrentPlayList[i])) != null)
+                        ((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.CurrentPlayList[i])).Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF042271"));
                 }
                 if (core.currentSongIndex > -1 && core.currentSongIndex < PlayListView.Items.Count)
                     if (((ListViewItem)(PlayListView.ItemContainerGenerator.ContainerFromIndex(core.currentSongIndex))) != null)
@@ -203,7 +205,7 @@ namespace MusicTagger2.GUI
         {
             if (selectedTags.Count < 1)
                 return null;
-            foreach (var t in core.tags)
+            foreach (var t in core.SongTags)
                 if (selectedTags.Contains(t))
                     return t;
             return null;
@@ -213,7 +215,7 @@ namespace MusicTagger2.GUI
         {
             if (selectedPlaylistSongs.Count < 1)
                 return null;
-            foreach (var s in core.currentPlaylist)
+            foreach (var s in core.CurrentPlayList)
                 if (selectedPlaylistSongs.Contains(s))
                     return s;
             return null;
@@ -331,8 +333,8 @@ namespace MusicTagger2.GUI
         private void RetagSongsButton_Click(object sender, RoutedEventArgs e)
         {
             foreach (Song s in PlayListView.SelectedItems)
-                if (!core.importList.Contains(s))
-                    core.importList.Add(s);
+                if (!core.ImportList.Contains(s))
+                    core.ImportList.Add(s);
 
             ReloadImportListViewColWidths();
         }
