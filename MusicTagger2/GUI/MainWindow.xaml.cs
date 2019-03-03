@@ -241,19 +241,19 @@ namespace MusicTagger2.GUI
         private void CreateTagButton_Click(object sender, RoutedEventArgs e)
         {
             core.CreateTag(TagNameTextBox.Text, TagCategoryTextBox.Text);
-            ReloadColumnWidths();
+            ReloadTagListViewColWidths();
         }
 
         private void EditTagButton_Click(object sender, RoutedEventArgs e)
         {
             core.EditTag(GetFirstSelectedTag(), TagNameTextBox.Text, TagCategoryTextBox.Text);
-            ReloadColumnWidths();
+            ReloadTagListViewColWidths();
         }
 
         private void RemoveTagButton_Click(object sender, RoutedEventArgs e)
         {
             core.RemoveTag(GetFirstSelectedTag());
-            ReloadColumnWidths();
+            ReloadTagListViewColWidths();
         }
         #endregion
 
@@ -269,7 +269,7 @@ namespace MusicTagger2.GUI
                 filter = Core.Core.FilterType.Or;
 
             PlayListView.ItemsSource = core.CreatePlaylist(selectedTags, filter);
-            ReloadColumnWidths();
+            ReloadPlayListViewColWidths();
         }
 
         private void RetagSongsButton_Click(object sender, RoutedEventArgs e)
@@ -278,7 +278,7 @@ namespace MusicTagger2.GUI
                 if (!core.importList.Contains(s))
                     core.importList.Add(s);
 
-            ReloadColumnWidths();
+            ReloadImportListViewColWidths();
         }
 
         private void RenameSongButton_Click(object sender, RoutedEventArgs e)
@@ -291,7 +291,8 @@ namespace MusicTagger2.GUI
                         core.MoveSong(selectedSong, inputDialog.Answer);
             }
 
-            ReloadColumnWidths();
+            ReloadImportListViewColWidths();
+            ReloadPlayListViewColWidths();
         }
 
         private void MoveSongsButton_Click(object sender, RoutedEventArgs e)
@@ -346,7 +347,7 @@ namespace MusicTagger2.GUI
         private void AssignButton_Click(object sender, RoutedEventArgs e)
         {
             core.AssignTags(selectedImportSongs, selectedTags, (bool)RemoveFromImportCheckbox.IsChecked, (bool)OverwriteTagsCheckbox.IsChecked);
-            ReloadColumnWidths();
+            ReloadImportListViewColWidths();
         }
         #endregion
 
@@ -388,7 +389,7 @@ namespace MusicTagger2.GUI
                     importList.Add(s);
             }
             core.AddIntoImport(importList);
-            ReloadColumnWidths();
+            ReloadImportListViewColWidths();
         }
 
         private void ImportListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -445,33 +446,37 @@ namespace MusicTagger2.GUI
             playView.GroupDescriptions.Clear();
             playView.GroupDescriptions.Add(groupDescription);
             LoadTagAdministrationFields(GetFirstSelectedTag());
-            ReloadColumnWidths();
+            ReloadTagListViewColWidths();
+            ReloadPlayListViewColWidths();
+            ReloadImportListViewColWidths();
         }
 
-        private void ReloadColumnWidths()
+        private void ReloadImportListViewColWidths()
+        {
+            foreach (var c in (ImportListView.View as GridView).Columns)
+            {
+                if (double.IsNaN(c.Width))
+                    c.Width = c.ActualWidth;
+                c.Width = double.NaN;
+            }
+        }
+
+        private void ReloadPlayListViewColWidths()
+        {
+            foreach (var c in (PlayListView.View as GridView).Columns)
+            {
+                if (double.IsNaN(c.Width))
+                    c.Width = c.ActualWidth;
+                c.Width = double.NaN;
+            }
+        }
+
+        private void ReloadTagListViewColWidths()
         {
             foreach (var c in (TagListView.View as GridView).Columns)
             {
                 if (double.IsNaN(c.Width))
-                {
                     c.Width = c.ActualWidth;
-                }
-                c.Width = double.NaN;
-            }
-            foreach (var c in (PlayListView.View as GridView).Columns)
-            {
-                if (double.IsNaN(c.Width))
-                {
-                    c.Width = c.ActualWidth;
-                }
-                c.Width = double.NaN;
-            }
-            foreach (var c in (ImportListView.View as GridView).Columns)
-            {
-                if (double.IsNaN(c.Width))
-                {
-                    c.Width = c.ActualWidth;
-                }
                 c.Width = double.NaN;
             }
         }
