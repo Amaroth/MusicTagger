@@ -142,16 +142,16 @@ namespace MusicTagger2.GUI
 
         private void MuteUnmuteButton_Click(object sender, RoutedEventArgs e)
         {
-            if (volumeSlider.IsEnabled)
+            if (SongVolumeSlider.IsEnabled)
             {
                 MuteUnmuteButton.Content = "Unmute";
-                volumeSlider.IsEnabled = false;
+                SongVolumeSlider.IsEnabled = false;
                 core.Mute();
             }
             else
             {
                 MuteUnmuteButton.Content = "Mute";
-                volumeSlider.IsEnabled = true;
+                SongVolumeSlider.IsEnabled = true;
                 core.Unmute();
             }
         }
@@ -164,7 +164,7 @@ namespace MusicTagger2.GUI
                 fadeTimer.Interval = new TimeSpan(0, 0, 0, 1);
             else
                 fadeTimer.Interval = new TimeSpan(0, 0, 0, 0, 3000 / preFadeVolume);
-            volumeSlider.IsEnabled = false;
+            SongVolumeSlider.IsEnabled = false;
             fadeTimer.Start();
         }
 
@@ -434,9 +434,9 @@ namespace MusicTagger2.GUI
             }
         }
 
-        private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void SongVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            core.SetVolume(volumeSlider.Value);
+            core.SetVolume(SongVolumeSlider.Value);
         }
 
         
@@ -478,9 +478,9 @@ namespace MusicTagger2.GUI
             else
             {
                 core.Stop();
-                volumeSlider.IsEnabled = true;
+                SongVolumeSlider.IsEnabled = true;
                 FadeButton.IsEnabled = true;
-                core.SetVolume(volumeSlider.Value);
+                core.SetVolume(SongVolumeSlider.Value);
                 fadeTimer.Stop();
             }
         }
