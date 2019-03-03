@@ -111,6 +111,58 @@ namespace MusicTagger2.GUI
         }
         #endregion
 
+        #region Update UI elements functions...
+        private void UpdatePlayingSongInfo()
+        {
+            Song currentSong = core.GetCurrentSong();
+            if (currentSong != null)
+            {
+                NameTextBlock.Text = currentSong.SongName;
+                SongProgressBar.Maximum = core.GetCurrentLength();
+                SongProgressBar.Value = core.GetCurrentPosition();
+                TimeTextBlock.Text = string.Format("{0} / {1}", Utilities.GetTimeString(core.GetCurrentPosition() / 10), Utilities.GetTimeString(core.GetCurrentLength() / 10));
+            }
+            else
+            {
+                NameTextBlock.Text = "";
+                SongProgressBar.Value = 0;
+                SongProgressBar.Maximum = 1;
+                TimeTextBlock.Text = "0:00:00 / 0:00:00";
+            }
+        }
+
+        private void MarkPlaying()
+        {
+            if (PlayListView.Items.Count > 0)
+            {
+                for (var i = 0; i < PlayListView.Items.Count; i++)
+                {
+                    if (((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.currentPlaylist[i])) != null)
+                        ((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.currentPlaylist[i])).Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF042271"));
+                }
+                if (core.currentSongIndex > -1 && core.currentSongIndex < PlayListView.Items.Count)
+                    if (((ListViewItem)(PlayListView.ItemContainerGenerator.ContainerFromIndex(core.currentSongIndex))) != null)
+                        ((ListViewItem)(PlayListView.ItemContainerGenerator.ContainerFromIndex(core.currentSongIndex))).Foreground = new SolidColorBrush(Colors.Red);
+            }
+        }
+
+        private void LoadTagAdministrationFields(Tag tag)
+        {
+            if (tag != null)
+            {
+                TagIDTextBox.Text = GetFirstSelectedTag().ID.ToString();
+                TagNameTextBox.Text = GetFirstSelectedTag().Name;
+                TagCategoryTextBox.Text = GetFirstSelectedTag().Category;
+            }
+            else
+            {
+                TagIDTextBox.Text = "Auto increment";
+                TagNameTextBox.Text = "";
+                TagCategoryTextBox.Text = "";
+            }
+        }
+        #endregion
+
         #region Event handlers...
         #region Menu event handlers...
         private void NewMenuItem_Click(object sender, RoutedEventArgs e) => NewFile();
@@ -354,7 +406,7 @@ namespace MusicTagger2.GUI
             foreach (Tag item in e.AddedItems)
                 selectedTags.Add(item);
 
-            LoadTagAdministration(GetFirstSelectedTag());
+            LoadTagAdministrationFields(GetFirstSelectedTag());
         }
         #endregion
 
@@ -385,56 +437,6 @@ namespace MusicTagger2.GUI
         #endregion
         #endregion
 
-        private void UpdatePlayingSongInfo()
-        {
-            SongProgressBar.Maximum = core.GetCurrentLength();
-            SongProgressBar.Value = core.GetCurrentPosition();
-
-            Song currentSong = core.GetCurrentSong();
-            if (currentSong != null)
-            {
-                NameTextBlock.Text = currentSong.SongName;
-                TimeTextBlock.Text = string.Format("{0} / {1}", Utilities.GetTimeString(core.GetCurrentPosition() / 10), Utilities.GetTimeString(core.GetCurrentLength() / 10));
-            }
-            else
-            {
-                NameTextBlock.Text = "";
-                SongProgressBar.Value = 0;
-                SongProgressBar.Maximum = 0;
-                TimeTextBlock.Text = "0:00:00 / 0:00:00";
-            }
-        }
-
-        private void MarkPlaying()
-        {
-            if (PlayListView.Items.Count > 0)
-            {
-                for (int i = 0; i < PlayListView.Items.Count; i++)
-                {
-                    if (((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.currentPlaylist[i])) != null)
-                        ((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.currentPlaylist[i])).Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF042271"));
-                }
-                if (core.currentSongIndex > -1 && core.currentSongIndex < PlayListView.Items.Count)
-                    if (((ListViewItem)(PlayListView.ItemContainerGenerator.ContainerFromIndex(core.currentSongIndex))) != null)
-                        ((ListViewItem)(PlayListView.ItemContainerGenerator.ContainerFromIndex(core.currentSongIndex))).Foreground = new SolidColorBrush(Colors.Red);
-            }
-        }
-
-        private void LoadTagAdministration(Tag tag)
-        {
-            if (tag != null)
-            {
-                TagIDTextBox.Text = GetFirstSelectedTag().ID.ToString();
-                TagNameTextBox.Text = GetFirstSelectedTag().Name;
-                TagCategoryTextBox.Text = GetFirstSelectedTag().Category;
-            }
-            else
-            {
-                TagIDTextBox.Text = "Auto increment";
-                TagNameTextBox.Text = "";
-                TagCategoryTextBox.Text = "";
-            }
-        }
 
         private void ReloadViews()
         {
@@ -442,7 +444,7 @@ namespace MusicTagger2.GUI
             var groupDescription = new PropertyGroupDescription("Category");
             playView.GroupDescriptions.Clear();
             playView.GroupDescriptions.Add(groupDescription);
-            LoadTagAdministration(GetFirstSelectedTag());
+            LoadTagAdministrationFields(GetFirstSelectedTag());
             ReloadColumnWidths();
         }
 
