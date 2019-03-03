@@ -14,7 +14,7 @@ namespace MusicTagger2.Core
         public void CreateSong(string filePath)
         {
             var newSong = new Song(filePath);
-            newSong.tags.Add(ID, this);
+            newSong.tags.Add(this);
             songs.Add(newSong);
         }
 
@@ -29,13 +29,13 @@ namespace MusicTagger2.Core
         public void RemoveFromSongs()
         {
             foreach (var s in songs)
-                s.tags.Remove(ID);
+                s.tags.Remove(this);
         }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("ID: {0},\n Name: {1},\n Category: {2},\n SongNames: ", ID, Name, Category);
+            sb.AppendFormat("ID: {0},\nName: {1},\nCategory: {2},\nSongNames: ", ID, Name, Category);
             if (songs.Count > 0)
             {
                 foreach (var s in songs)

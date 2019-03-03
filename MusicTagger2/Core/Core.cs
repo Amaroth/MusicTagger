@@ -162,7 +162,7 @@ namespace MusicTagger2.Core
                             {
                                 finds.Add(false);
                                 foreach (var t in c)
-                                    if (s.tags.ContainsKey(t.ID))
+                                    if (s.tags.Contains(t))
                                         finds[finds.Count - 1] = true;
                             }
                             // Was song matching for at least 1 tag per category?
@@ -185,7 +185,7 @@ namespace MusicTagger2.Core
                         {
                             bool matches = true;
                             foreach (var t in tags)
-                                if (!s.tags.ContainsKey(t.ID))
+                                if (!s.tags.Contains(t))
                                 {
                                     matches = false;
                                     break;
@@ -339,7 +339,7 @@ namespace MusicTagger2.Core
                 {
                     if (overwrite)
                         foreach (var s in songs)
-                            s.RemoveFromTags();
+                            s.RemoveFromAllTags();
                 }
                 catch (Exception e) { throw new Exception("Error occured while attempting to remove original tags from songs.", e); }
 
@@ -745,7 +745,7 @@ namespace MusicTagger2.Core
             if ((song == currentSong) || (song == previewSong))
                 Stop();
             currentPlaylist.Remove(song);
-            song.RemoveFromTags();
+            song.RemoveFromAllTags();
             importList.Remove(song);
             allSongs.Remove(song.FullPath);
             randomIndexList.Remove(randomIndexList.IndexOf(randomIndexList.Count - 1));

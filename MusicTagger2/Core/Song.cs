@@ -10,27 +10,7 @@ namespace MusicTagger2.Core
         public string FileName { get; set; }
         public string FullPath { get; set; }
         public bool Save { get; set; }
-        public Dictionary<int, SongTag> tags = new Dictionary<int, SongTag>();
-
-        public Song(string filePath)
-        {
-            FileName = Path.GetFileName(filePath);
-            SongName = FileName.Substring(0, FileName.Length - 4);
-            FullPath = filePath;
-            Save = true;
-        }
-
-        public void Move(string destination)
-        {
-            if (!File.Exists(destination))
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(destination));
-                File.Move(FullPath, destination);
-                FullPath = destination;
-                FileName = Path.GetFileName(destination);
-                SongName = FileName.Substring(0, FileName.Length - 4);
-            }
-        }
+        public HashSet<SongTag> tags = new HashSet<SongTag>();
 
         public string TagIds
         {
@@ -39,8 +19,8 @@ namespace MusicTagger2.Core
                 StringBuilder sb = new StringBuilder();
                 if (tags.Count > 0)
                 {
-                    foreach (var tag in tags.Values)
-                        sb.Append(string.Format("{0}, ", tag.ID));
+                    foreach (var t in tags)
+                        sb.Append(string.Format("{0}, ", t.ID));
                     sb.Length -= 2;
                 }
                 return sb.ToString();
@@ -54,38 +34,63 @@ namespace MusicTagger2.Core
                 StringBuilder sb = new StringBuilder();
                 if (tags.Count > 0)
                 {
-                    foreach (var tag in tags.Values)
-                        sb.Append(string.Format("{0}, ", tag.Name));
+                    foreach (var t in tags)
+                        sb.Append(string.Format("{0}, ", t.Name));
                     sb.Length -= 2;
                 }
                 return sb.ToString();
             }
         }
 
-        public void AddTag(SongTag tag)
+        public Song(string filePath)
         {
-            if (!tags.ContainsKey(tag.ID))
-                tags.Add(tag.ID, tag);
+            FullPath = filePath;
+            UpdateDerived();
+            Save = true;
         }
 
-        public void RemoveFromTags()
+        public void Move(string destination)
+        {
+            if (!File.Exists(destination))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(destination));
+                File.Move(FullPath, destination);
+                FullPath = destination;
+                UpdateDerived();
+            }
+        }
+
+        private void UpdateDerived()
+        {
+            FileName = Path.GetFileName(FullPath);
+            SongName = FileName.Substring(0, FileName.Length - 4);
+        }
+
+        public void AddTag(SongTag tag)
+        {
+            if (!tags.Contains(tag))
+                tags.Add(tag);
+        }
+
+        public void RemoveFromAllTags()
         {
             foreach (var t in tags)
-                t.Value.songs.Remove(this);
+                t.songs.Remove(this);
             tags.Clear();
         }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(string.Format("SongName: {0}\n", SongName));
-            sb.Append(string.Format("FileName: {0}\n", FileName));
-            sb.Append(string.Format("FullPath: {0}\n", FullPath));
-            sb.Append("Tag IDs: ");
-            foreach (var tag in tags)
+            sb.AppendFormat("SongName: {0},\nFileName: {1},\nFullPath: {2},\nTag IDs: ", SongName, FileName, FullPath);
+            if (tags.Count > 0)
             {
-                sb.Append(tag.Value.ID);
-                sb.Append(", ");
+                foreach (var t in tags)
+                {
+                    sb.Append(t.ID);
+                    sb.Append(", ");
+                }
+                sb.Length -= 2;
             }
             return sb.ToString();
         }
