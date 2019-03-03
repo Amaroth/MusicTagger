@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Xml;
 
 namespace MusicTagger2.Core
@@ -24,11 +23,6 @@ namespace MusicTagger2.Core
             }
             newNode.InnerText = innerText;
             parent.AppendChild(newNode);
-        }
-
-        public static string MakeRelative(string filePath, string referencePath)
-        {
-            return filePath.Substring(referencePath.Length);
         }
 
         public static bool IsFileSupported(string path)
