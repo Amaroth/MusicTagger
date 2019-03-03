@@ -502,5 +502,15 @@ namespace MusicTagger2.GUI
                     playButt.Content = "Play";
             }
         }
+
+        private void SoundSearchByNameButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SoundSearchByTagsButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

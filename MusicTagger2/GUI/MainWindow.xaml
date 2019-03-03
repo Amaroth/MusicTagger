@@ -187,7 +187,31 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Sounds">
-                <Label>Play random group of sound once, play random group of sounds continuously, search for group by keywords.</Label>
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Top" Margin="3">
+                        <CheckBox DockPanel.Dock="Right" Margin="1" VerticalAlignment="Center" Name="SoundSearchOnlyPlayingCheckBox">Playing only</CheckBox>
+                        <Button DockPanel.Dock="Right" Margin="1" Name="SoundSearchByTagsButton" Click="SoundSearchByTagsButton_Click">By tags</Button>
+                        <Button DockPanel.Dock="Right" Margin="1" Name="SoundSearchByNameButton" Click="SoundSearchByNameButton_Click">By name</Button>
+                        <TextBlock DockPanel.Dock="Left" Margin="1,1,5,1" VerticalAlignment="Center">Search:</TextBlock>
+                        <TextBox DockPanel.Dock="Left" Margin="1" Name="SoundSearchNameTextBox"></TextBox>
+                    </DockPanel>
+                    <ScrollViewer DockPanel.Dock="Bottom">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Margin="1" VerticalAlignment="Center">Sound group name</TextBlock>
+                            <Button Grid.Row="0" Grid.Column="1" Margin="1">Once</Button>
+                            <Button Grid.Row="0" Grid.Column="2" Margin="1">Continuous</Button>
+                        </Grid>
+                    </ScrollViewer>
+                </DockPanel>
             </TabItem>
             <TabItem Header="Tag sounds">
                 <Label>Add sound, add groups to sound.</Label>
