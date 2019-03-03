@@ -29,17 +29,16 @@ namespace MusicTagger2.GUI
         {
             InitializeComponent();
             LoadWindowTitle();
+            importListView.ItemsSource = core.importList;
+            tagListView.ItemsSource = core.tags;
+            ReloadTagGroups();
         }
 
         private void LoadWindowTitle()
         {
             Title = "Music Tagger 2.0";
-            if (core.filePath != "")
-                try
-                {
-                    Title += " - " + Path.GetFileName(core.filePath);
-                }
-                catch { }
+            if (core.SettingsFilePath != null && core.SettingsFilePath != "")
+                Title += " - " + Path.GetFileName(core.SettingsFilePath);
         }
 
         public void NewFile()
@@ -51,22 +50,11 @@ namespace MusicTagger2.GUI
                 Filter = "Xml file (*.xml)|*.xml"
             };
 
-            OpenFileDialog folderBrowser = new OpenFileDialog
-            {
-                ValidateNames = false,
-                CheckFileExists = false,
-                CheckPathExists = true,
-                FileName = "Folder Selection."
-            };
-
             if (saveFileDialog.ShowDialog() == true)
             {
-                if (folderBrowser.ShowDialog() == true)
-                {
-                    core.NewSettings(saveFileDialog.FileName, Path.GetDirectoryName(folderBrowser.FileName));
-                    LoadData();
-                    StartTimer();
-                }
+                core.NewSettings(saveFileDialog.FileName);
+                ReloadTagGroups();
+                StartTimer();
             }
             LoadWindowTitle();
         }
@@ -79,7 +67,7 @@ namespace MusicTagger2.GUI
             if (openFileDialog.ShowDialog() == true)
             {
                 core.LoadSettings(openFileDialog.FileName);
-                LoadData();
+                ReloadTagGroups();
                 StartTimer();
             }
             LoadWindowTitle();
@@ -87,8 +75,13 @@ namespace MusicTagger2.GUI
 
         private void SaveFile()
         {
-            core.SaveSettings(core.filePath);
-            LoadWindowTitle();
+            if (core.SettingsFilePath != null)
+            {
+                core.SaveSettings(core.SettingsFilePath);
+                LoadWindowTitle();
+            }
+            else
+                SaveAsFile();
         }
 
         private void SaveAsFile()
@@ -102,14 +95,25 @@ namespace MusicTagger2.GUI
             LoadWindowTitle();
         }
 
-        private void LoadData()
+        private void ReloadTagGroups()
         {
-            importListView.ItemsSource = core.importList;
-            tagListView.ItemsSource = core.tags;
             CollectionView playView = (CollectionView)CollectionViewSource.GetDefaultView(tagListView.ItemsSource);
             PropertyGroupDescription groupDescription = new PropertyGroupDescription("Category");
             playView.GroupDescriptions.Clear();
             playView.GroupDescriptions.Add(groupDescription);
+
+            if (GetFirstSelectedTag() != null)
+            {
+                tagIDIntUpDown.Text = GetFirstSelectedTag().ID.ToString();
+                tagNameTextBox.Text = GetFirstSelectedTag().Name;
+                tagCategoryTextBox.Text = GetFirstSelectedTag().Category;
+            }
+            else
+            {
+                tagIDIntUpDown.Text = "Auto increment";
+                tagNameTextBox.Text = "";
+                tagCategoryTextBox.Text = "";
+            }
         }
 
         private void StartTimer()
@@ -254,7 +258,7 @@ namespace MusicTagger2.GUI
         private void importListView_Drop(object sender, DragEventArgs e)
         {
             var files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            List<string> importList = new List<string>();
+            var importList = new List<string>();
             foreach (string s in files)
             {
                 if (Directory.Exists(s))
@@ -364,7 +368,7 @@ namespace MusicTagger2.GUI
             if (selectedPlaylistSongs.Count > 0)
             {
                 var selectedSong = GetFirstSelectedPlaylistSong();
-                var inputDialog = new StringInputDialog("Change name and/or subpath of first selected song:", selectedSong.SubPath);
+                var inputDialog = new StringInputDialog("Change name and/or path of the first selected song:", selectedSong.FullPath);
                 if (inputDialog.ShowDialog() == true)
                     core.MoveSong(selectedSong, inputDialog.Answer);
             }
@@ -375,7 +379,7 @@ namespace MusicTagger2.GUI
             if (selectedPlaylistSongs.Count > 0)
             {
                 var selectedSong = GetFirstSelectedPlaylistSong();
-                var inputDialog = new StringInputDialog("Choose new subdirectory path of selected songs:", selectedSong.SubDir);
+                var inputDialog = new StringInputDialog("Choose new path of selected songs:", selectedSong.FullPath);
                 if (inputDialog.ShowDialog() == true)
                 {
                     var result = inputDialog.Answer;
@@ -394,8 +398,24 @@ namespace MusicTagger2.GUI
 
             if (selectedItems.Count > 0)
             {
-                foreach (Song s in selectedItems)
-                    core.RemoveSong(s);
+                var oid = new OptionsInputDialog("Remove songs",
+                    string.Format("Are you sure? Do you want to delete {0} song files only from settings, or from drive as well?", selectedItems.Count),
+                    new string[] { "Settings only", "Drive as well", "Abort" });
+                if (oid.ShowDialog() == true)
+                {
+                    if (oid.GetAnswer() != "Abort")
+                    {
+                        foreach (Song s in selectedItems)
+                            core.RemoveSong(s);
+                    }
+                    if (oid.GetAnswer() == "Drive as well")
+                        foreach (Song s in selectedItems)
+                            try
+                            {
+                                File.Delete(s.FullPath);
+                            }
+                            catch { }
+                }
             }
         }
 

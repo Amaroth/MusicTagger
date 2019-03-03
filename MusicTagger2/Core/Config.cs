@@ -31,7 +31,7 @@ namespace MusicTagger2.Core
         }
 
         private XmlDocument xml;
-        List<Song> missing;
+        List<Song> missing = new List<Song>();
 
         private void Reset()
         {
@@ -46,10 +46,10 @@ namespace MusicTagger2.Core
         /// </summary>
         /// <param name="file">Path to new XML save file.</param>
         /// <param name="root">Root path of songs.</param>
-        public void NewSettings(string file, string root)
+        public void NewSettings(string file)
         {
             Reset();
-            SaveUserSettings(Core.Instance.tags, Core.Instance.allSongs, root, file);
+            SaveUserSettings(Core.Instance.tags, Core.Instance.allSongs, file);
         }
 
         /// <summary>
@@ -72,13 +72,6 @@ namespace MusicTagger2.Core
             }
             catch (Exception e) { throw new Exception("An error occured while attempting to read or load XML file. Provided file may be corrupted.", e); }
 
-            // Get root directory where music files are supposed to be, clean it up and pass it to Core.
-            try
-            {
-                Core.Instance.rootDir = xml.GetElementsByTagName("rootDir")[0].Attributes["path"].Value.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
-            }
-            catch (Exception e) { throw new Exception("Root directory was not successfully loaded. Provided file may be corrupted.", e); }
-
             // Get all tags from XML and pass them to Core.
             Dictionary<int, Tag> tags = new Dictionary<int, Tag>();
             try
@@ -87,9 +80,9 @@ namespace MusicTagger2.Core
                 {
                     var tag = new Tag()
                     {
-                        ID = int.Parse(node.Attributes["id"].Value),
-                        Name = node.Attributes["name"].Value,
-                        Category = node.Attributes["category"].Value
+                        ID = int.Parse(node.Attributes["ID"].Value),
+                        Name = node.Attributes["Name"].Value,
+                        Category = node.Attributes["Category"].Value
                     };
                     tags.Add(tag.ID, tag);
                     Core.Instance.tags.Add(tag);
@@ -102,11 +95,11 @@ namespace MusicTagger2.Core
             {
                 foreach (XmlNode node in xml.GetElementsByTagName("Songs")[0].ChildNodes)
                 {
-                    var newSong = new Song(Core.Instance.rootDir + node.Attributes["subPath"].Value, Core.Instance.rootDir);
+                    var newSong = new Song(node.Attributes["FilePath"].Value);
 
                     foreach (XmlNode tagNode in node.ChildNodes)
                     {
-                        var tagId = int.Parse(tagNode.Attributes["id"].Value);
+                        var tagId = int.Parse(tagNode.Attributes["ID"].Value);
                         tags[tagId].AddSong(newSong);
                     }
 
@@ -140,7 +133,7 @@ namespace MusicTagger2.Core
         /// <param name="songs">All songs to be saved.</param>
         /// <param name="rootDir">Root directory under which songs are to be found.</param>
         /// <param name="file">Destination file into which settings are to be saved,</param>
-        public void SaveUserSettings(ObservableCollection<Tag> tags, Dictionary<string, Song> songs, string rootDir, string file)
+        public void SaveUserSettings(ObservableCollection<Tag> tags, Dictionary<string, Song> songs, string file)
         {
             // Make sure path to file exists, otherwise create it.
             try
@@ -163,15 +156,6 @@ namespace MusicTagger2.Core
             }
             catch (Exception e) { throw new Exception("Could not prepare header and/or root of XML file.", e); }
 
-            // Save root directory with its path.
-            try
-            {
-                XmlElement rootDirElement = outputDocument.CreateElement(string.Empty, "rootDir", string.Empty);
-                rootDirElement.SetAttribute("path", rootDir);
-                rootElement.AppendChild(rootDirElement);
-            }
-            catch (Exception e) { throw new Exception("Could not save root directory into output file.", e); }
-
             // Save tags.
             try
             {
@@ -180,9 +164,9 @@ namespace MusicTagger2.Core
                 foreach (var t in tags)
                 {
                     XmlElement newTag = outputDocument.CreateElement(string.Empty, "Tag", string.Empty);
-                    newTag.SetAttribute("name", t.Name);
-                    newTag.SetAttribute("id", t.ID.ToString());
-                    newTag.SetAttribute("category", t.Category);
+                    newTag.SetAttribute("Name", t.Name);
+                    newTag.SetAttribute("ID", t.ID.ToString());
+                    newTag.SetAttribute("Category", t.Category);
                     tagsElement.AppendChild(newTag);
                 }
             }
@@ -192,7 +176,7 @@ namespace MusicTagger2.Core
             try
             {
                 foreach (var s in missing)
-                    songs.Add(s.SubPath, s);
+                    songs.Add(s.FullPath, s);
                 XmlElement songsElement = outputDocument.CreateElement(string.Empty, "Songs", string.Empty);
                 rootElement.AppendChild(songsElement);
                 foreach (var s in songs)
@@ -200,13 +184,13 @@ namespace MusicTagger2.Core
                     if (s.Value.Save)
                     {
                         XmlElement newSong = outputDocument.CreateElement(string.Empty, "Song", string.Empty);
-                        newSong.SetAttribute("subPath", s.Value.SubPath);
+                        newSong.SetAttribute("FilePath", s.Value.FullPath);
                         songsElement.AppendChild(newSong);
 
                         foreach (var t in s.Value.tags)
                         {
                             XmlElement tag = outputDocument.CreateElement(string.Empty, "Tag", string.Empty);
-                            tag.SetAttribute("id", t.Key.ToString());
+                            tag.SetAttribute("ID", t.Key.ToString());
                             newSong.AppendChild(tag);
                         }
                     }

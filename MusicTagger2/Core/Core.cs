@@ -34,8 +34,7 @@ namespace MusicTagger2.Core
         public Dictionary<string, Song> allSongs = new Dictionary<string, Song>();
         public bool Random { get; set; }
         public bool Repeat { get; set; }
-        public string filePath = "";
-        public string rootDir;
+        public string SettingsFilePath { get; set; }
         private bool supposedToBePlaying;
 
         private MediaPlayer.MediaPlayer mp = new MediaPlayer.MediaPlayer();
@@ -62,11 +61,10 @@ namespace MusicTagger2.Core
         /// Creates a new XML file for settings to be saved into.
         /// </summary>
         /// <param name="file">New settings XML file to be created.</param>
-        public void NewSettings(string file, string root)
+        public void NewSettings(string file)
         {
-            filePath = file;
-            rootDir = root;
-            conf.NewSettings(file, root);
+            SettingsFilePath = file;
+            conf.NewSettings(file);
         }
 
         /// <summary>
@@ -78,7 +76,7 @@ namespace MusicTagger2.Core
             try
             {
                 conf.LoadSettings(file);
-                filePath = file;
+                SettingsFilePath = file;
             }
             catch (Exception e) { MessageBox.Show(string.Format("Could not load settings from {0}. Error message:\n\n{1}", file, e.ToString())); }
         }
@@ -91,8 +89,8 @@ namespace MusicTagger2.Core
         {
             try
             {
-                conf.SaveUserSettings(tags, allSongs, rootDir, file);
-                filePath = file;
+                conf.SaveUserSettings(tags, allSongs, file);
+                SettingsFilePath = file;
             }
             catch (Exception e) { MessageBox.Show(string.Format("Could not save settings into {0}. Error message:\n\n{1}", file, e.ToString())); }
         }
@@ -124,7 +122,7 @@ namespace MusicTagger2.Core
                         {
                             bool matches = true;
                             foreach (var t in tags)
-                                if (!s.tags.ContainsValue(t))
+                                if (!s.tags.ContainsKey(t.ID))
                                 {
                                     matches = false;
                                     break;
@@ -187,25 +185,24 @@ namespace MusicTagger2.Core
         /// <param name="filePaths">Paths to input files.</param>
         public void AddIntoImport(List<string> filePaths)
         {
-            //try
+            try
             {
                 // Clean up paths to standart appearance.
-                //try
+                try
                 {
                     for (int i = 0; i < filePaths.Count; i++)
                     {
                         filePaths[i] = filePaths[i].Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
                     }
                 }
-                //catch (Exception e) { throw new Exception("Could not clean directory separators in import paths.", e); }
+                catch (Exception e) { throw new Exception("Could not clean directory separators in import paths.", e); }
 
-                // Check whether files are under root directory, whether they exist and whether they are supported. In that case, create song objects and add them into import.
-                //try
+                // Check whether files exist and whether they are supported. In that case, create song objects and add them into import.
+                try
                 {
-                    int errorCount = 0;
                     foreach (var s in filePaths)
                     {
-                        if (s.ToLower().StartsWith(rootDir.ToLower()) && File.Exists(s) && Utilities.IsFileSupported(s))
+                        if (File.Exists(s) && Utilities.IsFileSupported(s))
                         {
                             var newSong = new Song(s) { Save = false };
 
@@ -217,15 +214,11 @@ namespace MusicTagger2.Core
                             else if (!importList.Contains(allSongs[newSong.FullPath]))
                                 importList.Add(allSongs[newSong.FullPath]);
                         }
-                        else if (Utilities.IsFileSupported(s))
-                            errorCount++;
                     }
-                    if (errorCount > 0)
-                        MessageBox.Show(string.Format("There were {0} supported files found in import which are not under root directory {1}, which means they could not be imported.", errorCount, rootDir));
                 }
-                //catch (Exception e) { throw new Exception("Error occured while attempting to create song objects from provided import paths.", e); }
+                catch (Exception e) { throw new Exception("Error occured while attempting to create song objects from provided import paths.", e); }
             }
-            //catch (Exception e) { MessageBox.Show(string.Format("Could not add at least some of provided file paths into import list. Error message:\n\n{0}", e.ToString())); }
+            catch (Exception e) { MessageBox.Show(string.Format("Could not add at least one of the provided file paths into the import list. Error message:\n\n{0}", e.ToString())); }
         }
 
         /// <summary>
@@ -264,7 +257,7 @@ namespace MusicTagger2.Core
                 foreach (var s in remove)
                     importList.Remove(s);
             }
-            catch (Exception e) { MessageBox.Show(string.Format("Could not clear import list. Following error occured:\n\n{0}", e.ToString())); }
+            catch (Exception e) { MessageBox.Show(string.Format("Could not clear the import list. Following error occured:\n\n{0}", e.ToString())); }
         }
 
         /// <summary>
@@ -598,6 +591,7 @@ namespace MusicTagger2.Core
             {
                 supposedToBePlaying = false;
                 mp.Stop();
+                previewSong = null;
             }
         }
 
@@ -720,14 +714,13 @@ namespace MusicTagger2.Core
         /// 
         /// </summary>
         /// <param name="song"></param>
-        /// <param name="destinationSubPath"></param>
-        public void MoveSong(Song song, string destinationSubPath)
+        /// <param name="destinationPath"></param>
+        public void MoveSong(Song song, string destinationPath)
         {
-            var destination = rootDir + destinationSubPath;
             if (File.Exists(song.FullPath))
             {
-                if (!File.Exists(destination))
-                    song.Move(destination);
+                if (!File.Exists(destinationPath))
+                    song.Move(destinationPath);
                 else
                     MessageBox.Show("Such file already exists!");
             }
@@ -740,7 +733,7 @@ namespace MusicTagger2.Core
         /// <param name="subDir"></param>
         public void MoveSongs(ObservableCollection<Song> songs, string subDir)
         {
-            var destination = rootDir + subDir;
+            var destination = subDir;
             foreach (var s in songs)
                 s.Move(destination + s.FileName);
         }
@@ -751,12 +744,12 @@ namespace MusicTagger2.Core
         /// <param name="song"></param>
         public void RemoveSong(Song song)
         {
-            if (song == currentSong)
+            if (song == currentSong || song == previewSong)
                 Stop();
             currentPlaylist.Remove(song);
             song.RemoveFromTags();
             importList.Remove(song);
-            allSongs.Remove(song.SubDir);
+            allSongs.Remove(song.FullPath);
             randomIndexList.Remove(randomIndexList.IndexOf(randomIndexList.Count - 1));
         }
     }
