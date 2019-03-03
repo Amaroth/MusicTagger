@@ -44,7 +44,7 @@
             </Menu>
         </DockPanel>
 
-        <ListView Grid.Column="0" Grid.Row="1" Name="TagListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" SelectionChanged="tagListView_SelectionChanged">
+        <ListView Grid.Column="0" Grid.Row="1" Name="TagListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" SelectionChanged="TagListView_SelectionChanged">
             <ListView.Resources>
                 <Style TargetType="{x:Type GridViewColumnHeader}">
                     <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -190,8 +190,8 @@
                 <DockPanel>
                     <DockPanel DockPanel.Dock="Top" Margin="3">
                         <CheckBox DockPanel.Dock="Right" Margin="1" VerticalAlignment="Center" Name="SoundSearchOnlyPlayingCheckBox">Playing only</CheckBox>
-                        <Button DockPanel.Dock="Right" Margin="1" Name="SoundSearchByTagsButton" Click="SoundSearchByTagsButton_Click">By tags</Button>
-                        <Button DockPanel.Dock="Right" Margin="1" Name="SoundSearchByNameButton" Click="SoundSearchByNameButton_Click">By name</Button>
+                        <Button DockPanel.Dock="Right" Margin="1" Name="SoundSearchByTagsButton">By tags</Button>
+                        <Button DockPanel.Dock="Right" Margin="1" Name="SoundSearchByNameButton">By name</Button>
                         <TextBlock DockPanel.Dock="Left" Margin="1,1,5,1" VerticalAlignment="Center">Search:</TextBlock>
                         <TextBox DockPanel.Dock="Left" Margin="1" Name="SoundSearchNameTextBox"></TextBox>
                     </DockPanel>
@@ -264,7 +264,7 @@
             <TextBlock Grid.Row="2" Grid.Column="9" TextAlignment="Right">Songs:</TextBlock>
             <TextBlock Grid.Row="3" Grid.Column="9" TextAlignment="Right">Sounds:</TextBlock>
             <Slider Grid.Row="2" Grid.Column="10" Name="SongVolumeSlider" VerticalAlignment="Center" Margin="3, 0, 3, 0" Minimum="0" Maximum="100" Value="50" AutoToolTipPlacement="TopLeft" ValueChanged="SongVolumeSlider_ValueChanged"/>
-            <Slider Grid.Row="3" Grid.Column="10" Name="SoundsVolumeSlider" VerticalAlignment="Center" Margin="3, 0, 3, 0" Minimum="0" Maximum="100" Value="50" AutoToolTipPlacement="TopLeft" ValueChanged="SoundsVolumeSlider_ValueChanged"/>
+            <Slider Grid.Row="3" Grid.Column="10" Name="SoundsVolumeSlider" VerticalAlignment="Center" Margin="3, 0, 3, 0" Minimum="0" Maximum="100" Value="50" AutoToolTipPlacement="TopLeft"/>
         </Grid>
     </Grid>
 </Window>

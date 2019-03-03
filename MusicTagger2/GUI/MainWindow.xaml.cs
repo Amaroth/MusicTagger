@@ -22,10 +22,10 @@ namespace MusicTagger2.GUI
         private ObservableCollection<Song> selectedImportSongs = new ObservableCollection<Song>();
         private ObservableCollection<Song> selectedPlaylistSongs = new ObservableCollection<Song>();
         private Core.Core core = Core.Core.Instance;
-        DispatcherTimer timer = new DispatcherTimer();
 
         private int preFadeVolume = 0;
-        DispatcherTimer fadeTimer = new DispatcherTimer();
+        private DispatcherTimer fadeTimer = new DispatcherTimer();
+        private DispatcherTimer playSongTimer = new DispatcherTimer();
 
         public MainWindow()
         {
@@ -34,6 +34,11 @@ namespace MusicTagger2.GUI
             ImportListView.ItemsSource = core.importList;
             TagListView.ItemsSource = core.tags;
             ReloadViews();
+
+            playSongTimer.Tick += new EventHandler(Timer_Tick);
+            playSongTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+            playSongTimer.Start();
+            fadeTimer.Tick += new EventHandler(FadeTimer_Tick);
         }
 
         /// <summary>
@@ -52,14 +57,12 @@ namespace MusicTagger2.GUI
         /// </summary>
         public void NewFile()
         {
-            timer.Stop();
-
+            core.Stop();
             var saveFileDialog = new SaveFileDialog { Filter = "Xml file (*.xml)|*.xml" };
             if (saveFileDialog.ShowDialog() == true)
             {
                 core.NewSettings(saveFileDialog.FileName);
                 ReloadViews();
-                StartTimer();
             }
 
             LoadWindowTitle();
@@ -70,14 +73,12 @@ namespace MusicTagger2.GUI
         /// </summary>
         private void OpenFile()
         {
-            timer.Stop();
-
+            core.Stop();
             var openFileDialog = new OpenFileDialog() { Filter = "Xml file (*.xml)|*.xml" };
             if (openFileDialog.ShowDialog() == true)
             {
                 core.LoadSettings(openFileDialog.FileName);
                 ReloadViews();
-                StartTimer();
             }
 
             LoadWindowTitle();
@@ -168,6 +169,8 @@ namespace MusicTagger2.GUI
             fadeTimer.Start();
         }
 
+        private void SongVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => core.SetVolume(SongVolumeSlider.Value);
+
         private void SongProgressBar_MouseDown(object sender, MouseButtonEventArgs e)
         {
             double MousePosition = e.GetPosition(SongProgressBar).X;
@@ -202,7 +205,7 @@ namespace MusicTagger2.GUI
         }
         #endregion
 
-        #region Playlist event handlers...
+        #region Playlist buttons event handlers...
         private void BuildPlaylistButton_Click(object sender, RoutedEventArgs e)
         {
             Core.Core.FilterType filter;
@@ -294,90 +297,12 @@ namespace MusicTagger2.GUI
             ReloadColumnWidths();
         }
         #endregion
-        #endregion
 
-
-
-
-
-
-
-        private void ReloadViews()
+        #region Play list view event handlers...
+        private void PlayListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            CollectionView playView = (CollectionView)CollectionViewSource.GetDefaultView(TagListView.ItemsSource);
-            PropertyGroupDescription groupDescription = new PropertyGroupDescription("Category");
-            playView.GroupDescriptions.Clear();
-            playView.GroupDescriptions.Add(groupDescription);
-
-            if (GetFirstSelectedTag() != null)
-            {
-                TagIDTextBox.Text = GetFirstSelectedTag().ID.ToString();
-                TagNameTextBox.Text = GetFirstSelectedTag().Name;
-                TagCategoryTextBox.Text = GetFirstSelectedTag().Category;
-            }
-            else
-            {
-                TagIDTextBox.Text = "Auto increment";
-                TagNameTextBox.Text = "";
-                TagCategoryTextBox.Text = "";
-            }
-            ReloadColumnWidths();
-        }
-
-        private void StartTimer()
-        {
-            timer.Tick += new EventHandler(timer_Tick);
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
-            timer.Start();
-            fadeTimer.Tick += new EventHandler(fadeTimer_Tick);
-        }
-
-        private Tag GetFirstSelectedTag()
-        {
-            if (selectedTags.Count < 1)
-                return null;
-            foreach (var t in core.tags)
-                if (selectedTags.Contains(t))
-                    return t;
-            return null;
-        }
-
-        private Song GetFirstSelectedPlaylistSong()
-        {
-            if (selectedPlaylistSongs.Count < 1)
-                return null;
-            foreach (var s in core.currentPlaylist)
-                if (selectedPlaylistSongs.Contains(s))
-                    return s;
-            return null;
-        }
-
-        
-
-        
-
-        private void ImportListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            foreach (Song item in e.RemovedItems)
-                selectedImportSongs.Remove(item);
-            foreach (Song item in e.AddedItems)
-                selectedImportSongs.Add(item);
-        }
-
-        private void TagListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            foreach (Tag item in e.RemovedItems)
-                selectedTags.Remove(item);
-            foreach (Tag item in e.AddedItems)
-                selectedTags.Add(item);
-            if (GetFirstSelectedTag() != null)
-            {
-                TagIDTextBox.Text = GetFirstSelectedTag().ID.ToString();
-                TagNameTextBox.Text = GetFirstSelectedTag().Name;
-                TagCategoryTextBox.Text = GetFirstSelectedTag().Category;
-            }
-            else
-                TagIDTextBox.Text = "Auto increment";
+            if (PlayListView.SelectedItems.Count > 0)
+                core.PlaySong(PlayListView.SelectedItems[0] as Song);
         }
 
         private void PlayListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -386,6 +311,16 @@ namespace MusicTagger2.GUI
                 selectedPlaylistSongs.Remove(item);
             foreach (Song item in e.AddedItems)
                 selectedPlaylistSongs.Add(item);
+        }
+        #endregion
+
+        #region Import list view event handlers...
+        private void ImportListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            foreach (Song item in e.RemovedItems)
+                selectedImportSongs.Remove(item);
+            foreach (Song item in e.AddedItems)
+                selectedImportSongs.Add(item);
         }
 
         private void ImportListView_Drop(object sender, DragEventArgs e)
@@ -404,7 +339,104 @@ namespace MusicTagger2.GUI
             ReloadColumnWidths();
         }
 
-        
+        private void ImportListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (ImportListView.SelectedItems.Count > 0)
+                core.PlayPreview(ImportListView.SelectedItems[0] as Song);
+        }
+        #endregion
+
+        #region Tag list view event handlers...
+        private void TagListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            foreach (Tag item in e.RemovedItems)
+                selectedTags.Remove(item);
+            foreach (Tag item in e.AddedItems)
+                selectedTags.Add(item);
+
+            LoadTagAdministration(GetFirstSelectedTag());
+        }
+        #endregion
+
+        #region Timer event handlers...
+        private void FadeTimer_Tick(object sender, EventArgs e)
+        {
+            if (preFadeVolume > 0)
+                core.SetVolume(--preFadeVolume);
+            else
+            {
+                core.Stop();
+                SongVolumeSlider.IsEnabled = true;
+                FadeButton.IsEnabled = true;
+                core.SetVolume(SongVolumeSlider.Value);
+                fadeTimer.Stop();
+            }
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            core.CheckIsTimeForNext();
+
+            SongProgressBar.Maximum = core.GetCurrentLength();
+            SongProgressBar.Value = core.GetCurrentPosition();
+            timeText.Text = string.Format("{0} / {1}", Utilities.GetTimeString(core.GetCurrentPosition() / 10), Utilities.GetTimeString(core.GetCurrentLength() / 10));
+
+            var currentSong = core.GetCurrentSong();
+            if (currentSong != null)
+                NameTextBlock.Text = currentSong.SongName;
+            else
+            {
+                NameTextBlock.Text = null;
+                SongProgressBar.Value = 0;
+                SongProgressBar.Maximum = 0;
+                timeText.Text = "0:00:00 / 0:00:00";
+            }
+
+            if (PlayListView.Items.Count > 0)
+            {
+                for (int i = 0; i < PlayListView.Items.Count; i++)
+                {
+                    if (((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.currentPlaylist[i])) != null)
+                        ((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.currentPlaylist[i])).Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF042271"));
+                }
+                if (core.currentSongIndex > -1 && core.currentSongIndex < PlayListView.Items.Count)
+                    if (((ListViewItem)(PlayListView.ItemContainerGenerator.ContainerFromIndex(core.currentSongIndex))) != null)
+                        ((ListViewItem)(PlayListView.ItemContainerGenerator.ContainerFromIndex(core.currentSongIndex))).Foreground = new SolidColorBrush(Colors.Red);
+            }
+
+            if (core.IsReallyPlaying())
+                PlayPauseButton.Content = "Pause";
+            else
+                PlayPauseButton.Content = "Play";
+        }
+        #endregion
+        #endregion
+
+        private void LoadTagAdministration(Tag tag)
+        {
+            if (tag != null)
+            {
+                TagIDTextBox.Text = GetFirstSelectedTag().ID.ToString();
+                TagNameTextBox.Text = GetFirstSelectedTag().Name;
+                TagCategoryTextBox.Text = GetFirstSelectedTag().Category;
+            }
+            else
+            {
+                TagIDTextBox.Text = "Auto increment";
+                TagNameTextBox.Text = "";
+                TagCategoryTextBox.Text = "";
+            }
+        }
+
+        private void ReloadViews()
+        {
+            var playView = (CollectionView)CollectionViewSource.GetDefaultView(TagListView.ItemsSource);
+            var groupDescription = new PropertyGroupDescription("Category");
+            playView.GroupDescriptions.Clear();
+            playView.GroupDescriptions.Add(groupDescription);
+            LoadTagAdministration(GetFirstSelectedTag());
+            ReloadColumnWidths();
+        }
 
         private void ReloadColumnWidths()
         {
@@ -434,110 +466,24 @@ namespace MusicTagger2.GUI
             }
         }
 
-        private void SongVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private Tag GetFirstSelectedTag()
         {
-            core.SetVolume(SongVolumeSlider.Value);
+            if (selectedTags.Count < 1)
+                return null;
+            foreach (var t in core.tags)
+                if (selectedTags.Contains(t))
+                    return t;
+            return null;
         }
 
-        
-
-        private void PlayListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private Song GetFirstSelectedPlaylistSong()
         {
-            if (PlayListView.SelectedItems.Count > 0)
-                core.PlaySong(PlayListView.SelectedItems[0] as Song);
-        }
-
-        
-
-        private void ImportListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (ImportListView.SelectedItems.Count > 0)
-                core.PlayPreview(ImportListView.SelectedItems[0] as Song);
-        }
-
-
-
-
-
-
-
-
-
-        
-
-        
-
-        
-
-
-
-        private void fadeTimer_Tick(object sender, EventArgs e)
-        {
-            if (preFadeVolume > 0)
-                core.SetVolume(--preFadeVolume);
-            else
-            {
-                core.Stop();
-                SongVolumeSlider.IsEnabled = true;
-                FadeButton.IsEnabled = true;
-                core.SetVolume(SongVolumeSlider.Value);
-                fadeTimer.Stop();
-            }
-        }
-
-        private void timer_Tick(object sender, EventArgs e)
-        {
-            if (core.currentPlaylist != null)
-            {
-                core.CheckIsTimeForNext();
-
-                SongProgressBar.Maximum = core.GetCurrentLength();
-                SongProgressBar.Value = core.GetCurrentPosition();
-                timeText.Text = string.Format("{0} / {1}", Utilities.GetTimeString(core.GetCurrentPosition() / 10), Utilities.GetTimeString(core.GetCurrentLength() / 10));
-
-                var currentSong = core.GetCurrentSong();
-                if (currentSong != null)
-                    NameTextBlock.Text = currentSong.SongName;
-                else
-                {
-                    NameTextBlock.Text = null;
-                    SongProgressBar.Value = 0;
-                    SongProgressBar.Maximum = 0;
-                    timeText.Text = "0:00:00 / 0:00:00";
-                }
-
-                if (PlayListView.Items.Count > 0)
-                {
-                    for (int i = 0; i < PlayListView.Items.Count; i++)
-                    {
-                        if (((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.currentPlaylist[i])) != null)
-                            ((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.currentPlaylist[i])).Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF042271"));
-                    }
-                    if (core.currentSongIndex > -1 && core.currentSongIndex < PlayListView.Items.Count)
-                        if (((ListViewItem)(PlayListView.ItemContainerGenerator.ContainerFromIndex(core.currentSongIndex))) != null)
-                            ((ListViewItem)(PlayListView.ItemContainerGenerator.ContainerFromIndex(core.currentSongIndex))).Foreground = new SolidColorBrush(Colors.Red);
-                }
-
-                if (core.IsReallyPlaying())
-                    PlayPauseButton.Content = "Pause";
-                else
-                    PlayPauseButton.Content = "Play";
-            }
-        }
-
-        private void SoundSearchByNameButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void SoundSearchByTagsButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void SoundsVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-
+            if (selectedPlaylistSongs.Count < 1)
+                return null;
+            foreach (var s in core.currentPlaylist)
+                if (selectedPlaylistSongs.Contains(s))
+                    return s;
+            return null;
         }
     }
 }
