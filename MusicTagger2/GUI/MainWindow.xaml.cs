@@ -255,6 +255,18 @@ namespace MusicTagger2.GUI
             }
         }
         #endregion
+
+        #region Tag assignment event handlers...
+        private void ClearImportButton_Click(object sender, RoutedEventArgs e) => core.ClearImport();
+
+        private void RemoveFromImportButton_Click(object sender, RoutedEventArgs e) => core.RemoveFromImport(selectedImportSongs);
+
+        private void AssignButton_Click(object sender, RoutedEventArgs e)
+        {
+            core.AssignTags(selectedImportSongs, selectedTags, (bool)removeFromImportCheckbox.IsChecked, (bool)overwriteTagsCheckbox.IsChecked);
+            ReloadColumnWidths();
+        }
+        #endregion
         #endregion
 
 
@@ -315,11 +327,7 @@ namespace MusicTagger2.GUI
 
         
 
-        private void assignButt_Click(object sender, RoutedEventArgs e)
-        {
-            core.AssignTags(selectedImportSongs, selectedTags, (bool)removeFromImportCheckbox.IsChecked, (bool)overwriteTagsCheckbox.IsChecked);
-            ReloadColumnWidths();
-        }
+        
 
         private void importListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -435,23 +443,17 @@ namespace MusicTagger2.GUI
                 core.PlayPreview(importListView.SelectedItems[0] as Song);
         }
 
-        
+
+
+
+
+
+
+
 
         
 
         
-
-        
-
-        private void removeFromImportButt_Click(object sender, RoutedEventArgs e)
-        {
-            core.RemoveFromImport(selectedImportSongs);
-        }
-
-        private void clearImportButt_Click(object sender, RoutedEventArgs e)
-        {
-            core.ClearImport();
-        }
 
         private int preFadeVolume = 0;
         private void fadeButt_Click(object sender, RoutedEventArgs e)
@@ -534,5 +536,6 @@ namespace MusicTagger2.GUI
         {
 
         }
+
     }
 }

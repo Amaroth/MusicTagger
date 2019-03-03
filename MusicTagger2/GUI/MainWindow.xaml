@@ -149,9 +149,9 @@
                         </Grid.ColumnDefinitions>
                         <CheckBox Name="overwriteTagsCheckbox" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,3,0">Overwrite</CheckBox>
                         <CheckBox Name="removeFromImportCheckbox" Grid.Column="2" VerticalAlignment="Center" Margin="0,0,3,0" IsChecked="True">Assign+Remove</CheckBox>
-                        <Button Name="clearImportButt" Grid.Column="3" Margin="1" Padding="10,0,10,0" Click="clearImportButt_Click">Clear</Button>
-                        <Button Name="removeFromImportButt" Grid.Column="4" Margin="1" Padding="10,0,10,0" Click="removeFromImportButt_Click">Remove</Button>
-                        <Button Name="assignButt" Grid.Column="5" Margin="1,1,0,1" Padding="10,0,10,0" Click="assignButt_Click">Assign</Button>
+                        <Button Name="ClearImportButton" Grid.Column="3" Margin="1" Padding="10,0,10,0" Click="ClearImportButton_Click">Clear</Button>
+                        <Button Name="RemoveFromImportButton" Grid.Column="4" Margin="1" Padding="10,0,10,0" Click="RemoveFromImportButton_Click">Remove</Button>
+                        <Button Name="AssignButton" Grid.Column="5" Margin="1,1,0,1" Padding="10,0,10,0" Click="AssignButton_Click">Assign</Button>
                     </Grid>
                 </Grid>
             </TabItem>
