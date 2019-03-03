@@ -88,6 +88,7 @@
     <Compile Include="Core\Config.cs" />
     <Compile Include="Core\Core.cs" />
     <Compile Include="Core\SettingsReader.cs" />
+    <Compile Include="Core\SettingsWriter.cs" />
     <Compile Include="Core\Song.cs" />
     <Compile Include="Core\SongTag.cs" />
     <Compile Include="Core\Utilities.cs" />
