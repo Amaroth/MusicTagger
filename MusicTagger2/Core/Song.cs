@@ -6,12 +6,20 @@ namespace MusicTagger2.Core
 {
     class Song
     {
+        // Name of song (file name without extension)
         public string SongName { get; set; }
+        // Name of file song is saved in on drive
         public string FileName { get; set; }
+        // Full path to song's file on drive
         public string FullPath { get; set; }
-        public bool Save { get; set; }
+        // If song was not tagged yet since it was imported to app, do not save it to saved settings.
+        public bool WasTagged { get; set; }
+        // All tags assigned to songs.
         public HashSet<SongTag> tags = new HashSet<SongTag>();
 
+        /// <summary>
+        /// Returns string of comma separated IDs of all tags assigned to this song.
+        /// </summary>
         public string TagIds
         {
             get
@@ -27,6 +35,9 @@ namespace MusicTagger2.Core
             }
         }
 
+        /// <summary>
+        /// Returns string of comma separated names of all tags assigned to this song.
+        /// </summary>
         public string TagNames
         {
             get
@@ -46,9 +57,13 @@ namespace MusicTagger2.Core
         {
             FullPath = filePath;
             UpdateDerived();
-            Save = true;
+            WasTagged = true;
         }
 
+        /// <summary>
+        /// Move song file to provided path.
+        /// </summary>
+        /// <param name="destination"></param>
         public void Move(string destination)
         {
             if (!File.Exists(destination))
@@ -60,18 +75,28 @@ namespace MusicTagger2.Core
             }
         }
 
+        /// <summary>
+        /// Update attributes derived from song's FullPath.
+        /// </summary>
         private void UpdateDerived()
         {
             FileName = Path.GetFileName(FullPath);
             SongName = FileName.Substring(0, FileName.Length - 4);
         }
 
+        /// <summary>
+        /// Add provided tag to song's tags.
+        /// </summary>
+        /// <param name="tag"></param>
         public void AddTag(SongTag tag)
         {
             if (!tags.Contains(tag))
                 tags.Add(tag);
         }
 
+        /// <summary>
+        /// Clean song's tags completely. Cleans song from tags as well.
+        /// </summary>
         public void RemoveFromAllTags()
         {
             foreach (var t in tags)

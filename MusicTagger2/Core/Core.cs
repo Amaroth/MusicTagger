@@ -267,7 +267,7 @@ namespace MusicTagger2.Core
                     {
                         if (File.Exists(s) && Utilities.IsFileSupported(s))
                         {
-                            var newSong = new Song(s) { Save = false };
+                            var newSong = new Song(s) { WasTagged = false };
 
                             if (!allSongs.ContainsKey(newSong.FullPath))
                             {
@@ -350,7 +350,7 @@ namespace MusicTagger2.Core
                         foreach (var s in songs)
                         {
                             t.AddSong(s);
-                            s.Save = true;
+                            s.WasTagged = true;
                         }
                     if (!remove)
                         for (var i = 0; i < songs.Count; i++)
