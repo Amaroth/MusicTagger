@@ -123,9 +123,9 @@ namespace MusicTagger2.GUI
             if (currentSong != null)
             {
                 NameTextBlock.Text = currentSong.SongName;
-                SongProgressBar.Maximum = core.GetCurrentLength();
+                SongProgressBar.Maximum = core.CurrentLength;
                 SongProgressBar.Value = core.GetCurrentPosition();
-                TimeTextBlock.Text = string.Format("{0} / {1}", Utilities.GetTimeString(core.GetCurrentPosition() / 10), Utilities.GetTimeString(core.GetCurrentLength() / 10));
+                TimeTextBlock.Text = string.Format("{0} / {1}", Utilities.GetTimeString(core.GetCurrentPosition() / 10), Utilities.GetTimeString(core.CurrentLength / 10));
             }
             else
             {
@@ -233,7 +233,7 @@ namespace MusicTagger2.GUI
         #region Play panel event handlers...
         private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!core.IsReallyPlaying())
+            if (!core.IsReallyPlaying)
                 core.Play();
             else
                 core.Pause();
@@ -268,7 +268,7 @@ namespace MusicTagger2.GUI
         private void FadeButton_Click(object sender, RoutedEventArgs e)
         {
             FadeButton.IsEnabled = false;
-            preFadeVolume = core.GetVolume();
+            preFadeVolume = core.CurrentVolume;
             if (preFadeVolume <= 3)
                 fadeTimer.Interval = new TimeSpan(0, 0, 0, 1);
             else
@@ -302,7 +302,7 @@ namespace MusicTagger2.GUI
 
         private void EditTagButton_Click(object sender, RoutedEventArgs e)
         {
-            core.EditTag(GetFirstSelectedTag(), TagNameTextBox.Text, TagCategoryTextBox.Text);
+            core.UpdateTag(GetFirstSelectedTag(), TagNameTextBox.Text, TagCategoryTextBox.Text);
             ReloadTagListViewColWidths();
         }
 
@@ -489,7 +489,7 @@ namespace MusicTagger2.GUI
             UpdatePlayingSongInfo();
             MarkPlaying();
 
-            PlayPauseButton.Content = core.IsReallyPlaying() ? "Pause" : "Play";
+            PlayPauseButton.Content = core.IsReallyPlaying ? "Pause" : "Play";
         }
         #endregion   
     }
