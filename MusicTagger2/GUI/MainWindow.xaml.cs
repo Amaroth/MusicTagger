@@ -23,6 +23,8 @@ namespace MusicTagger2.GUI
         private ObservableCollection<Song> selectedPlaylistSongs = new ObservableCollection<Song>();
         private Core.Core core = Core.Core.Instance;
         DispatcherTimer timer = new DispatcherTimer();
+
+        private int preFadeVolume = 0;
         DispatcherTimer fadeTimer = new DispatcherTimer();
 
         public MainWindow()
@@ -153,22 +155,47 @@ namespace MusicTagger2.GUI
                 core.Unmute();
             }
         }
+
+        private void FadeButton_Click(object sender, RoutedEventArgs e)
+        {
+            FadeButton.IsEnabled = false;
+            preFadeVolume = core.GetVolume();
+            if (preFadeVolume <= 3)
+                fadeTimer.Interval = new TimeSpan(0, 0, 0, 1);
+            else
+                fadeTimer.Interval = new TimeSpan(0, 0, 0, 0, 3000 / preFadeVolume);
+            volumeSlider.IsEnabled = false;
+            fadeTimer.Start();
+        }
+
+        private void SongProgressBar_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            double MousePosition = e.GetPosition(SongProgressBar).X;
+            SongProgressBar.Value = e.GetPosition(SongProgressBar).X / SongProgressBar.ActualWidth * SongProgressBar.Maximum;
+            if (SongProgressBar.Value == SongProgressBar.Maximum)
+                SongProgressBar.Value--;
+            core.MoveToTime((int)SongProgressBar.Value);
+        }
+
+        private void RandomCheckBox_Checked(object sender, RoutedEventArgs e) => core.Random = (bool)RandomCheckBox.IsChecked;
+
+        private void RepeatCheckBox_Checked(object sender, RoutedEventArgs e) => core.Repeat = (bool)RepeatCheckBox.IsChecked;
         #endregion
 
         #region Tag management event handlers...
-        private void createTagButt_Click(object sender, RoutedEventArgs e)
+        private void CreateTagButton_Click(object sender, RoutedEventArgs e)
         {
             core.CreateTag(tagNameTextBox.Text, tagCategoryTextBox.Text);
             ReloadColumnWidths();
         }
 
-        private void editTagButt_Click(object sender, RoutedEventArgs e)
+        private void EditTagButton_Click(object sender, RoutedEventArgs e)
         {
             core.EditTag(GetFirstSelectedTag(), tagNameTextBox.Text, tagCategoryTextBox.Text);
             ReloadColumnWidths();
         }
 
-        private void removeTagButt_Click(object sender, RoutedEventArgs e)
+        private void RemoveTagButton_Click(object sender, RoutedEventArgs e)
         {
             core.RemoveTag(GetFirstSelectedTag());
             ReloadColumnWidths();
@@ -377,14 +404,7 @@ namespace MusicTagger2.GUI
             ReloadColumnWidths();
         }
 
-        private void progressBar_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            double MousePosition = e.GetPosition(progressBar).X;
-            progressBar.Value = e.GetPosition(progressBar).X / progressBar.ActualWidth * progressBar.Maximum;
-            if (progressBar.Value == progressBar.Maximum)
-                progressBar.Value--;
-            core.MoveToTime((int)progressBar.Value);
-        }
+        
 
         private void ReloadColumnWidths()
         {
@@ -419,15 +439,7 @@ namespace MusicTagger2.GUI
             core.SetVolume(volumeSlider.Value);
         }
 
-        private void randomCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            core.Random = (bool)randomCheckBox.IsChecked;
-        }
-
-        private void repeatCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            core.Repeat = (bool)repeatCheckBox.IsChecked;
-        }
+        
 
         private void playListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -455,18 +467,9 @@ namespace MusicTagger2.GUI
 
         
 
-        private int preFadeVolume = 0;
-        private void fadeButt_Click(object sender, RoutedEventArgs e)
-        {
-            fadeButt.IsEnabled = false;
-            preFadeVolume = core.GetVolume();
-            if (preFadeVolume <= 3)
-                fadeTimer.Interval = new TimeSpan(0, 0, 0, 1);
-            else
-                fadeTimer.Interval = new TimeSpan(0, 0, 0, 0, 3000 / preFadeVolume);
-            volumeSlider.IsEnabled = false;
-            fadeTimer.Start();
-        }
+        
+
+
 
         private void fadeTimer_Tick(object sender, EventArgs e)
         {
@@ -476,7 +479,7 @@ namespace MusicTagger2.GUI
             {
                 core.Stop();
                 volumeSlider.IsEnabled = true;
-                fadeButt.IsEnabled = true;
+                FadeButton.IsEnabled = true;
                 core.SetVolume(volumeSlider.Value);
                 fadeTimer.Stop();
             }
@@ -488,18 +491,18 @@ namespace MusicTagger2.GUI
             {
                 core.CheckIsTimeForNext();
 
-                progressBar.Maximum = core.GetCurrentLength();
-                progressBar.Value = core.GetCurrentPosition();
+                SongProgressBar.Maximum = core.GetCurrentLength();
+                SongProgressBar.Value = core.GetCurrentPosition();
                 timeText.Text = string.Format("{0} / {1}", Utilities.GetTimeString(core.GetCurrentPosition() / 10), Utilities.GetTimeString(core.GetCurrentLength() / 10));
 
                 var currentSong = core.GetCurrentSong();
                 if (currentSong != null)
-                    nameText.Text = currentSong.SongName;
+                    NameTextBlock.Text = currentSong.SongName;
                 else
                 {
-                    nameText.Text = null;
-                    progressBar.Value = 0;
-                    progressBar.Maximum = 0;
+                    NameTextBlock.Text = null;
+                    SongProgressBar.Value = 0;
+                    SongProgressBar.Maximum = 0;
                     timeText.Text = "0:00:00 / 0:00:00";
                 }
 
@@ -536,6 +539,5 @@ namespace MusicTagger2.GUI
         {
 
         }
-
     }
 }

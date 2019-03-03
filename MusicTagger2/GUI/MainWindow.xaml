@@ -180,9 +180,9 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0" Margin="1" Name="createTagButt" Click="createTagButt_Click">Create new</Button>
-                        <Button Grid.Column="1" Margin="1" Name="editTagButt" Click="editTagButt_Click">Edit selected</Button>
-                        <Button Grid.Column="2" Margin="1" Name="removeTagButt" Click="removeTagButt_Click">Remove selected</Button>
+                        <Button Grid.Column="0" Margin="1" Name="CreateTagButton" Click="CreateTagButton_Click">Create new</Button>
+                        <Button Grid.Column="1" Margin="1" Name="EditTagButton" Click="EditTagButton_Click">Edit selected</Button>
+                        <Button Grid.Column="2" Margin="1" Name="RemoveTagButton" Click="RemoveTagButton_Click">Remove selected</Button>
                     </Grid>
                 </Grid>
             </TabItem>
@@ -196,7 +196,7 @@
                         <TextBox DockPanel.Dock="Left" Margin="1" Name="SoundSearchNameTextBox"></TextBox>
                     </DockPanel>
                     <ScrollViewer DockPanel.Dock="Bottom">
-                        <Grid>
+                        <Grid Name="SoundsGrid">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
@@ -244,16 +244,16 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <ProgressBar Grid.ColumnSpan="11" Name="progressBar" Margin="2" MouseDown="progressBar_MouseDown"/>
+            <ProgressBar Grid.ColumnSpan="11" Name="SongProgressBar" Margin="2" MouseDown="SongProgressBar_MouseDown"/>
 
-            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Name="nameText" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Name="NameTextBlock" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
             <TextBlock Grid.Row="1" Grid.Column="5" Name="timeText" HorizontalAlignment="Center" VerticalAlignment="Center">0:00:00 / 0:00:00</TextBlock>
 
             <DockPanel Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" VerticalAlignment="Center">
-                <CheckBox Name="randomCheckBox" IsChecked="True" DockPanel.Dock="Top" Checked="randomCheckBox_Checked" Unchecked="randomCheckBox_Checked">Random</CheckBox>
-                <CheckBox Name="repeatCheckBox" IsChecked="True" Checked="repeatCheckBox_Checked" Unchecked="repeatCheckBox_Checked">Repeat</CheckBox>
+                <CheckBox Name="RandomCheckBox" IsChecked="True" DockPanel.Dock="Top" Checked="RandomCheckBox_Checked" Unchecked="RandomCheckBox_Checked">Random</CheckBox>
+                <CheckBox Name="RepeatCheckBox" IsChecked="True" Checked="RepeatCheckBox_Checked" Unchecked="RepeatCheckBox_Checked">Repeat</CheckBox>
             </DockPanel>
-            <Button Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" Name="fadeButt" Margin="1" Click="fadeButt_Click">Fade</Button>
+            <Button Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" Name="FadeButton" Margin="1" Click="FadeButton_Click">Fade</Button>
             <Button Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" Name="StopButton" Margin="1" Click="StopButton_Click">Stop</Button>
             <Button Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Name="FirstButton" Margin="1" Click="FirstButton_Click">First</Button>
             <Button Grid.Row="2" Grid.Column="4" Grid.RowSpan="2" Name="PreviousButton" Margin="1" Click="PreviousButton_Click">Prev</Button>
