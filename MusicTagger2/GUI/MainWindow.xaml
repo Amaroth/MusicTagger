@@ -247,7 +247,7 @@
             <ProgressBar Grid.ColumnSpan="11" Name="SongProgressBar" Margin="2" MouseDown="SongProgressBar_MouseDown"/>
 
             <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Name="NameTextBlock" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
-            <TextBlock Grid.Row="1" Grid.Column="5" Name="timeText" HorizontalAlignment="Center" VerticalAlignment="Center">0:00:00 / 0:00:00</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="5" Name="TimeTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center">0:00:00 / 0:00:00</TextBlock>
 
             <DockPanel Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" VerticalAlignment="Center">
                 <CheckBox Name="RandomCheckBox" IsChecked="True" DockPanel.Dock="Top" Checked="RandomCheckBox_Checked" Unchecked="RandomCheckBox_Checked">Random</CheckBox>

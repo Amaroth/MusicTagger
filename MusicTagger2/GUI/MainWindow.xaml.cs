@@ -377,21 +377,36 @@ namespace MusicTagger2.GUI
         {
             core.CheckIsTimeForNext();
 
+            UpdatePlayingSongInfo();
+            MarkPlaying();
+
+            PlayPauseButton.Content = core.IsReallyPlaying() ? "Pause" : "Play";
+        }
+        #endregion
+        #endregion
+
+        private void UpdatePlayingSongInfo()
+        {
             SongProgressBar.Maximum = core.GetCurrentLength();
             SongProgressBar.Value = core.GetCurrentPosition();
-            timeText.Text = string.Format("{0} / {1}", Utilities.GetTimeString(core.GetCurrentPosition() / 10), Utilities.GetTimeString(core.GetCurrentLength() / 10));
 
-            var currentSong = core.GetCurrentSong();
+            Song currentSong = core.GetCurrentSong();
             if (currentSong != null)
+            {
                 NameTextBlock.Text = currentSong.SongName;
+                TimeTextBlock.Text = string.Format("{0} / {1}", Utilities.GetTimeString(core.GetCurrentPosition() / 10), Utilities.GetTimeString(core.GetCurrentLength() / 10));
+            }
             else
             {
-                NameTextBlock.Text = null;
+                NameTextBlock.Text = "";
                 SongProgressBar.Value = 0;
                 SongProgressBar.Maximum = 0;
-                timeText.Text = "0:00:00 / 0:00:00";
+                TimeTextBlock.Text = "0:00:00 / 0:00:00";
             }
+        }
 
+        private void MarkPlaying()
+        {
             if (PlayListView.Items.Count > 0)
             {
                 for (int i = 0; i < PlayListView.Items.Count; i++)
@@ -403,14 +418,7 @@ namespace MusicTagger2.GUI
                     if (((ListViewItem)(PlayListView.ItemContainerGenerator.ContainerFromIndex(core.currentSongIndex))) != null)
                         ((ListViewItem)(PlayListView.ItemContainerGenerator.ContainerFromIndex(core.currentSongIndex))).Foreground = new SolidColorBrush(Colors.Red);
             }
-
-            if (core.IsReallyPlaying())
-                PlayPauseButton.Content = "Pause";
-            else
-                PlayPauseButton.Content = "Play";
         }
-        #endregion
-        #endregion
 
         private void LoadTagAdministration(Tag tag)
         {
