@@ -14,11 +14,11 @@ namespace MusicTagger2.Core
     class Config
     {
         private static Config instance;
+        private XmlDocument currentSettingsXml;
+        private List<Song> missingOnDrive = new List<Song>();
+        private Core core = Core.Instance;
 
-        private Config()
-        {
-
-        }
+        private Config() { }
 
         public static Config Instance
         {
@@ -30,13 +30,10 @@ namespace MusicTagger2.Core
             }
         }
 
-        private XmlDocument xml;
-        List<Song> missing = new List<Song>();
-
         private void Reset()
         {
-            xml = new XmlDocument();
-            missing = new List<Song>();
+            currentSettingsXml = new XmlDocument();
+            missingOnDrive = new List<Song>();
             Core.Instance.tags.Clear();
             Core.Instance.importList.Clear();
             Core.Instance.currentPlaylist.Clear();
@@ -52,7 +49,7 @@ namespace MusicTagger2.Core
         public void NewSettings(string file)
         {
             Reset();
-            SaveUserSettings(Core.Instance.tags, Core.Instance.allSongs, file);
+            SaveUserSettings(core.tags, core.allSongs, file);
         }
 
         /// <summary>
@@ -69,8 +66,7 @@ namespace MusicTagger2.Core
                 using (var sr = new StreamReader(file))
                 {
                     string xmlString = sr.ReadToEnd();
-                    sr.Close();
-                    xml.LoadXml(xmlString);
+                    currentSettingsXml.LoadXml(xmlString);
                 }
             }
             catch (Exception e) { throw new Exception("An error occured while attempting to read or load XML file. Provided file may be corrupted.", e); }
@@ -79,7 +75,7 @@ namespace MusicTagger2.Core
             Dictionary<int, SongTag> songTags = new Dictionary<int, SongTag>();
             try
             {
-                foreach (XmlNode node in xml.GetElementsByTagName("SongTags")[0].ChildNodes)
+                foreach (XmlNode node in currentSettingsXml.GetElementsByTagName("SongTags")[0].ChildNodes)
                 {
                     var tag = new SongTag()
                     {
@@ -88,7 +84,7 @@ namespace MusicTagger2.Core
                         Category = node.Attributes["Category"].Value
                     };
                     songTags.Add(tag.ID, tag);
-                    Core.Instance.tags.Add(tag);
+                    core.tags.Add(tag);
                 }
             }
             catch (Exception e) { throw new Exception("Tags were not successfully loaded. Provided file may be corrupted.", e); }
@@ -96,7 +92,7 @@ namespace MusicTagger2.Core
             // Get all songs from XML, assign them to tags and pass them to Core. If some songs are not existing on drive, notify user to determine what to do with them.
             try
             {
-                foreach (XmlNode node in xml.GetElementsByTagName("Songs")[0].ChildNodes)
+                foreach (XmlNode node in currentSettingsXml.GetElementsByTagName("Songs")[0].ChildNodes)
                 {
                     var newSong = new Song(node.Attributes["FilePath"].Value);
 
@@ -107,26 +103,31 @@ namespace MusicTagger2.Core
                     }
 
                     if (File.Exists(newSong.FullPath))
-                        Core.Instance.allSongs.Add(newSong.FullPath, newSong);
+                        core.allSongs.Add(newSong.FullPath, newSong);
                     else
-                        missing.Add(newSong);
-                }
-
-                using (var sw = new StreamWriter("MissingSongs.txt"))
-                {
-                    sw.WriteLine("Following songs were in saved settings, but were not found on drive:");
-                    foreach (var s in missing)
-                        sw.WriteLine(s.FullPath);
-                }
-
-                if (missing.Count > 0)
-                {
-                    MessageBoxResult dialogResult = MessageBox.Show(string.Format("{0} songs were not found on drive (full list can be found in MissingSongs.txt. Do you wish to delete them from the system?", missing.Count), "Missing songs found", MessageBoxButton.YesNo);
-                    if (dialogResult == MessageBoxResult.Yes)
-                        missing.Clear();
+                        missingOnDrive.Add(newSong);
                 }
             }
             catch (Exception e) { throw new Exception("Songs were not successfully loaded. Provided file may be corrupted.", e); }
+
+            HandleMissingSongs();
+        }
+
+        private void HandleMissingSongs()
+        {
+            if (missingOnDrive.Count > 0)
+            {
+                using (var sw = new StreamWriter("MissingSongs.txt"))
+                {
+                    sw.WriteLine("Following songs were in saved settings, but were not found on drive:");
+                    foreach (var s in missingOnDrive)
+                        sw.WriteLine(s.FullPath);
+                }
+
+                MessageBoxResult dialogResult = MessageBox.Show(string.Format("{0} songs were not found on drive (full list can be found in MissingSongs.txt. Do you wish to delete them from the system?", missingOnDrive.Count), "Missing songs found", MessageBoxButton.YesNo);
+                if (dialogResult == MessageBoxResult.Yes)
+                    missingOnDrive.Clear();
+            }
         }
 
         /// <summary>
@@ -135,13 +136,13 @@ namespace MusicTagger2.Core
         /// <param name="songTags">All tags to be saved.</param>
         /// <param name="songs">All songs to be saved.</param>
         /// <param name="rootDir">Root directory under which songs are to be found.</param>
-        /// <param name="file">Destination file into which settings are to be saved,</param>
-        public void SaveUserSettings(ObservableCollection<SongTag> songTags, Dictionary<string, Song> songs, string file)
+        /// <param name="filePath">Destination file into which settings are to be saved,</param>
+        public void SaveUserSettings(ObservableCollection<SongTag> songTags, Dictionary<string, Song> songs, string filePath)
         {
             // Make sure path to file exists, otherwise create it.
             try
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(file));
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
             }
             catch (Exception e) { throw new Exception("Could not create path to provided output file.", e); }
 
@@ -178,7 +179,7 @@ namespace MusicTagger2.Core
             // Save songs. Also include songs, which were excluded on first load as missing, in case they weren't cleaned up by user.
             try
             {
-                foreach (var s in missing)
+                foreach (var s in missingOnDrive)
                     songs.Add(s.FullPath, s);
                 XmlElement songsElement = outputDocument.CreateElement(string.Empty, "Songs", string.Empty);
                 rootElement.AppendChild(songsElement);
@@ -204,11 +205,8 @@ namespace MusicTagger2.Core
             // Save output XML into output file.
             try
             {
-                using (TextWriter tw = new StreamWriter(file, false, Encoding.UTF8))
-                {
+                using (TextWriter tw = new StreamWriter(filePath, false, Encoding.UTF8))
                     outputDocument.Save(tw);
-                    tw.Close();
-                }
             }
             catch (Exception e) { throw new Exception("Could not save output XML as file.", e); }
         }
