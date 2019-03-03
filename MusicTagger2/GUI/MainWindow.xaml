@@ -169,11 +169,11 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" VerticalAlignment="Center">ID</TextBlock>
-                    <TextBox Grid.Row="0" Grid.Column="1" Name="tagIDIntUpDown" Margin="3,1,0,1" TextAlignment="Left" IsEnabled="False" Text="Auto increment"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Name="TagIDTextBox" Margin="3,1,0,1" TextAlignment="Left" IsEnabled="False" Text="Auto increment"/>
                     <TextBlock Grid.Row="1" VerticalAlignment="Center">Name</TextBlock>
-                    <TextBox Grid.Row="1" Grid.Column="1" Name="tagNameTextBox" Margin="3,1,0,1" TextAlignment="Left"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Name="TagNameTextBox" Margin="3,1,0,1" TextAlignment="Left"/>
                     <TextBlock Grid.Row="2" VerticalAlignment="Center">Category</TextBlock>
-                    <TextBox Grid.Row="2" Grid.Column="1" Name="tagCategoryTextBox" Margin="3,1,0,1" TextAlignment="Left"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Name="TagCategoryTextBox" Margin="3,1,0,1" TextAlignment="Left"/>
                     <Grid Grid.Row="3" Grid.ColumnSpan="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>

@@ -185,13 +185,13 @@ namespace MusicTagger2.GUI
         #region Tag management event handlers...
         private void CreateTagButton_Click(object sender, RoutedEventArgs e)
         {
-            core.CreateTag(tagNameTextBox.Text, tagCategoryTextBox.Text);
+            core.CreateTag(TagNameTextBox.Text, TagCategoryTextBox.Text);
             ReloadColumnWidths();
         }
 
         private void EditTagButton_Click(object sender, RoutedEventArgs e)
         {
-            core.EditTag(GetFirstSelectedTag(), tagNameTextBox.Text, tagCategoryTextBox.Text);
+            core.EditTag(GetFirstSelectedTag(), TagNameTextBox.Text, TagCategoryTextBox.Text);
             ReloadColumnWidths();
         }
 
@@ -311,15 +311,15 @@ namespace MusicTagger2.GUI
 
             if (GetFirstSelectedTag() != null)
             {
-                tagIDIntUpDown.Text = GetFirstSelectedTag().ID.ToString();
-                tagNameTextBox.Text = GetFirstSelectedTag().Name;
-                tagCategoryTextBox.Text = GetFirstSelectedTag().Category;
+                TagIDTextBox.Text = GetFirstSelectedTag().ID.ToString();
+                TagNameTextBox.Text = GetFirstSelectedTag().Name;
+                TagCategoryTextBox.Text = GetFirstSelectedTag().Category;
             }
             else
             {
-                tagIDIntUpDown.Text = "Auto increment";
-                tagNameTextBox.Text = "";
-                tagCategoryTextBox.Text = "";
+                TagIDTextBox.Text = "Auto increment";
+                TagNameTextBox.Text = "";
+                TagCategoryTextBox.Text = "";
             }
             ReloadColumnWidths();
         }
@@ -372,12 +372,12 @@ namespace MusicTagger2.GUI
                 selectedTags.Add(item);
             if (GetFirstSelectedTag() != null)
             {
-                tagIDIntUpDown.Text = GetFirstSelectedTag().ID.ToString();
-                tagNameTextBox.Text = GetFirstSelectedTag().Name;
-                tagCategoryTextBox.Text = GetFirstSelectedTag().Category;
+                TagIDTextBox.Text = GetFirstSelectedTag().ID.ToString();
+                TagNameTextBox.Text = GetFirstSelectedTag().Name;
+                TagCategoryTextBox.Text = GetFirstSelectedTag().Category;
             }
             else
-                tagIDIntUpDown.Text = "Auto increment";
+                TagIDTextBox.Text = "Auto increment";
         }
 
         private void playListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
