@@ -71,7 +71,7 @@ namespace MusicTagger2.Core
         public void RemoveFromTags()
         {
             foreach (var t in tags)
-                t.Value.songs.Remove(FullPath);
+                t.Value.songs.Remove(this);
             tags.Clear();
         }
 

@@ -462,7 +462,7 @@ namespace MusicTagger2.GUI
                 selectedTags.Remove(item);
             foreach (SongTag item in e.AddedItems)
                 selectedTags.Add(item);
-
+            
             LoadTagAdministrationFields(GetFirstSelectedTag());
         }
         #endregion

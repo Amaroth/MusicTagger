@@ -199,8 +199,8 @@ namespace MusicTagger2.Core
                     else
                         foreach (var t in tags)
                             foreach (var s in t.songs)
-                                if (!result.Contains(s.Value))
-                                    result.Add(s.Value);
+                                if (!result.Contains(s))
+                                    result.Add(s);
                 }
                 // If there are no filter tags provided, return all songs in existence.
                 else

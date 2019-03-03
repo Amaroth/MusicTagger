@@ -16,7 +16,6 @@ namespace MusicTagger2.Core
         private static Config instance;
         private XmlDocument currentSettingsXml;
         private List<Song> missingOnDrive = new List<Song>();
-        private Core core = Core.Instance;
 
         private Config() { }
 
@@ -39,7 +38,7 @@ namespace MusicTagger2.Core
         {
             currentSettingsXml = new XmlDocument();
             missingOnDrive = new List<Song>();
-            SaveUserSettings(core.tags, core.allSongs, file);
+            SaveUserSettings(Core.Instance.tags, Core.Instance.allSongs, file);
         }
 
         /// <summary>
@@ -75,7 +74,7 @@ namespace MusicTagger2.Core
                         Category = node.Attributes["Category"].Value
                     };
                     songTags.Add(tag.ID, tag);
-                    core.tags.Add(tag);
+                    Core.Instance.tags.Add(tag);
                 }
             }
             catch (Exception e) { throw new Exception("Tags were not successfully loaded. Provided file may be corrupted.", e); }
@@ -94,7 +93,7 @@ namespace MusicTagger2.Core
                     }
 
                     if (File.Exists(newSong.FullPath))
-                        core.allSongs.Add(newSong.FullPath, newSong);
+                        Core.Instance.allSongs.Add(newSong.FullPath, newSong);
                     else
                         missingOnDrive.Add(newSong);
                 }
