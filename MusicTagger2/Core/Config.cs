@@ -76,12 +76,12 @@ namespace MusicTagger2.Core
             catch (Exception e) { throw new Exception("An error occured while attempting to read or load XML file. Provided file may be corrupted.", e); }
 
             // Get all tags from XML and pass them to Core.
-            Dictionary<int, Tag> tags = new Dictionary<int, Tag>();
+            Dictionary<int, SongTag> tags = new Dictionary<int, SongTag>();
             try
             {
                 foreach (XmlNode node in xml.GetElementsByTagName("Tags")[0].ChildNodes)
                 {
-                    var tag = new Tag()
+                    var tag = new SongTag()
                     {
                         ID = int.Parse(node.Attributes["ID"].Value),
                         Name = node.Attributes["Name"].Value,
@@ -136,7 +136,7 @@ namespace MusicTagger2.Core
         /// <param name="songs">All songs to be saved.</param>
         /// <param name="rootDir">Root directory under which songs are to be found.</param>
         /// <param name="file">Destination file into which settings are to be saved,</param>
-        public void SaveUserSettings(ObservableCollection<Tag> tags, Dictionary<string, Song> songs, string file)
+        public void SaveUserSettings(ObservableCollection<SongTag> tags, Dictionary<string, Song> songs, string file)
         {
             // Make sure path to file exists, otherwise create it.
             try

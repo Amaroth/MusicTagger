@@ -3,7 +3,7 @@ using System.Text;
 
 namespace MusicTagger2.Core
 {
-    class Tag
+    class SongTag
     {
         public int ID { get; set; }
         public string Name { get; set; }

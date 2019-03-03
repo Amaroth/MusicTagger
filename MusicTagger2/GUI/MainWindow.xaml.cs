@@ -18,7 +18,7 @@ namespace MusicTagger2.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ObservableCollection<Tag> selectedTags = new ObservableCollection<Tag>();
+        private ObservableCollection<SongTag> selectedTags = new ObservableCollection<SongTag>();
         private ObservableCollection<Song> selectedImportSongs = new ObservableCollection<Song>();
         private ObservableCollection<Song> selectedPlaylistSongs = new ObservableCollection<Song>();
         private Core.Core core = Core.Core.Instance;
@@ -151,7 +151,7 @@ namespace MusicTagger2.GUI
             }
         }
 
-        private void LoadTagAdministrationFields(Tag tag)
+        private void LoadTagAdministrationFields(SongTag tag)
         {
             if (tag != null)
             {
@@ -199,7 +199,7 @@ namespace MusicTagger2.GUI
         #endregion
 
         #region Get first selected functions...
-        private Tag GetFirstSelectedTag()
+        private SongTag GetFirstSelectedTag()
         {
             if (selectedTags.Count < 1)
                 return null;
@@ -458,9 +458,9 @@ namespace MusicTagger2.GUI
         #region Tag list view event handlers...
         private void TagListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            foreach (Tag item in e.RemovedItems)
+            foreach (SongTag item in e.RemovedItems)
                 selectedTags.Remove(item);
-            foreach (Tag item in e.AddedItems)
+            foreach (SongTag item in e.AddedItems)
                 selectedTags.Add(item);
 
             LoadTagAdministrationFields(GetFirstSelectedTag());

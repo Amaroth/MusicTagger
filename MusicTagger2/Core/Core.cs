@@ -21,7 +21,7 @@ namespace MusicTagger2.Core
         private static Core instance;
         private Config conf = Config.Instance;
 
-        public ObservableCollection<Tag> tags = new ObservableCollection<Tag>();
+        public ObservableCollection<SongTag> tags = new ObservableCollection<SongTag>();
         public ObservableCollection<Song> importList = new ObservableCollection<Song>();
         public ObservableCollection<Song> currentPlaylist = new ObservableCollection<Song>();
 
@@ -115,7 +115,7 @@ namespace MusicTagger2.Core
         /// <param name="tags">Filter tags which songs have to have.</param>
         /// <param name="useAndFilter">Use AND between HasTags?</param>
         /// <returns></returns>
-        public ObservableCollection<Song> CreatePlaylist(ObservableCollection<Tag> tags, FilterType filterType)
+        public ObservableCollection<Song> CreatePlaylist(ObservableCollection<SongTag> tags, FilterType filterType)
         {
             // Stop playing if anything is playing.
             Stop();
@@ -130,7 +130,7 @@ namespace MusicTagger2.Core
                     if (filterType == FilterType.Standard)
                     {
                         // Split filters by categories.
-                        var cats = new List<List<Tag>>();
+                        var cats = new List<List<SongTag>>();
                         foreach (var t in tags)
                         {
                             bool found = false;
@@ -141,7 +141,7 @@ namespace MusicTagger2.Core
                                     l.Add(t);
                                 }
                             if (!found)
-                                cats.Add(new List<Tag>() { t });
+                                cats.Add(new List<SongTag>() { t });
                         }
                         foreach (var s in allSongs.Values)
                         {
@@ -319,7 +319,7 @@ namespace MusicTagger2.Core
         /// <param name="tags">Tags to be added to songs.</param>
         /// <param name="remove">Remove songs from import list afterwards?</param>
         /// <param name="overwrite">Remove current tags from given songs before adding new ones?</param>
-        public void AssignTags(ObservableCollection<Song> songs, ObservableCollection<Tag> tags, bool remove, bool overwrite)
+        public void AssignTags(ObservableCollection<Song> songs, ObservableCollection<SongTag> tags, bool remove, bool overwrite)
         {
             try
             {
@@ -389,7 +389,7 @@ namespace MusicTagger2.Core
             try
             {
                 if ((name.Length > 0) && (category.Length > 0))
-                    tags.Add(new Tag() { ID = GetNextFreeTagID(), Name = name, Category = category });
+                    tags.Add(new SongTag() { ID = GetNextFreeTagID(), Name = name, Category = category });
                 else
                     MessageBox.Show("Please, enter both name and category for new tag.");
             }
@@ -400,7 +400,7 @@ namespace MusicTagger2.Core
         /// Deletes provided tag from both tag collection and from songs as well.
         /// </summary>
         /// <param name="tag">Tag to be removed.</param>
-        public void RemoveTag(Tag tag)
+        public void RemoveTag(SongTag tag)
         {
             try
             {
@@ -421,7 +421,7 @@ namespace MusicTagger2.Core
         /// <param name="tag">Tag to be edited.</param>
         /// <param name="name">Tag's new name.</param>
         /// <param name="category">Tag's new category.</param>
-        public void UpdateTag(Tag tag, string name, string category)
+        public void UpdateTag(SongTag tag, string name, string category)
         {
             try
             {

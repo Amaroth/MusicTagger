@@ -10,7 +10,7 @@ namespace MusicTagger2.Core
         public string FileName { get; set; }
         public string FullPath { get; set; }
         public bool Save { get; set; }
-        public Dictionary<int, Tag> tags = new Dictionary<int, Tag>();
+        public Dictionary<int, SongTag> tags = new Dictionary<int, SongTag>();
 
         public Song(string filePath)
         {
@@ -62,7 +62,7 @@ namespace MusicTagger2.Core
             }
         }
 
-        public void AddTag(Tag tag)
+        public void AddTag(SongTag tag)
         {
             if (!tags.ContainsKey(tag.ID))
                 tags.Add(tag.ID, tag);
