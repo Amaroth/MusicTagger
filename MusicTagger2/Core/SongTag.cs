@@ -5,12 +5,19 @@ namespace MusicTagger2.Core
 {
     class SongTag
     {
+        // Unique ID of tag (handled on creation by Core).
         public int ID { get; set; }
+        // Display name of tag.
         public string Name { get; set; }
+        // Category name for grouping in tag list view.
         public string Category { get; set; }
-
+        // All songs which have this tag assigned.
         public HashSet<Song> songs = new HashSet<Song>();
 
+        /// <summary>
+        /// Create a new song with this tag assigned.
+        /// </summary>
+        /// <param name="filePath"></param>
         public void CreateSong(string filePath)
         {
             var newSong = new Song(filePath);
@@ -18,6 +25,10 @@ namespace MusicTagger2.Core
             songs.Add(newSong);
         }
 
+        /// <summary>
+        /// Assign this tag to provided song.
+        /// </summary>
+        /// <param name="song"></param>
         public void AddSong(Song song)
         {
             if (!songs.Contains(song))
@@ -26,6 +37,9 @@ namespace MusicTagger2.Core
             song.AddTag(this);
         }
 
+        /// <summary>
+        /// Remove this tag from all its songs.
+        /// </summary>
         public void RemoveFromSongs()
         {
             foreach (var s in songs)
