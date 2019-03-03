@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
+using System.Runtime.InteropServices;
 using System.Windows;
 
 namespace MusicTagger2.GUI
@@ -6,11 +8,20 @@ namespace MusicTagger2.GUI
     /// <summary>
     /// Interaction logic for StringInputDialog.xaml
     /// </summary>
-    public partial class StringInputDialog : Window
+    public partial class StringInputDialog : Window, IDisposable
     {
+        private bool disposed = false;
+        private SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+
+        public string Answer
+        {
+            get { return AnswerTextBox.Text; }
+        }
+
         public StringInputDialog(string question)
         {
             InitializeComponent();
+
             QuestionTextBlock.Text = question;
             AnswerTextBox.Text = "";
         }
@@ -18,6 +29,7 @@ namespace MusicTagger2.GUI
         public StringInputDialog(string question, string defaultAnswer = "")
         {
             InitializeComponent();
+
             QuestionTextBlock.Text = question;
             AnswerTextBox.Text = defaultAnswer;
         }
@@ -33,9 +45,21 @@ namespace MusicTagger2.GUI
             AnswerTextBox.Focus();
         }
 
-        public string Answer
+        public void Dispose()
         {
-            get { return AnswerTextBox.Text; }
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+                handle.Dispose();
+
+            disposed = true;
         }
     }
 }

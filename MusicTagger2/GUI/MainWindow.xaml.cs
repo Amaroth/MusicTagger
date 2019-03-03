@@ -140,30 +140,15 @@ namespace MusicTagger2.GUI
                 core.Pause();
         }
 
-        private void PreviousButton_Click(object sender, RoutedEventArgs e)
-        {
-            core.Previous();
-        }
+        private void PreviousButton_Click(object sender, RoutedEventArgs e) => core.Previous();
 
-        private void NextButton_Click(object sender, RoutedEventArgs e)
-        {
-            core.Next();
-        }
+        private void NextButton_Click(object sender, RoutedEventArgs e) => core.Next();
 
-        private void FirstButton_Click(object sender, RoutedEventArgs e)
-        {
-            core.First();
-        }
+        private void FirstButton_Click(object sender, RoutedEventArgs e) => core.First();
 
-        private void LastButton_Click(object sender, RoutedEventArgs e)
-        {
-            core.Last();
-        }
+        private void LastButton_Click(object sender, RoutedEventArgs e) => core.Last();
 
-        private void StopButton_Click(object sender, RoutedEventArgs e)
-        {
-            core.Stop();
-        }
+        private void StopButton_Click(object sender, RoutedEventArgs e) => core.Stop();
 
         private void MuteUnmuteButton_Click(object sender, RoutedEventArgs e)
         {
@@ -222,6 +207,7 @@ namespace MusicTagger2.GUI
             foreach (Song s in playListView.SelectedItems)
                 if (!core.importList.Contains(s))
                     core.importList.Add(s);
+
             ReloadColumnWidths();
         }
 
@@ -230,10 +216,12 @@ namespace MusicTagger2.GUI
             if (selectedPlaylistSongs.Count > 0)
             {
                 var selectedSong = GetFirstSelectedPlaylistSong();
-                var inputDialog = new StringInputDialog("Change name and/or path of the first selected song:", selectedSong.FullPath);
-                if (inputDialog.ShowDialog() == true)
-                    core.MoveSong(selectedSong, inputDialog.Answer);
+                using (var inputDialog = new StringInputDialog("Change name and/or path of the first selected song:", selectedSong.FullPath))
+                    if (inputDialog.ShowDialog() == true)
+                        core.MoveSong(selectedSong, inputDialog.Answer);
             }
+
+            ReloadColumnWidths();
         }
 
         private void MoveSongsButton_Click(object sender, RoutedEventArgs e)
@@ -241,14 +229,12 @@ namespace MusicTagger2.GUI
             if (selectedPlaylistSongs.Count > 0)
             {
                 var selectedSong = GetFirstSelectedPlaylistSong();
-                var inputDialog = new StringInputDialog("Choose new path of selected songs:", selectedSong.FullPath);
-                if (inputDialog.ShowDialog() == true)
-                {
-                    var result = inputDialog.Answer;
-                    if (!result.EndsWith("\\"))
-                        result += "\\";
-                    core.MoveSongs(selectedPlaylistSongs, result);
-                }
+                using (var inputDialog = new StringInputDialog("Choose new path of selected songs:", Path.GetDirectoryName(selectedSong.FullPath)))
+                    if (inputDialog.ShowDialog() == true)
+                    {
+                        string result = inputDialog.Answer + "\\";
+                        core.MoveSongs(selectedPlaylistSongs, result);
+                    }
             }
         }
 
@@ -260,24 +246,24 @@ namespace MusicTagger2.GUI
 
             if (selectedItems.Count > 0)
             {
-                var oid = new OptionsInputDialog("Remove songs",
+                using (var oid = new OptionsInputDialog("Remove songs",
                     string.Format("Are you sure? Do you want to delete {0} song files only from settings, or from drive as well?", selectedItems.Count),
-                    new string[] { "Settings only", "Drive as well", "Abort" });
-                if (oid.ShowDialog() == true)
-                {
-                    if (oid.GetAnswer() != "Abort")
+                    new string[] { "Settings only", "Drive as well", "Abort" }))
+                    if (oid.ShowDialog() == true)
                     {
-                        foreach (Song s in selectedItems)
-                            core.RemoveSong(s);
+                        if (oid.GetAnswer() != "Abort")
+                        {
+                            foreach (Song s in selectedItems)
+                                core.RemoveSong(s);
+                        }
+                        if (oid.GetAnswer() == "Drive as well")
+                            foreach (Song s in selectedItems)
+                                try
+                                {
+                                    File.Delete(s.FullPath);
+                                }
+                                catch { }
                     }
-                    if (oid.GetAnswer() == "Drive as well")
-                        foreach (Song s in selectedItems)
-                            try
-                            {
-                                File.Delete(s.FullPath);
-                            }
-                            catch { }
-                }
             }
         }
         #endregion

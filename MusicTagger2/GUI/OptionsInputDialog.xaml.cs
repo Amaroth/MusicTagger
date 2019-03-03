@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
+using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace MusicTagger2.GUI
@@ -6,13 +9,21 @@ namespace MusicTagger2.GUI
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class OptionsInputDialog : Window
+    public partial class OptionsInputDialog : Window, IDisposable
     {
         private string answer;
+        private bool disposed = false;
+        private SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+
+        public string GetAnswer()
+        {
+            return answer;
+        }
 
         public OptionsInputDialog(string title, string question, string[] buttonTexts)
         {
             InitializeComponent();
+
             Title = title;
             QuestionTextBlock.Text = question;
             if (buttonTexts.Length == 0)
@@ -40,9 +51,21 @@ namespace MusicTagger2.GUI
             answer = (sender as Button).Content.ToString(); ;
         }
 
-        public string GetAnswer()
+        public void Dispose()
         {
-            return answer;
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+                handle.Dispose();
+
+            disposed = true;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace MusicTagger2.Core
         {
             if (!File.Exists(destination))
             {
-                new FileInfo(destination).Directory.Create();
+                Directory.CreateDirectory(Path.GetDirectoryName(destination));
                 File.Move(FullPath, destination);
                 FullPath = destination;
                 FileName = Path.GetFileName(destination);
