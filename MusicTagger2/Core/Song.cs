@@ -88,7 +88,11 @@ namespace MusicTagger2.Core
         /// Add provided tag to song's tags.
         /// </summary>
         /// <param name="tag"></param>
-        public void AddTag(SongTag tag) => tags.Add(tag);
+        public void AddTag(SongTag tag)
+        {
+            tags.Add(tag);
+            WasTagged = true;
+        }
 
         /// <summary>
         /// Clean song's tags completely. Cleans song from tags as well.

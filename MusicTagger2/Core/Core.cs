@@ -229,7 +229,7 @@ namespace MusicTagger2.Core
         #endregion
 
         #region ImportList delegation...
-        public void AddIntoImport(List<string> filePaths) => CurrentImportList.AddIntoImport(filePaths, Songs);
+        public void AddIntoImport(List<string> filePaths) => CurrentImportList.AddIntoImport(filePaths);
 
         public void AddIntoImport(List<Song> songs) => CurrentImportList.AddIntoImport(songs);
 

@@ -107,7 +107,7 @@ namespace MusicTagger2.GUI
         #region Update UI elements functions...
         private void LoadWindowTitle()
         {
-            Title = "Music Tagger 2.3.2";
+            Title = "Music Tagger 2.3.3";
             if ((CurrentFilePath != null) && (CurrentFilePath != ""))
                 Title += " - " + Path.GetFileName(CurrentFilePath);
         }
@@ -339,6 +339,9 @@ namespace MusicTagger2.GUI
             }
         }
 
+        /// <summary>
+        /// Adds all selected songs into import list for retagging.
+        /// </summary>
         private void RetagSongsButton_Click(object sender, RoutedEventArgs e)
         {
             try
