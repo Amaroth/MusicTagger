@@ -88,8 +88,8 @@
     <Compile Include="Core\Core.cs" />
     <Compile Include="Core\ImportList.cs" />
     <Compile Include="Core\SongPlayList.cs" />
-    <Compile Include="Core\SettingsReader.cs" />
-    <Compile Include="Core\SettingsWriter.cs" />
+    <Compile Include="Core\ProjectReader.cs" />
+    <Compile Include="Core\ProjectWriter.cs" />
     <Compile Include="Core\Song.cs" />
     <Compile Include="Core\SongTag.cs" />
     <Compile Include="Core\Utilities.cs" />

@@ -52,7 +52,7 @@ namespace MusicTagger2.Core
             try
             {
                 ClearAll();
-                var writer = new SettingsWriter();
+                var writer = new ProjectWriter();
                 writer.WriteSettings(filePath, Songs, SongTags);
             }
             catch (Exception e)
@@ -66,7 +66,7 @@ namespace MusicTagger2.Core
             try
             {
                 ClearAll();
-                var reader = new SettingsReader();
+                var reader = new ProjectReader();
                 reader.ReadSettings(filePath);
                 SongTags = reader.GetSongTags();
                 Songs = reader.GetSongs(SongTags);
@@ -81,7 +81,7 @@ namespace MusicTagger2.Core
         {
             try
             {
-                var writer = new SettingsWriter();
+                var writer = new ProjectWriter();
                 writer.WriteSettings(filePath, Songs, SongTags);
             }
             catch (Exception e)

@@ -46,7 +46,7 @@ namespace MusicTagger2.GUI
         public void NewFile()
         {
             core.Stop();
-            var saveFileDialog = new SaveFileDialog { Filter = "Xml file (*.xml)|*.xml" };
+            var saveFileDialog = new SaveFileDialog { Filter = "Project file (*.mtg)|*.mtg" };
             if (saveFileDialog.ShowDialog() == true)
             {
                 core.NewSettings(saveFileDialog.FileName);
@@ -61,7 +61,7 @@ namespace MusicTagger2.GUI
         private void OpenFile()
         {
             core.Stop();
-            var openFileDialog = new OpenFileDialog() { Filter = "Xml file (*.xml)|*.xml" };
+            var openFileDialog = new OpenFileDialog() { Filter = "Project file (*.mtg)|*.mtg" };
             if (openFileDialog.ShowDialog() == true)
             {
                 core.LoadSettings(openFileDialog.FileName);
@@ -87,7 +87,7 @@ namespace MusicTagger2.GUI
         /// </summary>
         private void SaveAsFile()
         {
-            var saveFileDialog = new SaveFileDialog { Filter = "Xml file (*.xml)|*.xml" };
+            var saveFileDialog = new SaveFileDialog { Filter = "Project file (*.mtg)|*.mtg" };
             if (saveFileDialog.ShowDialog() == true)
             {
                 core.SaveSettings(saveFileDialog.FileName);
@@ -100,7 +100,7 @@ namespace MusicTagger2.GUI
         #region Update UI elements functions...
         private void LoadWindowTitle()
         {
-            Title = "Music Tagger 2.2";
+            Title = "Music Tagger 2.3";
             if ((CurrentFilePath != null) && (CurrentFilePath != ""))
                 Title += " - " + Path.GetFileName(CurrentFilePath);
         }

@@ -6,7 +6,7 @@ using System.Xml;
 
 namespace MusicTagger2.Core
 {
-    class SettingsWriter
+    class ProjectWriter
     {
         XmlDocument outputDocument;
         XmlElement rootElement;
@@ -38,7 +38,7 @@ namespace MusicTagger2.Core
             }
             catch (Exception e)
             {
-                throw new Exception("Could not create directory path to provided output file.", e);
+                throw new Exception("Could not create directory path to provided output Project file.", e);
             }
         }
 
@@ -58,7 +58,7 @@ namespace MusicTagger2.Core
             }
             catch (Exception e)
             {
-                throw new Exception("Could not prepare header and/or root of XML file.", e);
+                throw new Exception("Could not prepare header and/or root of Project file.", e);
             }
         }
 
@@ -83,7 +83,7 @@ namespace MusicTagger2.Core
             }
             catch (Exception e)
             {
-                throw new Exception("Could not save tags into output file.", e);
+                throw new Exception("Could not save tags into Project file.", e);
             }
         }
 
@@ -116,7 +116,7 @@ namespace MusicTagger2.Core
             }
             catch (Exception e)
             {
-                throw new Exception("Could not save songs into output fule.", e);
+                throw new Exception("Could not save songs into Project file.", e);
             }
         }
 
@@ -133,7 +133,7 @@ namespace MusicTagger2.Core
             }
             catch (Exception e)
             {
-                throw new Exception("Could not save output XML as file.", e);
+                throw new Exception("Could not save Project into file.", e);
             }
         }
     }

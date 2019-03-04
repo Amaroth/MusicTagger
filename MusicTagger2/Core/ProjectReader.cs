@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml;
 
 namespace MusicTagger2.Core
 {
-    class SettingsReader
+    class ProjectReader
     {
         private XmlDocument xml;
 
@@ -25,7 +24,7 @@ namespace MusicTagger2.Core
             catch (Exception e)
             {
                 xml = null;
-                throw new Exception("An error occured while attempting to read or load XML file. Provided file may be corrupted.", e);
+                throw new Exception("An error occured while attempting to read or load Project file. Provided file may be corrupted.", e);
             }
         }
 
@@ -51,7 +50,7 @@ namespace MusicTagger2.Core
             }
             catch (Exception e)
             {
-                throw new Exception("Song tags were not successfully loaded. Provided settings file may be corrupted.", e);
+                throw new Exception("Song tags were not successfully loaded. Provided Project file may be corrupted.", e);
             }
 
             return result;
@@ -85,7 +84,7 @@ namespace MusicTagger2.Core
             }
             catch (Exception e)
             {
-                throw new Exception("Songs were not successfully loaded. Provided settings file may be corrupted.", e);
+                throw new Exception("Songs were not successfully loaded. Provided Project file may be corrupted.", e);
             }
 
             return result;
