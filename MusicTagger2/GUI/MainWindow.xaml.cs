@@ -2,7 +2,6 @@
 using MusicTagger2.Core;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,6 +17,7 @@ namespace MusicTagger2.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        private string CurrentVersionSignature = "Music Tagger 2.3.4";
         private string CurrentFilePath = "";
         private Core.Core core = Core.Core.Instance;
 
@@ -135,7 +135,7 @@ namespace MusicTagger2.GUI
         #region Update UI elements functions...
         private void LoadWindowTitle()
         {
-            Title = "Music Tagger 2.3.3";
+            Title = CurrentVersionSignature;
             if ((CurrentFilePath != null) && (CurrentFilePath != ""))
                 Title += " - " + Path.GetFileName(CurrentFilePath);
         }
