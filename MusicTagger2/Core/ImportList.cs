@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace MusicTagger2.Core
@@ -14,82 +11,51 @@ namespace MusicTagger2.Core
         public ObservableCollection<Song> Songs = new ObservableCollection<Song>();
 
 
+        public void AddIntoImport(List<Song> songs)
+        {
+            foreach (var s in songs)
+                if (!Songs.Contains(s))
+                    Songs.Add(s);
+        }
 
         public void AddIntoImport(List<string> filePaths, ObservableCollection<Song> alreadyExistingOnes)
         {
-            try
-            {
-                // Clean up paths to standard appearance.
-                try
-                {
-                    for (var i = 0; i < filePaths.Count; i++)
-                        filePaths[i] = filePaths[i].Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
-                }
-                catch (Exception e) { throw new Exception("Could not clean directory separators in import paths.", e); }
+            var existingSongs = new Dictionary<string, Song>();
+            foreach (var s in alreadyExistingOnes)
+                existingSongs.Add(s.FullPath, s);
 
-                // Check whether files exist and whether they are supported. In that case, create song objects and add them into import.
-                try
+            foreach (var filePath in filePaths)
+                if (File.Exists(filePath) && Utilities.IsFileSupported(filePath))
                 {
-                    foreach (var s in filePaths)
+                    if (existingSongs.ContainsKey(filePath))
                     {
-                        if (File.Exists(s) && Utilities.IsFileSupported(s))
-                        {
-                            var newSong = new Song(s) { WasTagged = false };
-                            bool found = false;
-                            foreach (var existingSong in alreadyExistingOnes)
-                                if (existingSong.FullPath == newSong.FullPath)
-                                {
-                                    found = true;
-                                    break;
-                                }
-                            if (!found)
-                            {
-                                Songs.Add(newSong);
-                                alreadyExistingOnes.Add(newSong);
-                            }
-                            bool inImport = false;
-                            foreach (var imported in Songs)
-                            if (imported.FullPath == newSong.FullPath)
-                                {
-                                    inImport = true;
-                                    break;
-                                }
-                            else if (!inImport)
-                                Songs.Add(newSong);
-                        }
+                        if (!Songs.Contains(existingSongs[filePath]))
+                            Songs.Add(existingSongs[filePath]);
                     }
+                    else
+                        Songs.Add(new Song(filePath));
                 }
-                catch (Exception e) { throw new Exception("Error occured while attempting to create song objects from provided import paths.", e); }
-            }
-            catch (Exception e) { MessageBox.Show(string.Format("Could not add at least one of the provided file paths into the import list. Error message:\n\n{0}", e.ToString())); }
         }
+
 
         public void RemoveFromImport(List<Song> forRemoval)
         {
-            try
-            {
-                var removeList = new List<Song>();
-                foreach (var s in forRemoval)
-                    removeList.Add(s);
+            var removeList = new List<Song>();
+            foreach (var s in forRemoval)
+                removeList.Add(s);
 
-                foreach (var s in removeList)
-                    Songs.Remove(s);
-            }
-            catch (Exception e) { MessageBox.Show(string.Format("Could not remove provided songs from import list. Following error occured:\n\n{0}", e.ToString())); }
+            foreach (var s in removeList)
+                Songs.Remove(s);
         }
 
         public void ClearImport()
         {
-            try
-            {
-                var remove = new List<Song>();
-                foreach (var s in Songs)
-                    if (s.tags.Count > 0)
-                        remove.Add(s);
-                foreach (var s in remove)
-                    Songs.Remove(s);
-            }
-            catch (Exception e) { MessageBox.Show(string.Format("Could not clear the import list. Following error occured:\n\n{0}", e.ToString())); }
+            var remove = new List<Song>();
+            foreach (var s in Songs)
+                if (s.tags.Count > 0)
+                    remove.Add(s);
+            foreach (var s in remove)
+                Songs.Remove(s);
         }
 
         public void AssignTags(List<Song> songs, List<SongTag> tags, bool remove, bool overwrite)

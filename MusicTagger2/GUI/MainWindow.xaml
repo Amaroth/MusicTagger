@@ -186,7 +186,7 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="Sounds">
+            <TabItem Header="Sounds" IsEnabled="False">
                 <DockPanel>
                     <DockPanel DockPanel.Dock="Top" Margin="3">
                         <CheckBox DockPanel.Dock="Right" Margin="1" VerticalAlignment="Center" Name="SoundSearchOnlyPlayingCheckBox">Playing only</CheckBox>
@@ -213,13 +213,13 @@
                     </ScrollViewer>
                 </DockPanel>
             </TabItem>
-            <TabItem Header="Tag sounds">
+            <TabItem Header="Tag sounds" IsEnabled="False">
                 <Label>Add sound, add groups to sound.</Label>
             </TabItem>
-            <TabItem Header="Ambiences">
+            <TabItem Header="Ambiences" IsEnabled="False">
                 <Label>Add groups to ambiences. CRUD ambiences?</Label>
             </TabItem>
-            <TabItem Header="Sound groups">
+            <TabItem Header="Sound groups" IsEnabled="False">
                 <Label>CRUD sound groups, add keywords.</Label>
             </TabItem>
         </TabControl>

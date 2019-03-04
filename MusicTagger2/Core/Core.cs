@@ -231,6 +231,8 @@ namespace MusicTagger2.Core
         #region ImportList delegation...
         public void AddIntoImport(List<string> filePaths) => CurrentImportList.AddIntoImport(filePaths, Songs);
 
+        public void AddIntoImport(List<Song> songs) => CurrentImportList.AddIntoImport(songs);
+
         public void AssignTags(List<Song> songs, List<SongTag> tags, bool remove, bool overwrite) => CurrentImportList.AssignTags(songs, tags, remove, overwrite);
 
         public void ClearImport() => CurrentImportList.ClearImport();
