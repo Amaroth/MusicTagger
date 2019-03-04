@@ -113,8 +113,10 @@ namespace MusicTagger2.Core
                 foreach (var result in finds)
                 {
                     if (!result)
+                    {
                         matches = false;
-                    break;
+                        break;
+                    }
                 }
 
                 if (matches)
