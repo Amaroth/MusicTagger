@@ -2,29 +2,27 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Windows;
 
 namespace MusicTagger2.Core
 {
     class SongPlayList
     {
-        public List<int> randomIndexList = new List<int>();
-        public Song currentSong;
-        public Song previewSong;
-        public int currentSongIndex = -1;
-        private int currentSongRandomIndex = -1;
-        public ObservableCollection<Song> CurrentPlayList = new ObservableCollection<Song>();
+        public Song currentSong { get; private set; }
+        public Song previewSong { get; private set; }
+        public ObservableCollection<Song> CurrentPlayList { get; private set; } = new ObservableCollection<Song>();
+        public List<int> randomIndexList { get; private set; } = new List<int>();
 
         public bool Random = true;
         public bool Repeat = true;
-        private bool supposedToBePlaying;
-
-        private MediaPlayer.MediaPlayer mp = new MediaPlayer.MediaPlayer() { Volume = -2000 };
-        public bool IsReallyPlaying => mp.PlayState == MediaPlayer.MPPlayStateConstants.mpPlaying;
-        private bool IsCurrentFirst => Random ? (currentSongRandomIndex == 0) : (currentSongIndex == 0);
-        private bool IsCurrentLast => Random ? currentSongRandomIndex == (randomIndexList.Count - 1) : (currentSongIndex == CurrentPlayList.Count - 1);
-        
         public int CurrentLength => (int)(mp.Duration * 10);
+        public bool IsReallyPlaying => mp.PlayState == MediaPlayer.MPPlayStateConstants.mpPlaying;
+        public int CurrentSongIndex { get; private set; } = -1;
+
+        private int currentSongRandomIndex = -1;
+        private bool supposedToBePlaying;
+        private MediaPlayer.MediaPlayer mp = new MediaPlayer.MediaPlayer() { Volume = -2000 };
+        private bool IsCurrentFirst => Random ? (currentSongRandomIndex == 0) : (CurrentSongIndex == 0);
+        private bool IsCurrentLast => Random ? currentSongRandomIndex == (randomIndexList.Count - 1) : (CurrentSongIndex == CurrentPlayList.Count - 1);
 
         public int Volume
         {
@@ -50,12 +48,6 @@ namespace MusicTagger2.Core
             set => mp.CurrentPosition = value / 10;
         }
 
-        public void RemovePreview(Song song)
-        {
-            if (song == previewSong)
-                Stop();
-        }
-
         public void RemoveSong(Song song)
         {
             if ((song == currentSong) || (song == previewSong))
@@ -64,119 +56,120 @@ namespace MusicTagger2.Core
             CurrentPlayList.Remove(song);
         }
 
-        public ObservableCollection<Song> CreatePlaylist(List<SongTag> filterTags, Core.FilterType filterType, ObservableCollection<SongTag> allTags, ObservableCollection<Song> allSongs)
+        public void GenerateFilteredPlayList(List<SongTag> filterTags, Core.FilterType filterType, ObservableCollection<SongTag> allTags, ObservableCollection<Song> allSongs)
         {
-            // Stop playing if anything is playing.
-            Stop();
-            var result = new ObservableCollection<Song>();
-
             try
             {
-                // If there is at least one tag, filter.
-                if (filterTags.Count > 0)
-                {
-                    // If use Standard filter, apply OR between tags with the same category and AND between categories of tags.
-                    if (filterType == Core.FilterType.Standard)
-                    {
-                        // Split filters by categories.
-                        var cats = new List<List<SongTag>>();
-                        foreach (var t in filterTags)
-                        {
-                            bool found = false;
-                            foreach (var l in cats)
-                                if (l[0].Category == t.Category)
-                                {
-                                    found = true;
-                                    l.Add(t);
-                                    break;
-                                }
-                            if (!found)
-                                cats.Add(new List<SongTag>() { t });
-                        }
-                        foreach (var s in allSongs)
-                        {
-                            // Does at least 1 of song's tags match tags in category?
-                            var finds = new List<bool>();
-                            foreach (var c in cats)
-                            {
-                                finds.Add(false);
-                                foreach (var t in c)
-                                    if (s.tags.Contains(t))
-                                        finds[finds.Count - 1] = true;
-                            }
-                            // Was song matching for at least 1 tag per category?
-                            var correct = true;
-                            foreach (var b in finds)
-                            {
-                                if (!b)
-                                    correct = false;
-                                break;
-                            }
-
-                            if (correct)
-                                result.Add(s);
-                        }
-                    }
-                    // If use And filter, make sure every song in output has all filter tags.
-                    else if (filterType == Core.FilterType.And)
-                    {
-                        foreach (var s in allSongs)
-                        {
-                            bool matches = true;
-                            foreach (var t in filterTags)
-                                if (!s.tags.Contains(t))
-                                {
-                                    matches = false;
-                                    break;
-                                }
-
-                            if (matches)
-                                result.Add(s);
-                        }
-                    }
-                    // If use Or filter, make sure every song in output has at least one of filter tags.
-                    else
-                        foreach (var t in filterTags)
-                            foreach (var s in t.songs)
-                                if (!result.Contains(s))
-                                    result.Add(s);
-                }
-                // If there are no filter tags provided, return all songs in existence.
+                Stop();
+                if (filterTags.Count == 0)
+                    CurrentPlayList = new ObservableCollection<Song>(allSongs);
                 else
-                    foreach (var s in allSongs)
-                        result.Add(s);
-
-                // Remember created playlist as new current playlist and generate randomized alternative for it.
-                CurrentPlayList = result;
+                {
+                    CurrentPlayList.Clear();
+                    switch (filterType)
+                    {
+                        case Core.FilterType.Standard: ApplyStandardFilter(filterTags, allTags, allSongs); break;
+                        case Core.FilterType.And: ApplyAndFilter(filterTags, allTags, allSongs); break;
+                        case Core.FilterType.Or: ApplyOrFilter(filterTags, allTags, allSongs); break;
+                    }
+                }
                 GenerateRandomPlaylist();
             }
-            catch (Exception e) { MessageBox.Show(string.Format("Something went wrong when attempting to provide filtered playlist. Error message:\n\n{0}", e.ToString())); }
+            catch (Exception e)
+            {
+                throw new Exception("Failed to generate playlist based on selected filters.", e);
+            }
+        }
 
-            return result;
+        private void ApplyStandardFilter(List<SongTag> filterTags, ObservableCollection<SongTag> allTags, ObservableCollection<Song> allSongs)
+        {
+            var filterTagsByCategories = new List<List<SongTag>>();
+            foreach (var t in filterTags)
+            {
+                var found = false;
+                foreach (var l in filterTagsByCategories)
+                    if (l[0].Category == t.Category)
+                    {
+                        found = true;
+                        l.Add(t);
+                        break;
+                    }
+                if (!found)
+                    filterTagsByCategories.Add(new List<SongTag>() { t });
+            }
+
+            foreach (var song in allSongs)
+            {
+                var finds = new List<bool>();
+                foreach (var category in filterTagsByCategories)
+                {
+                    finds.Add(false);
+                    foreach (var tag in category)
+                        if (song.tags.Contains(tag))
+                            finds[finds.Count - 1] = true;
+                }
+                
+                var matches = true;
+                foreach (var result in finds)
+                {
+                    if (!result)
+                        matches = false;
+                    break;
+                }
+
+                if (matches)
+                    CurrentPlayList.Add(song);
+            }
+        }
+
+        private void ApplyAndFilter(List<SongTag> filterTags, ObservableCollection<SongTag> allTags, ObservableCollection<Song> allSongs)
+        {
+            foreach (var s in allSongs)
+            {
+                var matches = true;
+                foreach (var t in filterTags)
+                    if (!s.tags.Contains(t))
+                    {
+                        matches = false;
+                        break;
+                    }
+
+                if (matches)
+                    CurrentPlayList.Add(s);
+            }
+        }
+
+        private void ApplyOrFilter(List<SongTag> filterTags, ObservableCollection<SongTag> allTags, ObservableCollection<Song> allSongs)
+        {
+            foreach (var t in filterTags)
+                foreach (var s in t.songs)
+                    if (!CurrentPlayList.Contains(s))
+                        CurrentPlayList.Add(s);
         }
 
         private void GenerateRandomPlaylist()
         {
-            try
+            randomIndexList.Clear();
+
+            var random = new Random();
+            var tmpList = new List<int>();
+
+            for (var i = 0; i < CurrentPlayList.Count; i++)
+                tmpList.Add(i);
+
+            var amount = tmpList.Count;
+            for (var i = 0; i < amount; i++)
             {
-                randomIndexList.Clear();
-
-                var random = new Random();
-                var tmpList = new List<int>();
-
-                for (var i = 0; i < CurrentPlayList.Count; i++)
-                    tmpList.Add(i);
-
-                var amount = tmpList.Count;
-                for (var i = 0; i < amount; i++)
-                {
-                    int rnd = random.Next(0, tmpList.Count);
-                    randomIndexList.Add(tmpList[rnd]);
-                    tmpList.RemoveAt(rnd);
-                }
+                int rnd = random.Next(0, tmpList.Count);
+                randomIndexList.Add(tmpList[rnd]);
+                tmpList.RemoveAt(rnd);
             }
-            catch (Exception e) { MessageBox.Show(string.Format("Random version of generated filtered playlist could not be created. Error message:\n\n{0}", e.ToString())); }
         }
+
+
+
+
+
 
         private void SetCurrentSong(Song song)
         {
@@ -184,8 +177,8 @@ namespace MusicTagger2.Core
 
             if (song != null)
             {
-                currentSongIndex = CurrentPlayList.IndexOf(song);
-                currentSongRandomIndex = randomIndexList.IndexOf(currentSongIndex);
+                CurrentSongIndex = CurrentPlayList.IndexOf(song);
+                currentSongRandomIndex = randomIndexList.IndexOf(CurrentSongIndex);
 
                 if (File.Exists(song.FullPath))
                 {
@@ -197,7 +190,7 @@ namespace MusicTagger2.Core
             }
             else
             {
-                currentSongIndex = -1;
+                CurrentSongIndex = -1;
                 currentSongRandomIndex = -1;
             }
         }
@@ -247,7 +240,7 @@ namespace MusicTagger2.Core
                     if (Random)
                         SetCurrentSong(CurrentPlayList[randomIndexList[currentSongRandomIndex + 1]]);
                     else
-                        SetCurrentSong(CurrentPlayList[currentSongIndex + 1]);
+                        SetCurrentSong(CurrentPlayList[CurrentSongIndex + 1]);
                 }
             }
             if (previewSong != null)
@@ -269,7 +262,7 @@ namespace MusicTagger2.Core
                         if (Random)
                             SetCurrentSong(CurrentPlayList[randomIndexList[currentSongRandomIndex - 1]]);
                         else
-                            SetCurrentSong(CurrentPlayList[currentSongIndex - 1]);
+                            SetCurrentSong(CurrentPlayList[CurrentSongIndex - 1]);
                     }
                 }
                 else

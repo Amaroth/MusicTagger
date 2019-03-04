@@ -145,13 +145,13 @@ namespace MusicTagger2.Core
             set => CurrentSongPlayList.Repeat = value;
         }
 
-        public ObservableCollection<Song> CreatePlaylist(List<SongTag> filterTags, FilterType filterType) => CurrentSongPlayList.CreatePlaylist(filterTags, filterType, SongTags, Songs);
+        public void GenerateFilteredPlayList(List<SongTag> filterTags, FilterType filterType) => CurrentSongPlayList.GenerateFilteredPlayList(filterTags, filterType, SongTags, Songs);
 
         public Song GetCurrentSong() => CurrentSongPlayList.GetCurrentSong();
 
         public int GetCurrentLength() => CurrentSongPlayList.CurrentLength;
 
-        public int GetCurrentSongIndex() => CurrentSongPlayList.currentSongIndex;
+        public int GetCurrentSongIndex() => CurrentSongPlayList.CurrentSongIndex;
 
         public bool IsSongPlayListPlaying() => CurrentSongPlayList.IsReallyPlaying;
 
@@ -238,8 +238,8 @@ namespace MusicTagger2.Core
         public void RemoveFromImport(List<Song> forRemoval)
         {
             CurrentImportList.RemoveFromImport(forRemoval);
-            foreach (var s in forRemoval)
-                CurrentSongPlayList.RemovePreview(s);
+            if (forRemoval.Contains(CurrentSongPlayList.previewSong))
+                CurrentSongPlayList.Stop();
         }
         #endregion
 

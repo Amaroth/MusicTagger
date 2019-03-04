@@ -314,18 +314,29 @@ namespace MusicTagger2.GUI
         #endregion
 
         #region Playlist buttons event handlers...
+        /// <summary>
+        /// Gets a new playlist based on filter criteria.
+        /// </summary>
         private void BuildPlaylistButton_Click(object sender, RoutedEventArgs e)
         {
-            Core.Core.FilterType filter;
-            if (StandardFilterRadio.IsChecked == true)
-                filter = Core.Core.FilterType.Standard;
-            else if (AndFilterRadio.IsChecked == true)
-                filter = Core.Core.FilterType.And;
-            else
-                filter = Core.Core.FilterType.Or;
+            try
+            {
+                Core.Core.FilterType filter;
+                if (StandardFilterRadio.IsChecked == true)
+                    filter = Core.Core.FilterType.Standard;
+                else if (AndFilterRadio.IsChecked == true)
+                    filter = Core.Core.FilterType.And;
+                else
+                    filter = Core.Core.FilterType.Or;
 
-            PlayListView.ItemsSource = core.CreatePlaylist(selectedTags, filter);
-            ReloadPlayListViewColWidths();
+                core.GenerateFilteredPlayList(selectedTags, filter);
+                PlayListView.ItemsSource = core.CurrentPlayList;
+                ReloadPlayListViewColWidths();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void RetagSongsButton_Click(object sender, RoutedEventArgs e)
@@ -367,8 +378,7 @@ namespace MusicTagger2.GUI
         {
             if (selectedPlaylistSongs.Count > 0)
             {
-                Song selectedSong = GetFirstSelectedPlaylistSong();
-                using (var inputDialog = new StringInputDialog("Choose new path of selected songs:", Path.GetDirectoryName(selectedSong.FullPath)))
+                using (var inputDialog = new StringInputDialog("Choose new path of selected songs:", Path.GetDirectoryName(GetFirstSelectedPlaylistSong().FullPath)))
                     if (inputDialog.ShowDialog() == true)
                     {
                         try
