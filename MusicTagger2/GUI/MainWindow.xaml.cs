@@ -49,7 +49,7 @@ namespace MusicTagger2.GUI
             var saveFileDialog = new SaveFileDialog { Filter = "Project file (*.mtg)|*.mtg" };
             if (saveFileDialog.ShowDialog() == true)
             {
-                core.NewSettings(saveFileDialog.FileName);
+                core.NewProject(saveFileDialog.FileName);
                 CurrentFilePath = saveFileDialog.FileName;
             }
             LoadWindowTitle();
@@ -64,7 +64,7 @@ namespace MusicTagger2.GUI
             var openFileDialog = new OpenFileDialog() { Filter = "Project file (*.mtg)|*.mtg" };
             if (openFileDialog.ShowDialog() == true)
             {
-                core.LoadSettings(openFileDialog.FileName);
+                core.LoadProject(openFileDialog.FileName);
                 ReloadViews();
                 CurrentFilePath = openFileDialog.FileName;
             }
@@ -77,7 +77,7 @@ namespace MusicTagger2.GUI
         private void SaveFile()
         {
             if (!string.IsNullOrEmpty(CurrentFilePath))
-                core.SaveSettings(CurrentFilePath);
+                core.SaveProject(CurrentFilePath);
             else
                 SaveAsFile();
         }
@@ -90,7 +90,7 @@ namespace MusicTagger2.GUI
             var saveFileDialog = new SaveFileDialog { Filter = "Project file (*.mtg)|*.mtg" };
             if (saveFileDialog.ShowDialog() == true)
             {
-                core.SaveSettings(saveFileDialog.FileName);
+                core.SaveProject(saveFileDialog.FileName);
                 CurrentFilePath = saveFileDialog.FileName;
             }
             LoadWindowTitle();

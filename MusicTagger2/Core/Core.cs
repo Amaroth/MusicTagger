@@ -47,7 +47,11 @@ namespace MusicTagger2.Core
         #endregion
 
         #region Input and output file handling...
-        public void NewSettings(string filePath)
+        /// <summary>
+        /// Creates a new, blank Project in a given path.
+        /// </summary>
+        /// <param name="filePath"></param>
+        public void NewProject(string filePath)
         {
             try
             {
@@ -61,7 +65,11 @@ namespace MusicTagger2.Core
             }
         }
 
-        public void LoadSettings(string filePath)
+        /// <summary>
+        /// Opens and loads Project from given path.
+        /// </summary>
+        /// <param name="filePath"></param>
+        public void LoadProject(string filePath)
         {
             try
             {
@@ -77,7 +85,11 @@ namespace MusicTagger2.Core
             }
         }
 
-        public void SaveSettings(string filePath)
+        /// <summary>
+        /// Saves current Project into given path.
+        /// </summary>
+        /// <param name="filePath"></param>
+        public void SaveProject(string filePath)
         {
             try
             {
@@ -90,6 +102,9 @@ namespace MusicTagger2.Core
             }
         }
 
+        /// <summary>
+        /// Clear all current data.
+        /// </summary>
         private void ClearAll()
         {
             SongTags.Clear();
