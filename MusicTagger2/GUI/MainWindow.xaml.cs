@@ -459,10 +459,40 @@ namespace MusicTagger2.GUI
         #endregion
 
         #region Tag assignment event handlers...
-        private void ClearImportButton_Click(object sender, RoutedEventArgs e) => core.ClearImport();
+        /// <summary>
+        /// Clears import from all songs which already have at least one tag added.
+        /// </summary>
+        private void ClearImportButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                core.ClearImport();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(string.Format("Failed to clean import from already tagged songs. Error message: {0}", ex.Message));
+            }
 
-        private void RemoveFromImportButton_Click(object sender, RoutedEventArgs e) => core.RemoveFromImport(selectedImportSongs);
+        }
 
+        /// <summary>
+        /// Removes all currently selected songs in import list from it.
+        /// </summary>
+        private void RemoveFromImportButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                core.RemoveFromImport(selectedImportSongs);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(string.Format("Failed to remove selected songs from import. Error message: {0}", ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Assigns selected tags to songs selected in import list. Optionally removes newly tagged songs from import and overwrites old tags.
+        /// </summary>
         private void AssignButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -471,7 +501,7 @@ namespace MusicTagger2.GUI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(string.Format("Failed to add tags to songs. Error message: {0}", ex.Message));
             }
             ReloadImportListViewColWidths();
             ImportListView.ItemsSource = null;
