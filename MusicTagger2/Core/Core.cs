@@ -124,7 +124,7 @@ namespace MusicTagger2.Core
             set => CurrentSongPlayList.Repeat = value;
         }
 
-        public void GenerateFilteredPlayList(List<SongTag> filterTags, FilterType filterType) => CurrentSongPlayList.GenerateFilteredPlayList(filterTags, filterType, SongTags, Songs);
+        public void GenerateFilteredPlayList(List<SongTag> filterTags, FilterType filterType) => CurrentSongPlayList.GenerateFilteredPlayList(filterTags, filterType);
 
         public Song GetCurrentSong() => CurrentSongPlayList.GetCurrentSong();
 

@@ -56,21 +56,21 @@ namespace MusicTagger2.Core
             CurrentPlayList.Remove(song);
         }
 
-        public void GenerateFilteredPlayList(List<SongTag> filterTags, Core.FilterType filterType, ObservableCollection<SongTag> allTags, ObservableCollection<Song> allSongs)
+        public void GenerateFilteredPlayList(List<SongTag> filterTags, Core.FilterType filterType)
         {
             try
             {
                 Stop();
                 if (filterTags.Count == 0)
-                    CurrentPlayList = new ObservableCollection<Song>(allSongs);
+                    CurrentPlayList = new ObservableCollection<Song>(Core.Instance.Songs);
                 else
                 {
                     CurrentPlayList.Clear();
                     switch (filterType)
                     {
-                        case Core.FilterType.Standard: ApplyStandardFilter(filterTags, allTags, allSongs); break;
-                        case Core.FilterType.And: ApplyAndFilter(filterTags, allTags, allSongs); break;
-                        case Core.FilterType.Or: ApplyOrFilter(filterTags, allTags, allSongs); break;
+                        case Core.FilterType.Standard: ApplyStandardFilter(filterTags); break;
+                        case Core.FilterType.And: ApplyAndFilter(filterTags); break;
+                        case Core.FilterType.Or: ApplyOrFilter(filterTags); break;
                     }
                 }
                 GenerateRandomPlaylist();
@@ -81,7 +81,7 @@ namespace MusicTagger2.Core
             }
         }
 
-        private void ApplyStandardFilter(List<SongTag> filterTags, ObservableCollection<SongTag> allTags, ObservableCollection<Song> allSongs)
+        private void ApplyStandardFilter(List<SongTag> filterTags)
         {
             var filterTagsByCategories = new List<List<SongTag>>();
             foreach (var t in filterTags)
@@ -98,7 +98,7 @@ namespace MusicTagger2.Core
                     filterTagsByCategories.Add(new List<SongTag>() { t });
             }
 
-            foreach (var song in allSongs)
+            foreach (var song in Core.Instance.Songs)
             {
                 var finds = new List<bool>();
                 foreach (var category in filterTagsByCategories)
@@ -122,9 +122,9 @@ namespace MusicTagger2.Core
             }
         }
 
-        private void ApplyAndFilter(List<SongTag> filterTags, ObservableCollection<SongTag> allTags, ObservableCollection<Song> allSongs)
+        private void ApplyAndFilter(List<SongTag> filterTags)
         {
-            foreach (var s in allSongs)
+            foreach (var s in Core.Instance.Songs)
             {
                 var matches = true;
                 foreach (var t in filterTags)
@@ -139,7 +139,7 @@ namespace MusicTagger2.Core
             }
         }
 
-        private void ApplyOrFilter(List<SongTag> filterTags, ObservableCollection<SongTag> allTags, ObservableCollection<Song> allSongs)
+        private void ApplyOrFilter(List<SongTag> filterTags)
         {
             foreach (var t in filterTags)
                 foreach (var s in t.songs)
