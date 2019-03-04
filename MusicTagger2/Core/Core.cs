@@ -219,7 +219,7 @@ namespace MusicTagger2.Core
         public void RemoveFromImport(List<Song> forRemoval)
         {
             CurrentImportList.RemoveFromImport(forRemoval);
-            if (forRemoval.Contains(CurrentSongPlayList.previewSong))
+            if (forRemoval.Contains(CurrentSongPlayList.CurrentPreviewSong))
                 CurrentSongPlayList.Stop();
         }
         #endregion

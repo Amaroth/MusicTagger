@@ -7,8 +7,9 @@ namespace MusicTagger2.Core
 {
     class SongPlayList
     {
-        public Song currentSong { get; private set; }
-        public Song previewSong { get; private set; }
+        public Song CurrentNormalSong { get; private set; }
+        public Song CurrentPreviewSong { get; private set; }
+        public Song GetCurrentSong() => CurrentPreviewSong ?? CurrentNormalSong;
         public ObservableCollection<Song> CurrentPlayList { get; private set; } = new ObservableCollection<Song>();
         public List<int> randomIndexList { get; private set; } = new List<int>();
 
@@ -50,7 +51,7 @@ namespace MusicTagger2.Core
 
         public void RemoveSong(Song song)
         {
-            if ((song == currentSong) || (song == previewSong))
+            if ((song == CurrentNormalSong) || (song == CurrentPreviewSong))
                 Stop();
             randomIndexList.Remove(CurrentPlayList.IndexOf(song));
             CurrentPlayList.Remove(song);
@@ -159,8 +160,7 @@ namespace MusicTagger2.Core
             for (var i = 0; i < CurrentPlayList.Count; i++)
                 tmpList.Add(i);
 
-            var amount = tmpList.Count;
-            for (var i = 0; i < amount; i++)
+            for (var i = 0; i < CurrentPlayList.Count; i++)
             {
                 int rnd = random.Next(0, tmpList.Count);
                 randomIndexList.Add(tmpList[rnd]);
@@ -175,7 +175,7 @@ namespace MusicTagger2.Core
 
         private void SetCurrentSong(Song song)
         {
-            currentSong = song;
+            CurrentNormalSong = song;
 
             if (song != null)
             {
@@ -200,12 +200,12 @@ namespace MusicTagger2.Core
         public void Play()
         {
             supposedToBePlaying = true;
-            if ((currentSong == null) && (CurrentPlayList.Count > 0))
+            if ((CurrentNormalSong == null) && (CurrentPlayList.Count > 0))
                 if (Random && (CurrentPlayList.Count > 0))
                     SetCurrentSong(CurrentPlayList[randomIndexList[0]]);
                 else
                     SetCurrentSong(CurrentPlayList[0]);
-            if ((currentSong != null) || (previewSong != null))
+            if ((CurrentNormalSong != null) || (CurrentPreviewSong != null))
                 mp.Play();
             else
                 supposedToBePlaying = false;
@@ -226,7 +226,7 @@ namespace MusicTagger2.Core
 
         public void Next()
         {
-            if ((currentSong != null) && (CurrentPlayList.Count > 0) && (previewSong == null))
+            if ((CurrentNormalSong != null) && (CurrentPlayList.Count > 0) && (CurrentPreviewSong == null))
             {
                 mp.Stop();
 
@@ -245,13 +245,13 @@ namespace MusicTagger2.Core
                         SetCurrentSong(CurrentPlayList[CurrentSongIndex + 1]);
                 }
             }
-            if (previewSong != null)
+            if (CurrentPreviewSong != null)
                 Stop();
         }
 
         public void Previous()
         {
-            if ((currentSong != null) && (CurrentPlayList.Count > 0) && (previewSong == null))
+            if ((CurrentNormalSong != null) && (CurrentPlayList.Count > 0) && (CurrentPreviewSong == null))
             {
                 if (mp.CurrentPosition < 1)
                 {
@@ -270,49 +270,49 @@ namespace MusicTagger2.Core
                 else
                     CurrentPosition = 0;
             }
-            if (previewSong != null)
+            if (CurrentPreviewSong != null)
                 CurrentPosition = 0;
         }
 
         public void First()
         {
-            if ((CurrentPlayList.Count > 0) && (previewSong == null))
+            if ((CurrentPlayList.Count > 0) && (CurrentPreviewSong == null))
             {
                 if (Random)
                     SetCurrentSong(CurrentPlayList[randomIndexList[0]]);
                 else
                     SetCurrentSong(CurrentPlayList[0]);
             }
-            if (previewSong != null)
+            if (CurrentPreviewSong != null)
                 CurrentPosition = 0;
         }
 
         public void Last()
         {
-            if ((CurrentPlayList.Count) > 0 && (previewSong == null))
+            if ((CurrentPlayList.Count) > 0 && (CurrentPreviewSong == null))
             {
                 if (Random)
                     SetCurrentSong(CurrentPlayList[randomIndexList[randomIndexList.Count - 1]]);
                 else
                     SetCurrentSong(CurrentPlayList[CurrentPlayList.Count - 1]);
             }
-            if (previewSong != null)
+            if (CurrentPreviewSong != null)
                 Stop();
         }
 
         public void Stop()
         {
-            if (currentSong != null)
+            if (CurrentNormalSong != null)
             {
                 supposedToBePlaying = false;
                 mp.Stop();
                 SetCurrentSong(null);
             }
-            if (previewSong != null)
+            if (CurrentPreviewSong != null)
             {
                 supposedToBePlaying = false;
                 mp.Stop();
-                previewSong = null;
+                CurrentPreviewSong = null;
             }
         }
 
@@ -330,13 +330,13 @@ namespace MusicTagger2.Core
                 if (supposedToBePlaying)
                     Next();
                 else
-                    previewSong = null;
+                    CurrentPreviewSong = null;
             }
         }
 
         
 
-        public Song GetCurrentSong() => previewSong != null ? previewSong : currentSong;
+        
 
 
         public void PlayPreview(Song song)
@@ -344,7 +344,7 @@ namespace MusicTagger2.Core
             if (File.Exists(song.FullPath))
             {
                 supposedToBePlaying = false;
-                previewSong = song;
+                CurrentPreviewSong = song;
                 mp.Stop();
                 mp.FileName = song.FullPath;
                 mp.Play();
