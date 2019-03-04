@@ -19,12 +19,12 @@ namespace MusicTagger2.Core
     {
         private static Core instance;
         private SongPlayList CurrentSongPlayList = new SongPlayList();
-        //private ImportList CurrentImportList = new ImportList();
+        private ImportList CurrentImportList = new ImportList();
 
         public ObservableCollection<SongTag> SongTags = new ObservableCollection<SongTag>();
         public ObservableCollection<Song> Songs = new ObservableCollection<Song>();
 
-        public ObservableCollection<Song> ImportList = new ObservableCollection<Song>(); // => CurrentImportList.ImportList;
+        public ObservableCollection<Song> ImportList => CurrentImportList.Songs;
         public ObservableCollection<Song> CurrentPlayList => CurrentSongPlayList.CurrentPlayList;
 
         public enum FilterType { Standard, And, Or }
@@ -162,20 +162,18 @@ namespace MusicTagger2.Core
         #endregion
 
         #region ImportList delegation...
-        /*public void AddIntoImport(List<string> filePaths) => CurrentImportList.AddIntoImport(filePaths);
+        public void AddIntoImport(List<string> filePaths) => CurrentImportList.AddIntoImport(filePaths, Songs);
 
         public void AssignTags(ObservableCollection<Song> songs, ObservableCollection<SongTag> tags, bool remove, bool overwrite) => CurrentImportList.AssignTags(songs, tags, remove, overwrite);
 
         public void ClearImport() => CurrentImportList.ClearImport();
 
-        public void RemoveFromImport(ObservableCollection<Song> forRemoval) => CurrentImportList.RemoveFromImport(forRemoval);*/
-        public void AddIntoImport(List<string> filePaths) { }
-
-        public void AssignTags(ObservableCollection<Song> songs, ObservableCollection<SongTag> tags, bool remove, bool overwrite) { }
-
-        public void ClearImport() { }
-
-        public void RemoveFromImport(ObservableCollection<Song> forRemoval) { }
+        public void RemoveFromImport(ObservableCollection<Song> forRemoval)
+        {
+            CurrentImportList.RemoveFromImport(forRemoval);
+            foreach (var s in forRemoval)
+                CurrentSongPlayList.RemovePreview(s);
+        }
         #endregion
 
 

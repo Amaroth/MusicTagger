@@ -50,7 +50,11 @@ namespace MusicTagger2.Core
             set => mp.CurrentPosition = value / 10;
         }
 
-
+        public void RemovePreview(Song song)
+        {
+            if (song == previewSong)
+                Stop();
+        }
 
         public void RemoveSong(Song song)
         {

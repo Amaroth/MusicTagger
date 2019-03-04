@@ -9,13 +9,17 @@ using System.Windows;
 
 namespace MusicTagger2.Core
 {
-    /*class ImportList
+    class ImportList
     {
-        public void AddIntoImport(List<string> filePaths)
+        public ObservableCollection<Song> Songs = new ObservableCollection<Song>();
+
+
+
+        public void AddIntoImport(List<string> filePaths, ObservableCollection<Song> alreadyExistingOnes)
         {
             try
             {
-                // Clean up paths to standart appearance.
+                // Clean up paths to standard appearance.
                 try
                 {
                     for (var i = 0; i < filePaths.Count; i++)
@@ -31,14 +35,27 @@ namespace MusicTagger2.Core
                         if (File.Exists(s) && Utilities.IsFileSupported(s))
                         {
                             var newSong = new Song(s) { WasTagged = false };
-
-                            if (!allSongs.ContainsKey(newSong.FullPath))
+                            bool found = false;
+                            foreach (var existingSong in alreadyExistingOnes)
+                                if (existingSong.FullPath == newSong.FullPath)
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            if (!found)
                             {
-                                ImportList.Add(newSong);
-                                allSongs.Add(newSong.FullPath, newSong);
+                                Songs.Add(newSong);
+                                alreadyExistingOnes.Add(newSong);
                             }
-                            else if (!ImportList.Contains(allSongs[newSong.FullPath]))
-                                ImportList.Add(allSongs[newSong.FullPath]);
+                            bool inImport = false;
+                            foreach (var imported in Songs)
+                            if (imported.FullPath == newSong.FullPath)
+                                {
+                                    inImport = true;
+                                    break;
+                                }
+                            else if (!inImport)
+                                Songs.Add(newSong);
                         }
                     }
                 }
@@ -56,11 +73,7 @@ namespace MusicTagger2.Core
                     removeList.Add(s);
 
                 foreach (var s in removeList)
-                {
-                    if (s == previewSong)
-                        Stop();
-                    ImportList.Remove(s);
-                }
+                    Songs.Remove(s);
             }
             catch (Exception e) { MessageBox.Show(string.Format("Could not remove provided songs from import list. Following error occured:\n\n{0}", e.ToString())); }
         }
@@ -70,11 +83,11 @@ namespace MusicTagger2.Core
             try
             {
                 var remove = new List<Song>();
-                foreach (var s in ImportList)
+                foreach (var s in Songs)
                     if (s.tags.Count > 0)
                         remove.Add(s);
                 foreach (var s in remove)
-                    ImportList.Remove(s);
+                    Songs.Remove(s);
             }
             catch (Exception e) { MessageBox.Show(string.Format("Could not clear the import list. Following error occured:\n\n{0}", e.ToString())); }
         }
@@ -101,9 +114,6 @@ namespace MusicTagger2.Core
                             t.AddSong(s);
                             s.WasTagged = true;
                         }
-                    if (!remove)
-                        for (var i = 0; i < songs.Count; i++)
-                            ImportList[ImportList.IndexOf(songs[i])] = songs[i];
                 }
                 catch (Exception e) { throw new Exception("Could not assing tags to songs.", e); }
 
@@ -113,5 +123,5 @@ namespace MusicTagger2.Core
             }
             catch (Exception e) { MessageBox.Show(string.Format("Could not assign tags to songs, or something else failed during the process. Error message:\n\n{0}", e.ToString())); }
         }
-    }*/
+    }
 }
