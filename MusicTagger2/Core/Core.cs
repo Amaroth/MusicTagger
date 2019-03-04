@@ -4,12 +4,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 
-// FadeStop
-// Sortování dle sloupců v listviewech
-// Delete z import listu a HD
-// Ukládání nastaveného volume
-
-
 namespace MusicTagger2.Core
 {
     /// <summary>

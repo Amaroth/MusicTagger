@@ -7,7 +7,7 @@ namespace MusicTagger2.Core
 {
     class SongPlayList
     {
-        public Song CurrentNormalSong { get; private set; }
+        
         public Song CurrentPreviewSong { get; private set; }
         public Song GetCurrentSong() => CurrentPreviewSong ?? CurrentNormalSong;
         public ObservableCollection<Song> CurrentPlayList { get; private set; } = new ObservableCollection<Song>();
@@ -24,6 +24,26 @@ namespace MusicTagger2.Core
         private MediaPlayer.MediaPlayer mp = new MediaPlayer.MediaPlayer() { Volume = -2000 };
         private bool IsCurrentFirst => Random ? (currentSongRandomIndex == 0) : (CurrentSongIndex == 0);
         private bool IsCurrentLast => Random ? currentSongRandomIndex == (randomIndexList.Count - 1) : (CurrentSongIndex == CurrentPlayList.Count - 1);
+
+        private Song _currentNormalSong;
+        public Song CurrentNormalSong
+        {
+            get => _currentNormalSong;
+            private set
+            {
+                if (value != null)
+                {
+                    CurrentSongIndex = CurrentPlayList.IndexOf(value);
+                    currentSongRandomIndex = randomIndexList.IndexOf(CurrentSongIndex);
+                }
+                else
+                {
+                    CurrentSongIndex = -1;
+                    currentSongRandomIndex = -1;
+                }
+                _currentNormalSong = value;
+            }
+        }
 
         public int Volume
         {
@@ -179,21 +199,14 @@ namespace MusicTagger2.Core
 
             if (song != null)
             {
-                CurrentSongIndex = CurrentPlayList.IndexOf(song);
-                currentSongRandomIndex = randomIndexList.IndexOf(CurrentSongIndex);
-
                 if (File.Exists(song.FullPath))
                 {
                     mp.FileName = song.FullPath;
                     mp.Pause();
+                    
                 }
                 else
                     Next();
-            }
-            else
-            {
-                CurrentSongIndex = -1;
-                currentSongRandomIndex = -1;
             }
         }
 
