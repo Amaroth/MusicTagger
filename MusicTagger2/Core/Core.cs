@@ -175,7 +175,7 @@ namespace MusicTagger2.Core
             }
             catch (Exception e)
             {
-                throw new Exception(string.Format("Error occured while attempting to move song's file {0} to {1}.", song.FullPath, destinationPath), e);
+                throw new Exception(string.Format("Error occured while attempting to move song's file {0} to {1}.:\n{2}", song.FullPath, destinationPath, e.Message), e);
             }
         }
 
@@ -193,7 +193,7 @@ namespace MusicTagger2.Core
             }
             catch (Exception e)
             {
-                throw new Exception(string.Format("Error occured while atempting to move selected songs to {0}.", targetDir), e);
+                throw new Exception(string.Format("Error occured while atempting to move selected songs to {0}.:\n{1}", targetDir, e.Message), e);
             }
         }
 
@@ -201,12 +201,15 @@ namespace MusicTagger2.Core
         /// 
         /// </summary>
         /// <param name="song"></param>
-        public void RemoveSong(Song song)
+        /// <param name="deleteFromDrive"></param>
+        public void RemoveSong(Song song, bool deleteFromDrive)
         {
             song.RemoveFromAllTags();
             ImportList.Remove(song);
             CurrentSongPlayList.RemoveSong(song);
             Songs.Remove(song);
+            if (deleteFromDrive)
+                File.Delete(song.FullPath);
         }
         #endregion
 

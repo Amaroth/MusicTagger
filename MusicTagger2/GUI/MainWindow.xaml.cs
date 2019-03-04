@@ -330,60 +330,77 @@ namespace MusicTagger2.GUI
             ReloadImportListViewColWidths();
         }
 
+        /// <summary>
+        /// Changes path to the first selected song in playlist, moving its file in the process.
+        /// </summary>
         private void RenameSongButton_Click(object sender, RoutedEventArgs e)
         {
             if (selectedPlaylistSongs.Count > 0)
             {
-                var selectedSong = GetFirstSelectedPlaylistSong();
+                Song selectedSong = GetFirstSelectedPlaylistSong();
                 using (var inputDialog = new StringInputDialog("Change name and/or path of the first selected song:", selectedSong.FullPath))
                     if (inputDialog.ShowDialog() == true)
-                        core.MoveSongFile(selectedSong, inputDialog.Answer);
+                        try
+                        {
+                            core.MoveSongFile(selectedSong, inputDialog.Answer);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
             }
-
             ReloadImportListViewColWidths();
             ReloadPlayListViewColWidths();
         }
 
+        /// <summary>
+        /// Moves all selected song files to provided directory, keeping file names.
+        /// </summary>
         private void MoveSongsButton_Click(object sender, RoutedEventArgs e)
         {
             if (selectedPlaylistSongs.Count > 0)
             {
-                var selectedSong = GetFirstSelectedPlaylistSong();
+                Song selectedSong = GetFirstSelectedPlaylistSong();
                 using (var inputDialog = new StringInputDialog("Choose new path of selected songs:", Path.GetDirectoryName(selectedSong.FullPath)))
                     if (inputDialog.ShowDialog() == true)
                     {
-                        string result = inputDialog.Answer + "\\";
-                        core.MoveSongsToDir(selectedPlaylistSongs, result);
+                        try
+                        {
+                            core.MoveSongsToDir(selectedPlaylistSongs, inputDialog.Answer + "\\");
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
                     }
             }
         }
 
+        /// <summary>
+        /// Removes all selected songs from settings, optinally also from drive.
+        /// </summary>
         private void RemoveSongsButton_Click(object sender, RoutedEventArgs e)
         {
-            var selectedItems = new List<Song>();
-            foreach (Song s in PlayListView.SelectedItems)
-                selectedItems.Add(s);
-
-            if (selectedItems.Count > 0)
+            if (PlayListView.SelectedItems.Count > 0)
             {
+                var selectedItems = new List<Song>();
+                foreach (Song s in PlayListView.SelectedItems)
+                    selectedItems.Add(s);
+
                 using (var oid = new OptionsInputDialog("Remove songs",
                     string.Format("Are you sure? Do you want to delete {0} song files only from settings, or from drive as well?", selectedItems.Count),
                     new string[] { "Settings only", "Drive as well", "Abort" }))
                     if (oid.ShowDialog() == true)
-                    {
                         if (oid.GetAnswer() != "Abort")
-                        {
-                            foreach (var s in selectedItems)
-                                core.RemoveSong(s);
-                        }
-                        if (oid.GetAnswer() == "Drive as well")
-                            foreach (var s in selectedItems)
-                                try
-                                {
-                                    File.Delete(s.FullPath);
-                                }
-                                catch { }
-                    }
+                            try
+                            {
+                                foreach (var s in selectedItems)
+                                    core.RemoveSong(s, (oid.GetAnswer() == "Drive as well"));
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(ex.Message);
+                            }
             }
         }
         #endregion
