@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
-using System.Windows;
 using System.Xml;
 
 namespace MusicTagger2.Core
@@ -18,20 +17,13 @@ namespace MusicTagger2.Core
         /// <param name="filePath"></param>
         /// <param name="songs"></param>
         /// <param name="songTags"></param>
-        public void WriteSettings(string filePath, Dictionary<string, Song> songs, Dictionary<int, SongTag> songTags)
+        public void WriteSettings(string filePath, ObservableCollection<Song> songs, ObservableCollection<SongTag> songTags)
         {
-            try
-            {
-                CreateDirectory(filePath);
-                CreateHeader();
-                WriteSongTagData(songTags);
-                WriteSongData(songs);
-                WriteSettingsToFile(filePath);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("Error occured while attempting to save current settings to provided file. Error message:\n" + e.ToString());
-            }
+            CreateDirectory(filePath);
+            CreateHeader();
+            WriteSongTagData(songTags);
+            WriteSongData(songs);
+            WriteSettingsToFile(filePath);
         }
 
         /// <summary>
@@ -74,13 +66,13 @@ namespace MusicTagger2.Core
         /// Adds song tag data into output XML.
         /// </summary>
         /// <param name="songTags"></param>
-        private void WriteSongTagData(Dictionary<int, SongTag> songTags)
+        private void WriteSongTagData(ObservableCollection<SongTag> songTags)
         {
             try
             {
                 XmlElement tagsElement = outputDocument.CreateElement(string.Empty, "SongTags", string.Empty);
                 rootElement.AppendChild(tagsElement);
-                foreach (var t in songTags.Values)
+                foreach (var t in songTags)
                 {
                     XmlElement newTag = outputDocument.CreateElement(string.Empty, "SongTag", string.Empty);
                     newTag.SetAttribute("Name", t.Name);
@@ -99,13 +91,13 @@ namespace MusicTagger2.Core
         /// Adds song data into output XML.
         /// </summary>
         /// <param name="songs"></param>
-        private void WriteSongData(Dictionary<string, Song> songs)
+        private void WriteSongData(ObservableCollection<Song> songs)
         {
             try
             {
                 XmlElement songsElement = outputDocument.CreateElement(string.Empty, "Songs", string.Empty);
                 rootElement.AppendChild(songsElement);
-                foreach (var s in songs.Values)
+                foreach (var s in songs)
                 {
                     if (s.WasTagged)
                     {
@@ -139,7 +131,10 @@ namespace MusicTagger2.Core
                 using (TextWriter tw = new StreamWriter(filePath, false, Encoding.UTF8))
                     outputDocument.Save(tw);
             }
-            catch (Exception e) { throw new Exception("Could not save output XML as file.", e); }
+            catch (Exception e)
+            {
+                throw new Exception("Could not save output XML as file.", e);
+            }
         }
     }
 }

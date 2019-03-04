@@ -86,6 +86,8 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Core\Core.cs" />
+    <Compile Include="Core\ImportList.cs" />
+    <Compile Include="Core\SongPlayList.cs" />
     <Compile Include="Core\SettingsReader.cs" />
     <Compile Include="Core\SettingsWriter.cs" />
     <Compile Include="Core\Song.cs" />

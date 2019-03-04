@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml;
 
@@ -32,9 +33,9 @@ namespace MusicTagger2.Core
         /// Provides song tags from its settings file.
         /// </summary>
         /// <returns></returns>
-        public Dictionary<int, SongTag> GetSongTags()
+        public ObservableCollection<SongTag> GetSongTags()
         {
-            var result = new Dictionary<int, SongTag>();
+            var result = new ObservableCollection<SongTag>();
             try
             {
                 foreach (XmlNode node in xml.GetElementsByTagName("SongTags")[0].ChildNodes)
@@ -45,7 +46,7 @@ namespace MusicTagger2.Core
                         Name = node.Attributes["Name"].Value,
                         Category = node.Attributes["Category"].Value
                     };
-                    result.Add(songTag.ID, songTag);
+                    result.Add(songTag);
                 }
             }
             catch (Exception e)
@@ -61,9 +62,9 @@ namespace MusicTagger2.Core
         /// </summary>
         /// <param name="songTags"></param>
         /// <returns></returns>
-        public Dictionary<string, Song> GetSongs(Dictionary<int, SongTag> songTags)
+        public ObservableCollection<Song> GetSongs(ObservableCollection<SongTag> songTags)
         {
-            var result = new Dictionary<string, Song>();
+            var result = new ObservableCollection<Song>();
             try
             {
                 foreach (XmlNode node in xml.GetElementsByTagName("Songs")[0].ChildNodes)
@@ -72,10 +73,14 @@ namespace MusicTagger2.Core
                     foreach (XmlNode songTagNode in node.ChildNodes)
                     {
                         var tagID = int.Parse(songTagNode.Attributes["ID"].Value);
-                        if (songTags.ContainsKey(tagID))
-                            song.AddTag(songTags[tagID]);
+                        foreach (var t in songTags)
+                            if (t.ID == tagID)
+                            {
+                                t.AddSong(song);
+                                break;
+                            }
                     }
-                    result.Add(song.FullPath, song);
+                    result.Add(song);
                 }
             }
             catch (Exception e)
