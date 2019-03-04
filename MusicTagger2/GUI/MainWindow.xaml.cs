@@ -107,7 +107,7 @@ namespace MusicTagger2.GUI
         #region Update UI elements functions...
         private void LoadWindowTitle()
         {
-            Title = "Music Tagger 2.3";
+            Title = "Music Tagger 2.3.1";
             if ((CurrentFilePath != null) && (CurrentFilePath != ""))
                 Title += " - " + Path.GetFileName(CurrentFilePath);
         }

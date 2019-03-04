@@ -80,7 +80,7 @@ namespace MusicTagger2.Core
                     {
                         // Split filters by categories.
                         var cats = new List<List<SongTag>>();
-                        foreach (var t in allTags)
+                        foreach (var t in filterTags)
                         {
                             bool found = false;
                             foreach (var l in cats)
@@ -88,6 +88,7 @@ namespace MusicTagger2.Core
                                 {
                                     found = true;
                                     l.Add(t);
+                                    break;
                                 }
                             if (!found)
                                 cats.Add(new List<SongTag>() { t });
