@@ -56,23 +56,30 @@ namespace MusicTagger2.GUI
         }
 
         /// <summary>
-        /// Open a settings file.
+        /// Open a Project file after retrieving path to it from user.
         /// </summary>
         private void OpenFile()
         {
-            core.Stop();
             var openFileDialog = new OpenFileDialog() { Filter = "Project file (*.mtg)|*.mtg" };
             if (openFileDialog.ShowDialog() == true)
-            {
-                core.LoadProject(openFileDialog.FileName);
-                ReloadViews();
-                CurrentFilePath = openFileDialog.FileName;
-            }
+                OpenFile(openFileDialog.FileName);
+        }
+
+        /// <summary>
+        /// Opens given Project file.
+        /// </summary>
+        /// <param name="filePath"></param>
+        public void OpenFile(string filePath)
+        {
+            core.Stop();
+            core.LoadProject(filePath);
+            ReloadViews();
+            CurrentFilePath = filePath;
             LoadWindowTitle();
         }
 
         /// <summary>
-        /// Save current settings file. If none is opened, go to Save As.
+        /// Save current Project file. If none is opened, go to Save As.
         /// </summary>
         private void SaveFile()
         {
@@ -83,7 +90,7 @@ namespace MusicTagger2.GUI
         }
 
         /// <summary>
-        /// Save current settings into new file.
+        /// Save current Project into new file.
         /// </summary>
         private void SaveAsFile()
         {

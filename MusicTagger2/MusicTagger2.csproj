@@ -155,9 +155,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Saves\Config.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Libs\Interop.MediaPlayer.dll" />
     <Resource Include="MusicTagger.ico" />
   </ItemGroup>
