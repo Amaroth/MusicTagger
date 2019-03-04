@@ -49,7 +49,14 @@ namespace MusicTagger2.GUI
             var saveFileDialog = new SaveFileDialog { Filter = "Project file (*.mtg)|*.mtg" };
             if (saveFileDialog.ShowDialog() == true)
             {
-                core.NewProject(saveFileDialog.FileName);
+                try
+                {
+                    core.NewProject(saveFileDialog.FileName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(string.Format("Could not create a Project in {0}. Error message: {1}", saveFileDialog.FileName, ex.Message));
+                }
                 CurrentFilePath = saveFileDialog.FileName;
             }
             LoadWindowTitle();
@@ -72,7 +79,14 @@ namespace MusicTagger2.GUI
         public void OpenFile(string filePath)
         {
             core.Stop();
-            core.LoadProject(filePath);
+            try
+            {
+                core.LoadProject(filePath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(string.Format("Failed to load Project from {0}. Error message: {1}", filePath, ex.Message));
+            }
             ReloadViews();
             CurrentFilePath = filePath;
             LoadWindowTitle();
@@ -84,7 +98,14 @@ namespace MusicTagger2.GUI
         private void SaveFile()
         {
             if (!string.IsNullOrEmpty(CurrentFilePath))
-                core.SaveProject(CurrentFilePath);
+                try
+                {
+                    core.SaveProject(CurrentFilePath);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(string.Format("Current Project could not be saved. Error message: {0}", ex.Message));
+                }
             else
                 SaveAsFile();
         }
@@ -97,7 +118,14 @@ namespace MusicTagger2.GUI
             var saveFileDialog = new SaveFileDialog { Filter = "Project file (*.mtg)|*.mtg" };
             if (saveFileDialog.ShowDialog() == true)
             {
-                core.SaveProject(saveFileDialog.FileName);
+                try
+                {
+                    core.SaveProject(saveFileDialog.FileName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(string.Format("Project could not be saved to {0}. Error message: {1}", saveFileDialog.FileName, ex.Message));
+                }
                 CurrentFilePath = saveFileDialog.FileName;
             }
             LoadWindowTitle();
@@ -330,13 +358,14 @@ namespace MusicTagger2.GUI
                     filter = Core.Core.FilterType.Or;
 
                 core.GenerateFilteredPlayList(selectedTags, filter);
-                PlayListView.ItemsSource = core.CurrentPlayList;
-                ReloadPlayListViewColWidths();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+            PlayListView.ItemsSource = null;
+            PlayListView.ItemsSource = core.CurrentPlayList;
+            ReloadPlayListViewColWidths();
         }
 
         /// <summary>
@@ -347,12 +376,12 @@ namespace MusicTagger2.GUI
             try
             {
                 core.AddIntoImport(selectedPlaylistSongs);
-                ReloadImportListViewColWidths();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+            ReloadImportListViewColWidths();
         }
 
         /// <summary>
@@ -436,8 +465,17 @@ namespace MusicTagger2.GUI
 
         private void AssignButton_Click(object sender, RoutedEventArgs e)
         {
-            core.AssignTags(selectedImportSongs, selectedTags, (bool)RemoveFromImportCheckbox.IsChecked, (bool)OverwriteTagsCheckbox.IsChecked);
+            try
+            {
+                core.AssignTags(selectedImportSongs, selectedTags, (bool)RemoveFromImportCheckbox.IsChecked, (bool)OverwriteTagsCheckbox.IsChecked);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             ReloadImportListViewColWidths();
+            ImportListView.ItemsSource = null;
+            ImportListView.ItemsSource = core.ImportList;
         }
         #endregion
 

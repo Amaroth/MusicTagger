@@ -53,16 +53,9 @@ namespace MusicTagger2.Core
         /// <param name="filePath"></param>
         public void NewProject(string filePath)
         {
-            try
-            {
-                ClearAll();
-                var writer = new ProjectWriter();
-                writer.WriteSettings(filePath, Songs, SongTags);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(string.Format("Could not create {0} save file. Error message:\n\n{1}", filePath, e.ToString()));
-            }
+            ClearAll();
+            var writer = new ProjectWriter();
+            writer.WriteSettings(filePath, Songs, SongTags);
         }
 
         /// <summary>
@@ -71,18 +64,11 @@ namespace MusicTagger2.Core
         /// <param name="filePath"></param>
         public void LoadProject(string filePath)
         {
-            try
-            {
-                ClearAll();
-                var reader = new ProjectReader();
-                reader.ReadSettings(filePath);
-                SongTags = reader.GetSongTags();
-                Songs = reader.GetSongs(SongTags);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(string.Format("Could not load settings from {0}. Error message:\n\n{1}", filePath, e.ToString()));
-            }
+            ClearAll();
+            var reader = new ProjectReader();
+            reader.ReadSettings(filePath);
+            SongTags = reader.GetSongTags();
+            Songs = reader.GetSongs(SongTags);
         }
 
         /// <summary>
@@ -91,15 +77,8 @@ namespace MusicTagger2.Core
         /// <param name="filePath"></param>
         public void SaveProject(string filePath)
         {
-            try
-            {
-                var writer = new ProjectWriter();
-                writer.WriteSettings(filePath, Songs, SongTags);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(string.Format("Could not save settings into {0}. Error message:\n\n{1}", filePath, e.ToString()));
-            }
+            var writer = new ProjectWriter();
+            writer.WriteSettings(filePath, Songs, SongTags);
         }
 
         /// <summary>
