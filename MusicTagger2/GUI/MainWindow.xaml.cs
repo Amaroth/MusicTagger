@@ -21,9 +21,9 @@ namespace MusicTagger2.GUI
         private string CurrentFilePath = "";
         private Core.Core core = Core.Core.Instance;
 
-        private ObservableCollection<SongTag> selectedTags = new ObservableCollection<SongTag>();
-        private ObservableCollection<Song> selectedImportSongs = new ObservableCollection<Song>();
-        private ObservableCollection<Song> selectedPlaylistSongs = new ObservableCollection<Song>();
+        private List<SongTag> selectedTags = new List<SongTag>();
+        private List<Song> selectedImportSongs = new List<Song>();
+        private List<Song> selectedPlaylistSongs = new List<Song>();
 
         private int preFadeVolume = 0;
         private DispatcherTimer fadeTimer = new DispatcherTimer();
@@ -337,7 +337,7 @@ namespace MusicTagger2.GUI
                 var selectedSong = GetFirstSelectedPlaylistSong();
                 using (var inputDialog = new StringInputDialog("Change name and/or path of the first selected song:", selectedSong.FullPath))
                     if (inputDialog.ShowDialog() == true)
-                        core.MoveSong(selectedSong, inputDialog.Answer);
+                        core.MoveSongFile(selectedSong, inputDialog.Answer);
             }
 
             ReloadImportListViewColWidths();
@@ -353,7 +353,7 @@ namespace MusicTagger2.GUI
                     if (inputDialog.ShowDialog() == true)
                     {
                         string result = inputDialog.Answer + "\\";
-                        core.MoveSongs(selectedPlaylistSongs, result);
+                        core.MoveSongsToDir(selectedPlaylistSongs, result);
                     }
             }
         }

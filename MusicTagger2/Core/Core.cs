@@ -130,7 +130,7 @@ namespace MusicTagger2.Core
             set => CurrentSongPlayList.Repeat = value;
         }
 
-        public ObservableCollection<Song> CreatePlaylist(ObservableCollection<SongTag> filterTags, FilterType filterType) => CurrentSongPlayList.CreatePlaylist(filterTags, filterType, SongTags, Songs);
+        public ObservableCollection<Song> CreatePlaylist(List<SongTag> filterTags, FilterType filterType) => CurrentSongPlayList.CreatePlaylist(filterTags, filterType, SongTags, Songs);
 
         public Song GetCurrentSong() => CurrentSongPlayList.GetCurrentSong();
 
@@ -161,31 +161,69 @@ namespace MusicTagger2.Core
         public void Last() => CurrentSongPlayList.Last();
         #endregion
 
+        #region Song's file changes...
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="song"></param>
+        /// <param name="destinationPath"></param>
+        public void MoveSongFile(Song song, string destinationPath)
+        {
+            try
+            {
+                song.Move(destinationPath);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(string.Format("Error occured while attempting to move song's file {0} to {1}.", song.FullPath, destinationPath), e);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="songs"></param>
+        /// <param name="targetDir"></param>
+        public void MoveSongsToDir(List<Song> songs, string targetDir)
+        {
+            try
+            {
+                foreach (var song in songs)
+                    song.Move(targetDir + song.FileName);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(string.Format("Error occured while atempting to move selected songs to {0}.", targetDir), e);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="song"></param>
+        public void RemoveSong(Song song)
+        {
+            song.RemoveFromAllTags();
+            ImportList.Remove(song);
+            CurrentSongPlayList.RemoveSong(song);
+            Songs.Remove(song);
+        }
+        #endregion
+
         #region ImportList delegation...
         public void AddIntoImport(List<string> filePaths) => CurrentImportList.AddIntoImport(filePaths, Songs);
 
-        public void AssignTags(ObservableCollection<Song> songs, ObservableCollection<SongTag> tags, bool remove, bool overwrite) => CurrentImportList.AssignTags(songs, tags, remove, overwrite);
+        public void AssignTags(List<Song> songs, List<SongTag> tags, bool remove, bool overwrite) => CurrentImportList.AssignTags(songs, tags, remove, overwrite);
 
         public void ClearImport() => CurrentImportList.ClearImport();
 
-        public void RemoveFromImport(ObservableCollection<Song> forRemoval)
+        public void RemoveFromImport(List<Song> forRemoval)
         {
             CurrentImportList.RemoveFromImport(forRemoval);
             foreach (var s in forRemoval)
                 CurrentSongPlayList.RemovePreview(s);
         }
         #endregion
-
-
-
-
-
-
-
-
-
-
-
 
 
         public int GetNextFreeTagID()
@@ -270,39 +308,6 @@ namespace MusicTagger2.Core
             {
                 MessageBox.Show(string.Format("Could not edit provided tag. Error message:\n\n{0}", e.ToString()));
             }
-        }
-
-
-        
-
-        
-
-
-        public void MoveSong(Song song, string destinationPath)
-        {
-            if (File.Exists(song.FullPath))
-            {
-                if (!File.Exists(destinationPath))
-                    song.Move(destinationPath);
-                else
-                    MessageBox.Show("Such file already exists!");
-            }
-        }
-
-        public void MoveSongs(ObservableCollection<Song> songs, string targetDir)
-        {
-            foreach (var s in songs)
-                s.Move(targetDir + s.FileName);
-        }
-
-        public void RemoveSong(Song song)
-        {
-            
-            
-            song.RemoveFromAllTags();
-            ImportList.Remove(song);
-            Songs.Remove(song);
-            
         }
     }
 }

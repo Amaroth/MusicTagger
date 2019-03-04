@@ -60,11 +60,11 @@ namespace MusicTagger2.Core
         {
             if ((song == currentSong) || (song == previewSong))
                 Stop();
-            randomIndexList.Remove(randomIndexList.IndexOf(randomIndexList.Count - 1));
+            randomIndexList.Remove(CurrentPlayList.IndexOf(song));
             CurrentPlayList.Remove(song);
         }
 
-        public ObservableCollection<Song> CreatePlaylist(ObservableCollection<SongTag> filterTags, Core.FilterType filterType, ObservableCollection<SongTag> allTags, ObservableCollection<Song> allSongs)
+        public ObservableCollection<Song> CreatePlaylist(List<SongTag> filterTags, Core.FilterType filterType, ObservableCollection<SongTag> allTags, ObservableCollection<Song> allSongs)
         {
             // Stop playing if anything is playing.
             Stop();

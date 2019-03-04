@@ -64,7 +64,7 @@ namespace MusicTagger2.Core
             catch (Exception e) { MessageBox.Show(string.Format("Could not add at least one of the provided file paths into the import list. Error message:\n\n{0}", e.ToString())); }
         }
 
-        public void RemoveFromImport(ObservableCollection<Song> forRemoval)
+        public void RemoveFromImport(List<Song> forRemoval)
         {
             try
             {
@@ -92,7 +92,7 @@ namespace MusicTagger2.Core
             catch (Exception e) { MessageBox.Show(string.Format("Could not clear the import list. Following error occured:\n\n{0}", e.ToString())); }
         }
 
-        public void AssignTags(ObservableCollection<Song> songs, ObservableCollection<SongTag> tags, bool remove, bool overwrite)
+        public void AssignTags(List<Song> songs, List<SongTag> tags, bool remove, bool overwrite)
         {
             try
             {
