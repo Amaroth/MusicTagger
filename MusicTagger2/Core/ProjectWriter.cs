@@ -108,7 +108,7 @@ namespace MusicTagger2.Core
                         foreach (var t in s.tags)
                         {
                             XmlElement tag = outputDocument.CreateElement(string.Empty, "SongTag", string.Empty);
-                            tag.SetAttribute("ID", t.ToString());
+                            tag.SetAttribute("ID", t.ID.ToString());
                             newSong.AppendChild(tag);
                         }
                     }
