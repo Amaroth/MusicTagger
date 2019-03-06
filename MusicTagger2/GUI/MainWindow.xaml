@@ -254,7 +254,7 @@
 
             <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Name="NameTextBlock" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
             <TextBlock Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="6" Name="TimeTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center">0:00:00 / 0:00:00</TextBlock>
-
+            
             <DockPanel Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Center">
                 <CheckBox Name="RandomCheckBox" IsChecked="True" DockPanel.Dock="Top" Checked="RandomCheckBox_Checked" Unchecked="RandomCheckBox_Checked">Random</CheckBox>
                 <CheckBox Name="RepeatCheckBox" IsChecked="True" Checked="RepeatCheckBox_Checked" Unchecked="RepeatCheckBox_Checked">Repeat</CheckBox>

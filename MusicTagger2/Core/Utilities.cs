@@ -4,7 +4,7 @@ namespace MusicTagger2.Core
 {
     class Utilities
     {
-        public static bool IsFileSupported(string filePath) => filePath.ToLower().EndsWith(".mp3");
+        public static bool IsFileSupported(string filePath) => filePath.ToLower().EndsWith(".mp3") || filePath.ToLower().EndsWith(".mp4");
 
         public static string GetTimeString(int timeInSeconds)
         {

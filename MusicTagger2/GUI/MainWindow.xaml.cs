@@ -17,7 +17,7 @@ namespace MusicTagger2.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.5.0";
+        private string CurrentVersionSignature = "Music Tagger 2.5.1";
         private string CurrentFilePath = "";
         private Core.Core core = Core.Core.Instance;
 
@@ -38,6 +38,16 @@ namespace MusicTagger2.GUI
             {
                 _isSongPlayerPlaying = value;
                 UpdateButtons();
+            }
+        }
+
+        private Uri CurrentSongUri
+        {
+            get => SongPlayer.Source;
+            set
+            {
+                SongPlayer.Source = value;
+                MarkPlaying();
             }
         }
 
@@ -171,18 +181,21 @@ namespace MusicTagger2.GUI
         private void UpdateButtons()
         {
             PlayPauseButton.Content = IsSongPlayerPlaying ? "Pause" : "Play";
-            FirstButton.IsEnabled = (SongPlayer.Source != null) && !isPreviewPlaying;
-            PreviousButton.IsEnabled = (SongPlayer.Source != null) && !isPreviewPlaying;
-            NextButton.IsEnabled = (SongPlayer.Source != null) && !isPreviewPlaying;
-            LastButton.IsEnabled = (SongPlayer.Source != null) && !isPreviewPlaying;
+            FirstButton.IsEnabled = (CurrentSongUri != null) && !isPreviewPlaying;
+            PreviousButton.IsEnabled = (CurrentSongUri != null) && !isPreviewPlaying;
+            NextButton.IsEnabled = (CurrentSongUri != null) && !isPreviewPlaying;
+            LastButton.IsEnabled = (CurrentSongUri != null) && !isPreviewPlaying;
             StopButton.IsEnabled = IsSongPlayerPlaying;
         }
 
+        private void infoTimer_Tick(object sender, EventArgs e) => UpdatePlayingSongInfo();
+
         private void UpdatePlayingSongInfo()
         {
-            if ((SongPlayer.Source != null) && SongPlayer.NaturalDuration.HasTimeSpan)
+            if ((CurrentSongUri != null) && SongPlayer.NaturalDuration.HasTimeSpan)
             {
-                NameTextBlock.Text = Path.GetFileName(SongPlayer.Source.ToString());
+                NameTextBlock.Text = isPreviewPlaying ? "Previewing: " : "";
+                NameTextBlock.Text += Path.GetFileName(CurrentSongUri.ToString());
                 SongProgressBar.Maximum = currentSongLength;
                 SongProgressBar.Value = SongPlayer.Position.TotalMilliseconds;
                 TimeTextBlock.Text = string.Format("{0} / {1}",
@@ -287,7 +300,7 @@ namespace MusicTagger2.GUI
             if (song != null)
             {
                 Stop();
-                SongPlayer.Source = new Uri(song.FullPath);
+                CurrentSongUri = new Uri(song.FullPath);
                 SongPlayer.Play();
                 isPreviewPlaying = true;
             }
@@ -295,9 +308,9 @@ namespace MusicTagger2.GUI
 
         private void Play()
         {
-            if (SongPlayer.Source == null)
-                SongPlayer.Source = core.First();
-            if (SongPlayer.Source != null)
+            if (CurrentSongUri == null)
+                CurrentSongUri = core.First();
+            if (CurrentSongUri != null)
             {
                 SongPlayer.Play();
                 IsSongPlayerPlaying = true;
@@ -313,7 +326,8 @@ namespace MusicTagger2.GUI
         private void Stop()
         {
             SongPlayer.Stop();
-            SongPlayer.Source = null;
+            core.SetCurrent(null);
+            CurrentSongUri = null;
             IsSongPlayerPlaying = false;
             isPreviewPlaying = false;
         }
@@ -323,15 +337,15 @@ namespace MusicTagger2.GUI
             Uri currentUri = core.SetCurrent(song);
             if (currentUri != null)
             {
-                SongPlayer.Source = currentUri;
+                CurrentSongUri = currentUri;
                 Play();
             }
         }
 
         private void Next()
         {
-            SongPlayer.Source = core.Next();
-            if (SongPlayer.Source == null)
+            CurrentSongUri = core.Next();
+            if (CurrentSongUri == null)
                 Stop();
         }
 
@@ -339,19 +353,19 @@ namespace MusicTagger2.GUI
         {
             if (IsSongPlayerPlaying)
                 if (SongPlayer.Position.TotalSeconds < 1)
-                    SongPlayer.Source = core.Previous();
+                    CurrentSongUri = core.Previous();
                 else
                     SongPlayer.Position = new TimeSpan(0);
         }
 
         private void Last()
         {
-            SongPlayer.Source = core.Last();
+            CurrentSongUri = core.Last();
         }
 
         private void First()
         {
-            SongPlayer.Source = core.First();
+            CurrentSongUri = core.First();
         }
         #endregion
 
@@ -658,14 +672,7 @@ namespace MusicTagger2.GUI
         }
         #endregion
 
-        #region Timer event handlers...
-        private void infoTimer_Tick(object sender, EventArgs e)
-        {
-            UpdatePlayingSongInfo();
-            MarkPlaying();
-        }
-        #endregion
-
+        #region Song player event handlers...
         private void SongPlayer_MediaOpened(object sender, RoutedEventArgs e)
         {
             IsSongPlayerPlaying = true;
@@ -675,7 +682,7 @@ namespace MusicTagger2.GUI
         private void SongPlayer_MediaEnded(object sender, RoutedEventArgs e)
         {
             IsSongPlayerPlaying = false;
-            SongPlayer.Source = null;
+            CurrentSongUri = null;
             if (!isPreviewPlaying)
                 Next();
         }
@@ -685,5 +692,6 @@ namespace MusicTagger2.GUI
             IsSongPlayerPlaying = false;
             isPreviewPlaying = false;
         }
+        #endregion
     }
 }
