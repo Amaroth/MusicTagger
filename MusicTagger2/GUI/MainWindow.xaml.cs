@@ -739,6 +739,10 @@ namespace MusicTagger2.GUI
             UpdateImportListViewColWidths();
             ImportListView.ItemsSource = null;
             ImportListView.ItemsSource = core.ImportList;
+
+            UpdatePlayListViewColWidths();
+            PlayListView.ItemsSource = null;
+            PlayListView.ItemsSource = core.CurrentPlayList;
         }
         #endregion
 
