@@ -17,7 +17,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.6.2";
+        private string CurrentVersionSignature = "Music Tagger 2.6.3";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -53,20 +53,19 @@ namespace MusicTagger.GUI
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        /// <summary>
+        /// Load startup config file and set user's settings according to it, reload views and controls accordingly.
+        /// </summary>
+        private void LoadStartup()
+        {
             LoadWindowTitle();
             infoTimer.Tick += new EventHandler(infoTimer_Tick);
             infoTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             infoTimer.Start();
             ReloadViews();
             UpdateButtons();
-            LoadStartup();
-        }
-
-        /// <summary>
-        /// Load startup config file and set user's settings according to it.
-        /// </summary>
-        private void LoadStartup()
-        {
             StartupConfig.LoadFile();
 
             RandomCheckBox.IsChecked = StartupConfig.PlayRandom;
@@ -89,9 +88,9 @@ namespace MusicTagger.GUI
         }
 
         /// <summary>
-        /// If window is about to be closed, save current user's settings into startup config file.
+        /// If window is about to be closed, save current user's settings into startup file.
         /// </summary>
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void SaveStartup()
         {
             Core.Core.FilterType filterType;
             if (StandardFilterRadio.IsChecked == true)
@@ -102,7 +101,12 @@ namespace MusicTagger.GUI
                 filterType = Core.Core.FilterType.Or;
             StartupConfig.SaveFile(RandomCheckBox.IsChecked == true, RepeatCheckBox.IsChecked == true, filterType, SongVolumeSlider.Value, SoundsVolumeSlider.Value,
                 SongPlayer.IsMuted, SongPlayer.IsMuted, Width, Height, WindowState);
+
         }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e) => LoadStartup();
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) => SaveStartup();
         #endregion
 
         #region Menu functions...
@@ -154,10 +158,8 @@ namespace MusicTagger.GUI
             {
                 MessageBox.Show(string.Format("Failed to load Project from {0}. Error message: {1}", filePath, ex.Message));
             }
-            ReloadViews();
             CurrentProjectFilePath = filePath;
-            LoadWindowTitle();
-            UpdateButtons();
+            LoadStartup();
         }
 
         /// <summary>
@@ -855,9 +857,8 @@ namespace MusicTagger.GUI
             IsSongPlayerPlaying = false;
             PreviewSong = null;
         }
+
+
         #endregion
-
-        
-
     }
 }

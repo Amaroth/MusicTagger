@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Xml;
@@ -7,7 +8,7 @@ namespace MusicTagger.Core
 {
     class StartupConfig
     {
-        private readonly string configPath = "startup.conf";
+        private readonly string configPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\startup.conf";
 
         public bool PlayRandom { get; private set; } = true;
         public bool PlayRepeat { get; private set; } = true;
