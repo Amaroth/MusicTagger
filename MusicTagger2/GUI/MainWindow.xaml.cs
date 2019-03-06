@@ -168,7 +168,7 @@ namespace MusicTagger2.GUI
         }
 
         /// <summary>
-        /// 
+        /// Completely reloads all views.
         /// </summary>
         private void ReloadViews()
         {
@@ -179,11 +179,15 @@ namespace MusicTagger2.GUI
             playView.GroupDescriptions.Clear();
             playView.GroupDescriptions.Add(groupDescription);
             LoadTagAdministrationFields(GetFirstSelectedTag());
-            ReloadTagListViewColWidths();
-            ReloadPlayListViewColWidths();
-            ReloadImportListViewColWidths();
+            UpdateTagListViewColWidths();
+            UpdatePlayListViewColWidths();
+            UpdateImportListViewColWidths();
+            UpdatePlayingSongInfo();
         }
 
+        /// <summary>
+        /// Updates whether buttons in play panel should be enabled or not and text on Play / Pause button.
+        /// </summary>
         private void UpdateButtons()
         {
             PlayPauseButton.Content = IsSongPlayerPlaying ? "Pause" : "Play";
@@ -196,6 +200,9 @@ namespace MusicTagger2.GUI
 
         private void infoTimer_Tick(object sender, EventArgs e) => UpdatePlayingSongInfo();
 
+        /// <summary>
+        /// Updates progress bar and texts in play panel depending on song being played.
+        /// </summary>
         private void UpdatePlayingSongInfo()
         {
             if ((CurrentSongUri != null) && SongPlayer.NaturalDuration.HasTimeSpan)
@@ -216,6 +223,9 @@ namespace MusicTagger2.GUI
             }
         }
 
+        /// <summary>
+        /// If song from playlist is playing or being paused, mark it with red in playlist.
+        /// </summary>
         private void MarkPlaying()
         {
             if (PlayListView.Items.Count > 0)
@@ -231,6 +241,10 @@ namespace MusicTagger2.GUI
             }
         }
 
+        /// <summary>
+        /// Updates fields in tag administration form depending on tag currently selected.
+        /// </summary>
+        /// <param name="tag">Currently selected tag.</param>
         private void LoadTagAdministrationFields(SongTag tag)
         {
             if (tag != null)
@@ -247,7 +261,10 @@ namespace MusicTagger2.GUI
             }
         }
 
-        private void ReloadImportListViewColWidths()
+        /// <summary>
+        /// Updates widths of columns in import list to fit width of their contents.
+        /// </summary>
+        private void UpdateImportListViewColWidths()
         {
             foreach (var c in (ImportListView.View as GridView).Columns)
             {
@@ -257,7 +274,10 @@ namespace MusicTagger2.GUI
             }
         }
 
-        private void ReloadPlayListViewColWidths()
+        /// <summary>
+        /// Updates widths of columns in playlist to fit width of their contents.
+        /// </summary>
+        private void UpdatePlayListViewColWidths()
         {
             foreach (var c in (PlayListView.View as GridView).Columns)
             {
@@ -267,7 +287,10 @@ namespace MusicTagger2.GUI
             }
         }
 
-        private void ReloadTagListViewColWidths()
+        /// <summary>
+        /// Updates widths of columns in tag list to fit width of their contents.
+        /// </summary>
+        private void UpdateTagListViewColWidths()
         {
             foreach (var c in (TagListView.View as GridView).Columns)
             {
@@ -497,19 +520,19 @@ namespace MusicTagger2.GUI
         private void CreateTagButton_Click(object sender, RoutedEventArgs e)
         {
             core.CreateTag(TagNameTextBox.Text, TagCategoryTextBox.Text);
-            ReloadTagListViewColWidths();
+            UpdateTagListViewColWidths();
         }
 
         private void EditTagButton_Click(object sender, RoutedEventArgs e)
         {
             core.UpdateTag(GetFirstSelectedTag(), TagNameTextBox.Text, TagCategoryTextBox.Text);
-            ReloadTagListViewColWidths();
+            UpdateTagListViewColWidths();
         }
 
         private void RemoveTagButton_Click(object sender, RoutedEventArgs e)
         {
             core.RemoveTag(GetFirstSelectedTag());
-            ReloadTagListViewColWidths();
+            UpdateTagListViewColWidths();
         }
         #endregion
 
@@ -537,7 +560,7 @@ namespace MusicTagger2.GUI
             }
             PlayListView.ItemsSource = null;
             PlayListView.ItemsSource = core.CurrentPlayList;
-            ReloadPlayListViewColWidths();
+            UpdatePlayListViewColWidths();
         }
 
         /// <summary>
@@ -553,7 +576,7 @@ namespace MusicTagger2.GUI
             {
                 MessageBox.Show(ex.Message);
             }
-            ReloadImportListViewColWidths();
+            UpdateImportListViewColWidths();
         }
 
         /// <summary>
@@ -575,8 +598,8 @@ namespace MusicTagger2.GUI
                             MessageBox.Show(ex.Message);
                         }
             }
-            ReloadImportListViewColWidths();
-            ReloadPlayListViewColWidths();
+            UpdateImportListViewColWidths();
+            UpdatePlayListViewColWidths();
         }
 
         /// <summary>
@@ -675,7 +698,7 @@ namespace MusicTagger2.GUI
             {
                 MessageBox.Show(string.Format("Failed to add tags to songs. Error message: {0}", ex.Message));
             }
-            ReloadImportListViewColWidths();
+            UpdateImportListViewColWidths();
             ImportListView.ItemsSource = null;
             ImportListView.ItemsSource = core.ImportList;
         }
@@ -719,7 +742,7 @@ namespace MusicTagger2.GUI
                     importList.Add(s);
             }
             core.AddIntoImport(importList);
-            ReloadImportListViewColWidths();
+            UpdateImportListViewColWidths();
         }
 
         private void ImportListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
