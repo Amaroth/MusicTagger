@@ -71,9 +71,8 @@ namespace MusicTagger2.Core
                     var song = new Song(node.Attributes["FilePath"].Value);
                     foreach (XmlNode songTagNode in node.ChildNodes)
                     {
-                        var tagID = int.Parse(songTagNode.Attributes["ID"].Value);
                         foreach (var t in songTags)
-                            if (t.ID == tagID)
+                            if (t.ID == int.Parse(songTagNode.Attributes["ID"].Value))
                             {
                                 t.AddSong(song);
                                 break;
