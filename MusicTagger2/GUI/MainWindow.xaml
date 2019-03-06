@@ -252,9 +252,9 @@
             </Grid.RowDefinitions>
             <ProgressBar Grid.ColumnSpan="14" Name="SongProgressBar" Margin="0,2,0,2" MouseDown="SongProgressBar_MouseDown"/>
 
-            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Name="NameTextBlock" Margin="3" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
-            <TextBlock Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="6" Name="TimeTextBlock" Margin="3" HorizontalAlignment="Center" VerticalAlignment="Center">0:00:00 / 0:00:00</TextBlock>
-            <TextBlock Grid.Row="1" Grid.Column="10" Grid.ColumnSpan="4" Name="TagsTextBlock" Margin="3" HorizontalAlignment="Right" VerticalAlignment="Center"></TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Name="NameTextBlock" Margin="3,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="6" Name="TimeTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center">0:00:00 / 0:00:00</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="10" Grid.ColumnSpan="4" Name="TagsTextBlock" Margin="0,0,3,0" HorizontalAlignment="Right" VerticalAlignment="Center"></TextBlock>
             
             <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Name="RandomCheckBox" IsChecked="True" Checked="RandomCheckBox_Checked" Unchecked="RandomCheckBox_Checked">Random</CheckBox>
             <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Name="RepeatCheckBox" IsChecked="True" Checked="RepeatCheckBox_Checked" Unchecked="RepeatCheckBox_Checked">Repeat</CheckBox>
