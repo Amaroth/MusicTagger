@@ -76,11 +76,16 @@
                 </GroupStyle>
             </ListView.GroupStyle>
         </ListView>
-        <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <RadioButton Name="StandardFilterRadio" VerticalAlignment="Center" Margin="7" IsChecked="True">Standard filter</RadioButton>
-            <RadioButton Name="AndFilterRadio" VerticalAlignment="Center" Margin="7">And filter</RadioButton>
-            <RadioButton Name="OrFilterRadio" VerticalAlignment="Center" Margin="7">Or filter</RadioButton>
-        </StackPanel>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <RadioButton Grid.Column="0" Name="StandardFilterRadio" VerticalAlignment="Center" IsChecked="True">Standard filter</RadioButton>
+            <RadioButton Grid.Column="1" Name="AndFilterRadio" VerticalAlignment="Center">And filter</RadioButton>
+            <RadioButton Grid.Column="2" Name="OrFilterRadio" VerticalAlignment="Center">Or filter</RadioButton>
+        </Grid>
 
 
 
