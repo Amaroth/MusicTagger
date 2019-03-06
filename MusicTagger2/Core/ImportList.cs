@@ -38,7 +38,11 @@ namespace MusicTagger2.Core
                             Songs.Add(existingSongs[filePath]);
                     }
                     else
-                        Songs.Add(new Song(filePath));
+                    {
+                        var newSong = new Song(filePath);
+                        Songs.Add(newSong);
+                        Core.Instance.Songs.Add(newSong);
+                    }
                 }
         }
 
