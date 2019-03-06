@@ -92,6 +92,7 @@
     <Compile Include="Core\ProjectWriter.cs" />
     <Compile Include="Core\Song.cs" />
     <Compile Include="Core\SongTag.cs" />
+    <Compile Include="Core\StartupConfig.cs" />
     <Compile Include="Core\Utilities.cs" />
     <Compile Include="GUI\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>

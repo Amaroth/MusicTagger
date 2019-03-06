@@ -17,14 +17,15 @@ namespace MusicTagger2.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.5.5";
-        private string CurrentFilePath = "";
+        private string CurrentVersionSignature = "Music Tagger 2.6.0";
+        private string CurrentProjectFilePath = "";
+
         private Core.Core core = Core.Core.Instance;
+        private StartupConfig StartupConfig = new StartupConfig();
 
         private double currentSongLength;
         private DispatcherTimer infoTimer = new DispatcherTimer();
 
-        //private bool isPreviewPlaying = false;
         private Song PreviewSong = null;
         private bool _isSongPlayerPlaying = false;
 
@@ -48,6 +49,7 @@ namespace MusicTagger2.GUI
             }
         }
 
+        #region Window open/close...
         public MainWindow()
         {
             InitializeComponent();
@@ -57,7 +59,46 @@ namespace MusicTagger2.GUI
             infoTimer.Start();
             ReloadViews();
             UpdateButtons();
+            LoadStartup();
         }
+
+        /// <summary>
+        /// Load startup config file and set user's settings according to it.
+        /// </summary>
+        private void LoadStartup()
+        {
+            StartupConfig.LoadFile();
+
+            RandomCheckBox.IsChecked = StartupConfig.PlayRandom;
+            RepeatCheckBox.IsChecked = StartupConfig.PlayRepeat;
+
+            StandardFilterRadio.IsChecked = (StartupConfig.SelectedFilter == Core.Core.FilterType.Standard);
+            AndFilterRadio.IsChecked = (StartupConfig.SelectedFilter == Core.Core.FilterType.And);
+            OrFilterRadio.IsChecked = (StartupConfig.SelectedFilter == Core.Core.FilterType.Or);
+
+            SongVolumeSlider.Value = StartupConfig.SongVolume;
+            SoundsVolumeSlider.Value = StartupConfig.SoundsVolume;
+
+            SongPlayer.IsMuted = StartupConfig.SongMute;
+            SongVolumeSlider.IsEnabled = !SongPlayer.IsMuted;
+            SongMuteUnmuteButton.Content = SongPlayer.IsMuted ? "Unmute" : "Mute";
+        }
+
+        /// <summary>
+        /// If window is about to be closed, save current user's settings into startup config file.
+        /// </summary>
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Core.Core.FilterType filterType;
+            if (StandardFilterRadio.IsChecked == true)
+                filterType = Core.Core.FilterType.Standard;
+            else if (AndFilterRadio.IsChecked == true)
+                filterType = Core.Core.FilterType.And;
+            else
+                filterType = Core.Core.FilterType.Or;
+            StartupConfig.SaveFile(RandomCheckBox.IsChecked == true, RepeatCheckBox.IsChecked == true, filterType, SongVolumeSlider.Value, SoundsVolumeSlider.Value, SongPlayer.IsMuted, SongPlayer.IsMuted);
+        }
+        #endregion
 
         #region Menu functions...
         /// <summary>
@@ -77,7 +118,7 @@ namespace MusicTagger2.GUI
                 {
                     MessageBox.Show(string.Format("Could not create a Project in {0}. Error message: {1}", saveFileDialog.FileName, ex.Message));
                 }
-                CurrentFilePath = saveFileDialog.FileName;
+                CurrentProjectFilePath = saveFileDialog.FileName;
             }
             LoadWindowTitle();
             UpdateButtons();
@@ -109,7 +150,7 @@ namespace MusicTagger2.GUI
                 MessageBox.Show(string.Format("Failed to load Project from {0}. Error message: {1}", filePath, ex.Message));
             }
             ReloadViews();
-            CurrentFilePath = filePath;
+            CurrentProjectFilePath = filePath;
             LoadWindowTitle();
             UpdateButtons();
         }
@@ -119,10 +160,10 @@ namespace MusicTagger2.GUI
         /// </summary>
         private void SaveFile()
         {
-            if (!string.IsNullOrEmpty(CurrentFilePath))
+            if (!string.IsNullOrEmpty(CurrentProjectFilePath))
                 try
                 {
-                    core.SaveProject(CurrentFilePath);
+                    core.SaveProject(CurrentProjectFilePath);
                 }
                 catch (Exception ex)
                 {
@@ -148,7 +189,7 @@ namespace MusicTagger2.GUI
                 {
                     MessageBox.Show(string.Format("Project could not be saved to {0}. Error message: {1}", saveFileDialog.FileName, ex.Message));
                 }
-                CurrentFilePath = saveFileDialog.FileName;
+                CurrentProjectFilePath = saveFileDialog.FileName;
             }
             LoadWindowTitle();
         }
@@ -161,8 +202,8 @@ namespace MusicTagger2.GUI
         private void LoadWindowTitle()
         {
             Title = CurrentVersionSignature;
-            if ((CurrentFilePath != null) && (CurrentFilePath != ""))
-                Title += " - " + Path.GetFileName(CurrentFilePath);
+            if ((CurrentProjectFilePath != null) && (CurrentProjectFilePath != ""))
+                Title += " - " + Path.GetFileName(CurrentProjectFilePath);
         }
 
         /// <summary>
@@ -758,25 +799,9 @@ namespace MusicTagger2.GUI
             if (PlayListView.SelectedItems.Count > 0)
                 JumpTo(GetFirstSelectedPlaylistSong());
         }
-
-        /*private void PlayListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            foreach (Song item in e.RemovedItems)
-                selectedPlaylistSongs.Remove(item);
-            foreach (Song item in e.AddedItems)
-                selectedPlaylistSongs.Add(item);
-        }*/
         #endregion
 
         #region Import list view event handlers...
-        /*private void ImportListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            foreach (Song item in e.RemovedItems)
-                selectedImportSongs.Remove(item);
-            foreach (Song item in e.AddedItems)
-                selectedImportSongs.Add(item);
-        }*/
-
         private void ImportListView_Drop(object sender, DragEventArgs e)
         {
             var files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -798,10 +823,6 @@ namespace MusicTagger2.GUI
             if (ImportListView.SelectedItems.Count > 0)
                 PlayPreview(ImportListView.SelectedItems[0] as Song);
         }
-        #endregion
-
-        #region Tag list view event handlers...
-        
         #endregion
 
         #region Song player event handlers...

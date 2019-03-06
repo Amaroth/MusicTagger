@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Height="600" MinHeight="600" Width="1024" MinWidth="1024">
+        Height="600" MinHeight="600" Width="1024" MinWidth="1024"
+        Closing="Window_Closing">
     <Grid Margin="5, 0, 5, 5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
