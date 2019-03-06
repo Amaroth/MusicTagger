@@ -17,7 +17,7 @@ namespace MusicTagger2.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.6.0";
+        private string CurrentVersionSignature = "Music Tagger 2.6.1";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -82,6 +82,10 @@ namespace MusicTagger2.GUI
             SongPlayer.IsMuted = StartupConfig.SongMute;
             SongVolumeSlider.IsEnabled = !SongPlayer.IsMuted;
             SongMuteUnmuteButton.Content = SongPlayer.IsMuted ? "Unmute" : "Mute";
+
+            Width = StartupConfig.WindowWidth;
+            Height = StartupConfig.WindoHeight;
+            WindowState = StartupConfig.WindowState;
         }
 
         /// <summary>
@@ -96,7 +100,8 @@ namespace MusicTagger2.GUI
                 filterType = Core.Core.FilterType.And;
             else
                 filterType = Core.Core.FilterType.Or;
-            StartupConfig.SaveFile(RandomCheckBox.IsChecked == true, RepeatCheckBox.IsChecked == true, filterType, SongVolumeSlider.Value, SoundsVolumeSlider.Value, SongPlayer.IsMuted, SongPlayer.IsMuted);
+            StartupConfig.SaveFile(RandomCheckBox.IsChecked == true, RepeatCheckBox.IsChecked == true, filterType, SongVolumeSlider.Value, SoundsVolumeSlider.Value,
+                SongPlayer.IsMuted, SongPlayer.IsMuted, Width, Height, WindowState);
         }
         #endregion
 

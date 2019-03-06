@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text;
+using System.Windows;
 using System.Xml;
 
 namespace MusicTagger2.Core
@@ -15,6 +16,9 @@ namespace MusicTagger2.Core
         public double SoundsVolume { get; private set; } = 50;
         public bool SongMute { get; private set; } = false;
         public bool SoundsMute { get; private set; } = false;
+        public double WindowWidth { get; private set; } = 1024;
+        public double WindoHeight { get; private set; } = 600;
+        public WindowState WindowState { get; private set; } = WindowState.Normal;
 
         /// <summary>
         /// Loads all settings from config file. If error occurs, it gets ignored and default value is used instead.
@@ -38,13 +42,17 @@ namespace MusicTagger2.Core
                         case "SoundsVolume": SoundsVolume = double.Parse(node.InnerText); break;
                         case "SongMute": SongMute = bool.Parse(node.InnerText); break;
                         case "SoundsMute": SoundsMute = bool.Parse(node.InnerText); break;
+                        case "WindowWidth": WindowWidth = double.Parse(node.InnerText); break;
+                        case "WindowHeight": WindoHeight = double.Parse(node.InnerText); break;
+                        case "WindowState": WindowState = ParseWindowState(node.InnerText); break;
                     }
                 }
             }
             catch { }
         }
 
-        public void SaveFile(bool playRandom, bool playRepeat, Core.FilterType selectedFilter, double songVolume, double soundsVolume, bool songMute, bool soundsMute)
+        public void SaveFile(bool playRandom, bool playRepeat, Core.FilterType selectedFilter, double songVolume, double soundsVolume,
+            bool songMute, bool soundsMute, double windowWidth, double windowHeight, WindowState windowState)
         {
             try
             {
@@ -62,6 +70,9 @@ namespace MusicTagger2.Core
                 AppendValue(doc, rootElement, "SoundsVolume", soundsVolume.ToString());
                 AppendValue(doc, rootElement, "SongMute", songMute.ToString());
                 AppendValue(doc, rootElement, "SoundsMute", soundsMute.ToString());
+                AppendValue(doc, rootElement, "WindowWidth", windowWidth.ToString());
+                AppendValue(doc, rootElement, "WindowHeight", windowHeight.ToString());
+                AppendValue(doc, rootElement, "WindowState", windowState.ToString());
 
                 using (TextWriter tw = new StreamWriter(configPath, false, Encoding.UTF8))
                     doc.Save(tw);
@@ -84,6 +95,14 @@ namespace MusicTagger2.Core
                 return Core.FilterType.And;
             else
                 return Core.FilterType.Or;
+        }
+
+        private WindowState ParseWindowState(string name)
+        {
+            if (name == WindowState.Maximized.ToString())
+                return WindowState.Maximized;
+            else
+                return WindowState.Normal;
         }
     }
 }
