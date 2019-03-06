@@ -157,6 +157,9 @@ namespace MusicTagger2.GUI
         #endregion
 
         #region Update UI elements functions...
+        /// <summary>
+        /// Updates title of main window with app name, version and current file name.
+        /// </summary>
         private void LoadWindowTitle()
         {
             Title = CurrentVersionSignature;
@@ -164,6 +167,9 @@ namespace MusicTagger2.GUI
                 Title += " - " + Path.GetFileName(CurrentFilePath);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void ReloadViews()
         {
             ImportListView.ItemsSource = core.ImportList;
@@ -297,75 +303,138 @@ namespace MusicTagger2.GUI
         #region Play controls functions...
         private void PlayPreview(Song song)
         {
-            if (song != null)
+            try
             {
-                Stop();
-                CurrentSongUri = new Uri(song.FullPath);
-                SongPlayer.Play();
-                isPreviewPlaying = true;
+                if (song != null)
+                {
+                    Stop();
+                    CurrentSongUri = new Uri(song.FullPath);
+                    SongPlayer.Play();
+                    isPreviewPlaying = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
         private void Play()
         {
-            if (CurrentSongUri == null)
-                CurrentSongUri = core.First();
-            if (CurrentSongUri != null)
+            try
             {
-                SongPlayer.Play();
-                IsSongPlayerPlaying = true;
+                if (CurrentSongUri == null)
+                    CurrentSongUri = core.First();
+                if (CurrentSongUri != null)
+                {
+                    SongPlayer.Play();
+                    IsSongPlayerPlaying = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
         private void Pause()
         {
-            SongPlayer.Pause();
-            IsSongPlayerPlaying = false;
+            try
+            {
+                SongPlayer.Pause();
+                IsSongPlayerPlaying = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void Stop()
         {
-            SongPlayer.Stop();
-            core.SetCurrent(null);
-            CurrentSongUri = null;
-            IsSongPlayerPlaying = false;
-            isPreviewPlaying = false;
+            try
+            {
+                SongPlayer.Stop();
+                core.SetCurrent(null);
+                CurrentSongUri = null;
+                IsSongPlayerPlaying = false;
+                isPreviewPlaying = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void JumpTo(Song song)
         {
-            Uri currentUri = core.SetCurrent(song);
-            if (currentUri != null)
+            try
             {
-                CurrentSongUri = currentUri;
-                Play();
+                Uri currentUri = core.SetCurrent(song);
+                if (currentUri != null)
+                {
+                    CurrentSongUri = currentUri;
+                    Play();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
         private void Next()
         {
-            CurrentSongUri = core.Next();
-            if (CurrentSongUri == null)
-                Stop();
+            try
+            {
+                CurrentSongUri = core.Next();
+                if (CurrentSongUri == null)
+                    Stop();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void Previous()
         {
-            if (IsSongPlayerPlaying)
-                if (SongPlayer.Position.TotalSeconds < 1)
-                    CurrentSongUri = core.Previous();
-                else
-                    SongPlayer.Position = new TimeSpan(0);
+            try
+            {
+                if (IsSongPlayerPlaying)
+                    if (SongPlayer.Position.TotalSeconds < 1)
+                        CurrentSongUri = core.Previous();
+                    else
+                        SongPlayer.Position = new TimeSpan(0);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void Last()
         {
-            CurrentSongUri = core.Last();
+            try
+            {
+                CurrentSongUri = core.Last();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void First()
         {
-            CurrentSongUri = core.First();
+            try
+            {
+                CurrentSongUri = core.First();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         #endregion
 
