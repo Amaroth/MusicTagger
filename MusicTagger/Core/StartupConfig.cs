@@ -3,7 +3,7 @@ using System.Text;
 using System.Windows;
 using System.Xml;
 
-namespace MusicTagger2.Core
+namespace MusicTagger.Core
 {
     class StartupConfig
     {

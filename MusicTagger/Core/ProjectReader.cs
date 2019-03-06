@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml;
 
-namespace MusicTagger2.Core
+namespace MusicTagger.Core
 {
     class ProjectReader
     {

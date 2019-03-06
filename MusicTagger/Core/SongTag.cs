@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace MusicTagger2.Core
+namespace MusicTagger.Core
 {
     class SongTag
     {

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 
-namespace MusicTagger2.Core
+namespace MusicTagger.Core
 {
     /// <summary>
     /// Core handles all main functionalities and logical interaction between data, being controller behind GUI.

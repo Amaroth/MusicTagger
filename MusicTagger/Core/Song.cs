@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace MusicTagger2.Core
+namespace MusicTagger.Core
 {
     class Song
     {

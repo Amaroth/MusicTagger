@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace MusicTagger2.Core
+namespace MusicTagger.Core
 {
     class SongPlayList
     {

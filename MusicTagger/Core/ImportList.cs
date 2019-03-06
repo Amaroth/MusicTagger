@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 
-namespace MusicTagger2.Core
+namespace MusicTagger.Core
 {
     class ImportList
     {

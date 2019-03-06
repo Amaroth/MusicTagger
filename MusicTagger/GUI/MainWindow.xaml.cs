@@ -1,5 +1,5 @@
 ﻿using Microsoft.Win32;
-using MusicTagger2.Core;
+using MusicTagger.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-namespace MusicTagger2.GUI
+namespace MusicTagger.GUI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

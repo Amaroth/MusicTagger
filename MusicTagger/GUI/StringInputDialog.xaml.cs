@@ -3,7 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 
-namespace MusicTagger2.GUI
+namespace MusicTagger.GUI
 {
     /// <summary>
     /// Interaction logic for StringInputDialog.xaml

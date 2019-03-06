@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace MusicTagger2.GUI
+namespace MusicTagger.GUI
 {
     /// <summary>
     /// Interaction logic for Window1.xaml

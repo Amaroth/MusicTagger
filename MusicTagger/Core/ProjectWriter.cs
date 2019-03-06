@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 
-namespace MusicTagger2.Core
+namespace MusicTagger.Core
 {
     class ProjectWriter
     {
