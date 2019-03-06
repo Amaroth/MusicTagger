@@ -107,11 +107,11 @@
                         </ListView.View>
                     </ListView>
                     <StackPanel Orientation="Horizontal" Grid.Row="1">
-                        <Button Grid.Column="0" Name="BuildPlaylistButton" Padding="10,0,10,0" Margin="0,1,1,1" Click="BuildPlaylistButton_Click" Grid.ColumnSpan="2">Build playlist by tags</Button>
-                        <Button Grid.Column="1" Name="RetagSongsButton" Padding="10,0,10,0" Margin="1" Click="RetagSongsButton_Click" Grid.ColumnSpan="2">Retag songs</Button>
-                        <Button Grid.Column="2" Name="RenameSongButton" Padding="10,0,10,0" Margin="1" Click="RenameSongButton_Click" Grid.ColumnSpan="2">Move/rename</Button>
-                        <Button Grid.Column="3" Name="MoveSongsButton" Padding="10,0,10,0" Margin="1" Click="MoveSongsButton_Click" Grid.ColumnSpan="2">Move to dir</Button>
-                        <Button Grid.Column="4" Name="RemoveSongsButton" Padding="10,0,10,0" Margin="1"  Click="RemoveSongsButton_Click" Grid.ColumnSpan="2">Remove</Button>
+                        <Button Grid.Column="0" Name="BuildPlaylistButton" Padding="10,0,10,0" Margin="0,2,1,0" Click="BuildPlaylistButton_Click" Grid.ColumnSpan="2">Build playlist by tags</Button>
+                        <Button Grid.Column="1" Name="RetagSongsButton" Padding="10,0,10,0" Margin="1,2,1,0" Click="RetagSongsButton_Click" Grid.ColumnSpan="2">Retag songs</Button>
+                        <Button Grid.Column="2" Name="RenameSongButton" Padding="10,0,10,0" Margin="1,2,1,0" Click="RenameSongButton_Click" Grid.ColumnSpan="2">Move/rename</Button>
+                        <Button Grid.Column="3" Name="MoveSongsButton" Padding="10,0,10,0" Margin="1,2,1,0" Click="MoveSongsButton_Click" Grid.ColumnSpan="2">Move to dir</Button>
+                        <Button Grid.Column="4" Name="RemoveSongsButton" Padding="10,0,10,0" Margin="1,2,1,0"  Click="RemoveSongsButton_Click" Grid.ColumnSpan="2">Remove</Button>
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -150,9 +150,9 @@
                         </Grid.ColumnDefinitions>
                         <CheckBox Name="OverwriteTagsCheckbox" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,3,0">Overwrite</CheckBox>
                         <CheckBox Name="RemoveFromImportCheckbox" Grid.Column="2" VerticalAlignment="Center" Margin="0,0,3,0" IsChecked="True">Assign+Remove</CheckBox>
-                        <Button Name="ClearImportButton" Grid.Column="3" Margin="1" Padding="10,0,10,0" Click="ClearImportButton_Click">Clear</Button>
-                        <Button Name="RemoveFromImportButton" Grid.Column="4" Margin="1" Padding="10,0,10,0" Click="RemoveFromImportButton_Click">Remove</Button>
-                        <Button Name="AssignButton" Grid.Column="5" Margin="1,1,0,1" Padding="10,0,10,0" Click="AssignButton_Click">Assign</Button>
+                        <Button Name="ClearImportButton" Grid.Column="3" Margin="0,2,1,0" Padding="10,0,10,0" Click="ClearImportButton_Click">Clear</Button>
+                        <Button Name="RemoveFromImportButton" Grid.Column="4" Margin="1,2,1,0" Padding="10,0,10,0" Click="RemoveFromImportButton_Click">Remove</Button>
+                        <Button Name="AssignButton" Grid.Column="5" Margin="1,2,0,0" Padding="10,0,10,0" Click="AssignButton_Click">Assign</Button>
                     </Grid>
                 </Grid>
             </TabItem>
@@ -169,12 +169,12 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" VerticalAlignment="Center">ID</TextBlock>
-                    <TextBox Grid.Row="0" Grid.Column="1" Name="TagIDTextBox" Margin="3,1,0,1" TextAlignment="Left" IsEnabled="False" Text="Auto increment"/>
-                    <TextBlock Grid.Row="1" VerticalAlignment="Center">Name</TextBlock>
-                    <TextBox Grid.Row="1" Grid.Column="1" Name="TagNameTextBox" Margin="3,1,0,1" TextAlignment="Left"/>
-                    <TextBlock Grid.Row="2" VerticalAlignment="Center">Category</TextBlock>
-                    <TextBox Grid.Row="2" Grid.Column="1" Name="TagCategoryTextBox" Margin="3,1,0,1" TextAlignment="Left"/>
+                    <TextBlock Grid.Row="0" Margin="2" VerticalAlignment="Center">ID:</TextBlock>
+                    <TextBox Grid.Row="0" Grid.Column="1" Name="TagIDTextBox" Margin="5,1,0,1" TextAlignment="Left" IsEnabled="False" Text="Auto increment"/>
+                    <TextBlock Grid.Row="1" Margin="2" VerticalAlignment="Center">Name:</TextBlock>
+                    <TextBox Grid.Row="1" Grid.Column="1" Name="TagNameTextBox" Margin="5,1,0,1" TextAlignment="Left"/>
+                    <TextBlock Grid.Row="2" Margin="2" VerticalAlignment="Center">Category:</TextBlock>
+                    <TextBox Grid.Row="2" Grid.Column="1" Name="TagCategoryTextBox" Margin="5,1,0,1" TextAlignment="Left"/>
                     <Grid Grid.Row="3" Grid.ColumnSpan="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -250,7 +250,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <ProgressBar Grid.ColumnSpan="14" Name="SongProgressBar" Margin="2" MouseDown="SongProgressBar_MouseDown"/>
+            <ProgressBar Grid.ColumnSpan="14" Name="SongProgressBar" Margin="1,2,1,2" MouseDown="SongProgressBar_MouseDown"/>
 
             <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Name="NameTextBlock" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
             <TextBlock Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="6" Name="TimeTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center">0:00:00 / 0:00:00</TextBlock>
