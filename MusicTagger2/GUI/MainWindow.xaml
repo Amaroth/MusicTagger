@@ -182,8 +182,8 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Button Grid.Column="0" Margin="1" Name="CreateTagButton" Click="CreateTagButton_Click">Create new</Button>
-                        <Button Grid.Column="1" Margin="1" Name="EditTagButton" Click="EditTagButton_Click">Edit selected</Button>
-                        <Button Grid.Column="2" Margin="1" Name="RemoveTagButton" Click="RemoveTagButton_Click">Remove selected</Button>
+                        <Button Grid.Column="1" Margin="1" Name="UpdateTagButton" Click="UpdateTagButton_Click" IsEnabled="False">Update selected</Button>
+                        <Button Grid.Column="2" Margin="1" Name="RemoveTagButton" Click="RemoveTagButton_Click" IsEnabled="False">Remove selected</Button>
                     </Grid>
                 </Grid>
             </TabItem>

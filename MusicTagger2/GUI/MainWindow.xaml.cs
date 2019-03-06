@@ -250,11 +250,13 @@ namespace MusicTagger2.GUI
         /// <param name="tag">Currently selected tag.</param>
         private void LoadTagAdministrationFields(SongTag tag)
         {
+            UpdateTagButton.IsEnabled = (tag != null);
+            RemoveTagButton.IsEnabled = (tag != null);
             if (tag != null)
             {
                 TagIDTextBox.Text = GetFirstSelectedTag().ID.ToString();
                 TagNameTextBox.Text = GetFirstSelectedTag().Name;
-                TagCategoryTextBox.Text = GetFirstSelectedTag().Category;
+                TagCategoryTextBox.Text = GetFirstSelectedTag().Category; 
             }
             else
             {
@@ -526,18 +528,27 @@ namespace MusicTagger2.GUI
         #endregion
 
         #region Tag management event handlers...
+        /// <summary>
+        /// Creates a new tag with provided name and category.
+        /// </summary>
         private void CreateTagButton_Click(object sender, RoutedEventArgs e)
         {
             core.CreateTag(TagNameTextBox.Text, TagCategoryTextBox.Text);
             UpdateTagListViewColWidths();
         }
 
-        private void EditTagButton_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Updates selected tag with new name and category.
+        /// </summary>
+        private void UpdateTagButton_Click(object sender, RoutedEventArgs e)
         {
             core.UpdateTag(GetFirstSelectedTag(), TagNameTextBox.Text, TagCategoryTextBox.Text);
             UpdateTagListViewColWidths();
         }
 
+        /// <summary>
+        /// Removes selected tag from Project.
+        /// </summary>
         private void RemoveTagButton_Click(object sender, RoutedEventArgs e)
         {
             core.RemoveTag(GetFirstSelectedTag());
