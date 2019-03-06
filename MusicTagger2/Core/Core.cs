@@ -104,6 +104,13 @@ namespace MusicTagger2.Core
 
         public int GetCurrentSongIndex() => CurrentSongPlayList.CurrentSongIndex;
 
+        public string GetCurrentSongTagNames()
+        {
+            if (CurrentSongPlayList.CurrentSong != null)
+                return CurrentSongPlayList.CurrentSong.TagNames;
+            return "";
+        }
+
         public Uri SetCurrent(Song song) => CurrentSongPlayList.SetCurrent(song);
 
         public Uri Previous() => CurrentSongPlayList.Previous();

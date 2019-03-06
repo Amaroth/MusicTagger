@@ -17,7 +17,7 @@ namespace MusicTagger2.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.5.3";
+        private string CurrentVersionSignature = "Music Tagger 2.5.4";
         private string CurrentFilePath = "";
         private Core.Core core = Core.Core.Instance;
 
@@ -228,6 +228,7 @@ namespace MusicTagger2.GUI
             {
                 NameTextBlock.Text = isPreviewPlaying ? "Previewing: " : "";
                 NameTextBlock.Text += Path.GetFileName(CurrentSongUri.ToString());
+                TagsTextBlock.Text = core.GetCurrentSongTagNames();
                 SongProgressBar.Maximum = currentSongLength;
                 SongProgressBar.Value = SongPlayer.Position.TotalMilliseconds;
                 TimeTextBlock.Text = string.Format("{0} / {1}",
@@ -236,6 +237,7 @@ namespace MusicTagger2.GUI
             else
             {
                 NameTextBlock.Text = "";
+                TagsTextBlock.Text = "";
                 SongProgressBar.Value = 0;
                 SongProgressBar.Maximum = 1;
                 TimeTextBlock.Text = "0:00:00 / 0:00:00";
