@@ -17,7 +17,7 @@ namespace MusicTagger2.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.3.5";
+        private string CurrentVersionSignature = "Music Tagger 2.5.0";
         private string CurrentFilePath = "";
         private Core.Core core = Core.Core.Instance;
 
@@ -25,18 +25,30 @@ namespace MusicTagger2.GUI
         private List<Song> selectedImportSongs = new List<Song>();
         private List<Song> selectedPlaylistSongs = new List<Song>();
 
-        private int preFadeVolume = 0;
-        private DispatcherTimer fadeTimer = new DispatcherTimer();
-        private DispatcherTimer playSongTimer = new DispatcherTimer();
+        private double currentSongLength;
+        private DispatcherTimer infoTimer = new DispatcherTimer();
+
+        private bool isPreviewPlaying = false;
+        private bool _isSongPlayerPlaying = false;
+
+        private bool IsSongPlayerPlaying
+        {
+            get => _isSongPlayerPlaying;
+            set
+            {
+                _isSongPlayerPlaying = value;
+                UpdateButtons();
+            }
+        }
 
         public MainWindow()
         {
             InitializeComponent();
             LoadWindowTitle();
-            playSongTimer.Tick += new EventHandler(Timer_Tick);
-            playSongTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
-            playSongTimer.Start();
-            fadeTimer.Tick += new EventHandler(FadeTimer_Tick);
+            infoTimer.Tick += new EventHandler(infoTimer_Tick);
+            infoTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+            infoTimer.Start();
+            UpdateButtons();
         }
 
         #region Menu functions...
@@ -45,7 +57,7 @@ namespace MusicTagger2.GUI
         /// </summary>
         public void NewFile()
         {
-            core.Stop();
+            Stop();
             var saveFileDialog = new SaveFileDialog { Filter = "Project file (*.mtg)|*.mtg" };
             if (saveFileDialog.ShowDialog() == true)
             {
@@ -60,6 +72,7 @@ namespace MusicTagger2.GUI
                 CurrentFilePath = saveFileDialog.FileName;
             }
             LoadWindowTitle();
+            UpdateButtons();
         }
 
         /// <summary>
@@ -78,7 +91,7 @@ namespace MusicTagger2.GUI
         /// <param name="filePath"></param>
         public void OpenFile(string filePath)
         {
-            core.Stop();
+            Stop();
             try
             {
                 core.LoadProject(filePath);
@@ -90,6 +103,7 @@ namespace MusicTagger2.GUI
             ReloadViews();
             CurrentFilePath = filePath;
             LoadWindowTitle();
+            UpdateButtons();
         }
 
         /// <summary>
@@ -154,15 +168,25 @@ namespace MusicTagger2.GUI
             ReloadImportListViewColWidths();
         }
 
+        private void UpdateButtons()
+        {
+            PlayPauseButton.Content = IsSongPlayerPlaying ? "Pause" : "Play";
+            FirstButton.IsEnabled = (SongPlayer.Source != null) && !isPreviewPlaying;
+            PreviousButton.IsEnabled = (SongPlayer.Source != null) && !isPreviewPlaying;
+            NextButton.IsEnabled = (SongPlayer.Source != null) && !isPreviewPlaying;
+            LastButton.IsEnabled = (SongPlayer.Source != null) && !isPreviewPlaying;
+            StopButton.IsEnabled = IsSongPlayerPlaying;
+        }
+
         private void UpdatePlayingSongInfo()
         {
-            Song currentSong = core.GetCurrentSong();
-            if (currentSong != null)
+            if ((SongPlayer.Source != null) && SongPlayer.NaturalDuration.HasTimeSpan)
             {
-                NameTextBlock.Text = currentSong.SongName;
-                SongProgressBar.Maximum = core.GetCurrentLength();
-                SongProgressBar.Value = core.CurrentTime;
-                TimeTextBlock.Text = string.Format("{0} / {1}", Utilities.GetTimeString(core.CurrentTime / 10), Utilities.GetTimeString(core.GetCurrentLength() / 10));
+                NameTextBlock.Text = Path.GetFileName(SongPlayer.Source.ToString());
+                SongProgressBar.Maximum = currentSongLength;
+                SongProgressBar.Value = SongPlayer.Position.TotalMilliseconds;
+                TimeTextBlock.Text = string.Format("{0} / {1}",
+                    Utilities.GetTimeString((int)SongPlayer.Position.TotalSeconds), Utilities.GetTimeString((int)SongPlayer.NaturalDuration.TimeSpan.TotalSeconds));
             }
             else
             {
@@ -257,6 +281,80 @@ namespace MusicTagger2.GUI
         }
         #endregion
 
+        #region Play controls functions...
+        private void PlayPreview(Song song)
+        {
+            if (song != null)
+            {
+                Stop();
+                SongPlayer.Source = new Uri(song.FullPath);
+                SongPlayer.Play();
+                isPreviewPlaying = true;
+            }
+        }
+
+        private void Play()
+        {
+            if (SongPlayer.Source == null)
+                SongPlayer.Source = core.First();
+            if (SongPlayer.Source != null)
+            {
+                SongPlayer.Play();
+                IsSongPlayerPlaying = true;
+            }
+        }
+
+        private void Pause()
+        {
+            SongPlayer.Pause();
+            IsSongPlayerPlaying = false;
+        }
+
+        private void Stop()
+        {
+            SongPlayer.Stop();
+            SongPlayer.Source = null;
+            IsSongPlayerPlaying = false;
+            isPreviewPlaying = false;
+        }
+
+        private void JumpTo(Song song)
+        {
+            Uri currentUri = core.SetCurrent(song);
+            if (currentUri != null)
+            {
+                SongPlayer.Source = currentUri;
+                Play();
+            }
+        }
+
+        private void Next()
+        {
+            SongPlayer.Source = core.Next();
+            if (SongPlayer.Source == null)
+                Stop();
+        }
+
+        private void Previous()
+        {
+            if (IsSongPlayerPlaying)
+                if (SongPlayer.Position.TotalSeconds < 1)
+                    SongPlayer.Source = core.Previous();
+                else
+                    SongPlayer.Position = new TimeSpan(0);
+        }
+
+        private void Last()
+        {
+            SongPlayer.Source = core.Last();
+        }
+
+        private void First()
+        {
+            SongPlayer.Source = core.First();
+        }
+        #endregion
+
         #region Menu event handlers...
         private void NewMenuItem_Click(object sender, RoutedEventArgs e) => NewFile();
 
@@ -270,42 +368,33 @@ namespace MusicTagger2.GUI
         #region Play panel event handlers...
         private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!core.IsSongPlayListPlaying())
-                core.Play();
+            if (IsSongPlayerPlaying)
+                Pause();
             else
-                core.Pause();
+                Play();
         }
 
-        private void PreviousButton_Click(object sender, RoutedEventArgs e) => core.Previous();
+        private void PreviousButton_Click(object sender, RoutedEventArgs e) => Previous();
 
-        private void NextButton_Click(object sender, RoutedEventArgs e) => core.Next();
+        private void NextButton_Click(object sender, RoutedEventArgs e) => Next();
 
-        private void FirstButton_Click(object sender, RoutedEventArgs e) => core.First();
+        private void FirstButton_Click(object sender, RoutedEventArgs e) => First();
 
-        private void LastButton_Click(object sender, RoutedEventArgs e) => core.Last();
+        private void LastButton_Click(object sender, RoutedEventArgs e) => Last();
 
-        private void StopButton_Click(object sender, RoutedEventArgs e) => core.Stop();
+        private void StopButton_Click(object sender, RoutedEventArgs e) => Stop();
 
-        private void MuteUnmuteButton_Click(object sender, RoutedEventArgs e)
+        private void SongMuteUnmuteButton_Click(object sender, RoutedEventArgs e)
         {
-            core.Muted = !core.Muted;
-            SongVolumeSlider.IsEnabled = !core.Muted;
-            MuteUnmuteButton.Content = core.Muted ? "Unmute" : "Mute";
+            SongPlayer.IsMuted = !SongPlayer.IsMuted;
+            SongVolumeSlider.IsEnabled = !SongPlayer.IsMuted;
+            SongMuteUnmuteButton.Content = SongPlayer.IsMuted ? "Unmute" : "Mute";
         }
 
-        private void FadeButton_Click(object sender, RoutedEventArgs e)
+        private void SongVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            FadeButton.IsEnabled = false;
-            preFadeVolume = core.Volume;
-            if (preFadeVolume <= 3)
-                fadeTimer.Interval = new TimeSpan(0, 0, 0, 1);
-            else
-                fadeTimer.Interval = new TimeSpan(0, 0, 0, 0, 3000 / preFadeVolume);
-            SongVolumeSlider.IsEnabled = false;
-            fadeTimer.Start();
+            SongPlayer.Volume = SongVolumeSlider.Value / 100;
         }
-
-        private void SongVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => core.Volume = (int)SongVolumeSlider.Value;
 
         private void SongProgressBar_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -313,7 +402,7 @@ namespace MusicTagger2.GUI
             SongProgressBar.Value = e.GetPosition(SongProgressBar).X / SongProgressBar.ActualWidth * SongProgressBar.Maximum;
             if (SongProgressBar.Value == SongProgressBar.Maximum)
                 SongProgressBar.Value--;
-            core.CurrentTime = (int)SongProgressBar.Value;
+            SongPlayer.Position = new TimeSpan(0, 0, 0, 0, (int)SongProgressBar.Value);
         }
 
         private void RandomCheckBox_Checked(object sender, RoutedEventArgs e) => core.Random = (bool)RandomCheckBox.IsChecked;
@@ -513,7 +602,7 @@ namespace MusicTagger2.GUI
         private void PlayListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (PlayListView.SelectedItems.Count > 0)
-                core.PlaySong(PlayListView.SelectedItems[0] as Song);
+                JumpTo(GetFirstSelectedPlaylistSong());
         }
 
         private void PlayListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -553,7 +642,7 @@ namespace MusicTagger2.GUI
         private void ImportListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (ImportListView.SelectedItems.Count > 0)
-                core.PlayPreview(ImportListView.SelectedItems[0] as Song);
+                PlayPreview(ImportListView.SelectedItems[0] as Song);
         }
         #endregion
 
@@ -570,27 +659,31 @@ namespace MusicTagger2.GUI
         #endregion
 
         #region Timer event handlers...
-        private void FadeTimer_Tick(object sender, EventArgs e)
+        private void infoTimer_Tick(object sender, EventArgs e)
         {
-            if (preFadeVolume > 0)
-                core.Volume = --preFadeVolume;
-            else
-            {
-                core.Stop();
-                SongVolumeSlider.IsEnabled = true;
-                FadeButton.IsEnabled = true;
-                core.Volume = (int)SongVolumeSlider.Value;
-                fadeTimer.Stop();
-            }
-        }
-
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            core.CheckIsTimeForNext();
             UpdatePlayingSongInfo();
             MarkPlaying();
-            PlayPauseButton.Content = core.IsSongPlayListPlaying() ? "Pause" : "Play";
         }
-        #endregion   
+        #endregion
+
+        private void SongPlayer_MediaOpened(object sender, RoutedEventArgs e)
+        {
+            IsSongPlayerPlaying = true;
+            currentSongLength = IsSongPlayerPlaying ? SongPlayer.NaturalDuration.TimeSpan.TotalMilliseconds : 0;
+        }
+
+        private void SongPlayer_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            IsSongPlayerPlaying = false;
+            SongPlayer.Source = null;
+            if (!isPreviewPlaying)
+                Next();
+        }
+
+        private void SongPlayer_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+            IsSongPlayerPlaying = false;
+            isPreviewPlaying = false;
+        }
     }
 }

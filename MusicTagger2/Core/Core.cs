@@ -88,24 +88,6 @@ namespace MusicTagger2.Core
         #endregion
 
         #region PlayList delegation...
-        public bool Muted
-        {
-            get => CurrentSongPlayList.Muted;
-            set => CurrentSongPlayList.Muted = value;
-        }
-
-        public int Volume
-        {
-            get => CurrentSongPlayList.Volume;
-            set => CurrentSongPlayList.Volume = value;
-        }
-
-        public int CurrentTime
-        {
-            get => CurrentSongPlayList.CurrentPosition;
-            set => CurrentSongPlayList.CurrentPosition = value;
-        }
-
         public bool Random
         {
             get => CurrentSongPlayList.Random;
@@ -120,33 +102,17 @@ namespace MusicTagger2.Core
 
         public void GenerateFilteredPlayList(List<SongTag> filterTags, FilterType filterType) => CurrentSongPlayList.GenerateFilteredPlayList(filterTags, filterType);
 
-        public Song GetCurrentSong() => CurrentSongPlayList.GetCurrentSong();
-
-        public int GetCurrentLength() => CurrentSongPlayList.CurrentLength;
-
         public int GetCurrentSongIndex() => CurrentSongPlayList.CurrentSongIndex;
 
-        public bool IsSongPlayListPlaying() => CurrentSongPlayList.IsReallyPlaying;
+        public Uri SetCurrent(Song song) => CurrentSongPlayList.SetCurrent(song);
 
-        public void PlaySong(Song song) => CurrentSongPlayList.PlaySong(song);
+        public Uri Previous() => CurrentSongPlayList.Previous();
 
-        public void PlayPreview(Song song) => CurrentSongPlayList.PlayPreview(song);
+        public Uri Next() => CurrentSongPlayList.Next();
 
-        public void CheckIsTimeForNext() => CurrentSongPlayList.CheckIsTimeForNext();
+        public Uri First() => CurrentSongPlayList.First();
 
-        public void Play() => CurrentSongPlayList.Play();
-
-        public void Pause() => CurrentSongPlayList.Pause();
-
-        public void Stop() => CurrentSongPlayList.Stop();
-
-        public void Previous() => CurrentSongPlayList.Previous();
-
-        public void Next() => CurrentSongPlayList.Next();
-
-        public void First() => CurrentSongPlayList.First();
-
-        public void Last() => CurrentSongPlayList.Last();
+        public Uri Last() => CurrentSongPlayList.Last();
         #endregion
 
         #region Song's file changes...
@@ -210,12 +176,7 @@ namespace MusicTagger2.Core
 
         public void ClearImport() => CurrentImportList.ClearImport();
 
-        public void RemoveFromImport(List<Song> forRemoval)
-        {
-            CurrentImportList.RemoveFromImport(forRemoval);
-            if (forRemoval.Contains(CurrentSongPlayList.CurrentPreviewSong))
-                CurrentSongPlayList.Stop();
-        }
+        public void RemoveFromImport(List<Song> forRemoval) => CurrentImportList.RemoveFromImport(forRemoval);
         #endregion
 
 

@@ -1,34 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 
 namespace MusicTagger2.Core
 {
     class SongPlayList
     {
-        
-        public Song CurrentPreviewSong { get; private set; }
-        public Song GetCurrentSong() => CurrentPreviewSong ?? CurrentNormalSong;
-        public ObservableCollection<Song> CurrentPlayList { get; private set; } = new ObservableCollection<Song>();
+        public ObservableCollection<Song> CurrentPlayList = new ObservableCollection<Song>();
         public List<int> randomIndexList { get; private set; } = new List<int>();
+        public bool Random;
+        public bool Repeat;
 
-        public bool Random = true;
-        public bool Repeat = true;
-        public int CurrentLength => (int)(mp.Duration * 10);
-        public bool IsReallyPlaying => mp.PlayState == MediaPlayer.MPPlayStateConstants.mpPlaying;
         public int CurrentSongIndex { get; private set; } = -1;
-
         private int currentSongRandomIndex = -1;
-        private bool supposedToBePlaying;
-        private MediaPlayer.MediaPlayer mp = new MediaPlayer.MediaPlayer() { Volume = -2000 };
-        private bool IsCurrentFirst => Random ? (currentSongRandomIndex == 0) : (CurrentSongIndex == 0);
-        private bool IsCurrentLast => Random ? currentSongRandomIndex == (randomIndexList.Count - 1) : (CurrentSongIndex == CurrentPlayList.Count - 1);
-
-        private Song _currentNormalSong;
-        public Song CurrentNormalSong
+        private Song _currentSong;
+        public Song CurrentSong
         {
-            get => _currentNormalSong;
+            get => _currentSong;
             private set
             {
                 if (value != null)
@@ -41,38 +29,84 @@ namespace MusicTagger2.Core
                     CurrentSongIndex = -1;
                     currentSongRandomIndex = -1;
                 }
-                _currentNormalSong = value;
+                _currentSong = value;
             }
         }
+        private bool IsCurrentFirst => Random ? (currentSongRandomIndex == 0) : (CurrentSongIndex == 0);
+        private bool IsCurrentLast => Random ? currentSongRandomIndex == (randomIndexList.Count - 1) : (CurrentSongIndex == CurrentPlayList.Count - 1);
 
-        public int Volume
+        public Uri Next()
         {
-            get => (mp.Volume == -10000) ? 0 : (mp.Volume / 40 + 100);
-            set => mp.Volume = (value > 0) ? ((value - 100) * 40) : -10000;
-        }
-
-        public bool Muted
-        {
-            get => mp.Mute;
-            set => mp.Mute = value;
-        }
-
-        public int CurrentPosition
-        {
-            get
+            Song result = null;
+            if ((CurrentSong != null) && (CurrentPlayList.Count > 0))
             {
-                if ((int)(mp.CurrentPosition * 10) < (int)(mp.Duration * 10))
-                    return (int)(mp.CurrentPosition * 10);
+                if (IsCurrentLast)
+                {
+                    if (Repeat)
+                        return First();
+                }
                 else
-                    return CurrentLength;
+                    result = Random ? CurrentPlayList[randomIndexList[currentSongRandomIndex + 1]] : CurrentPlayList[CurrentSongIndex + 1];
             }
-            set => mp.CurrentPosition = value / 10;
+
+            CurrentSong = result;
+            if (result == null)
+                return null;
+            return new Uri(CurrentSong.FullPath);
+        }
+
+        public Uri Previous()
+        {
+            Song result = null;
+
+            if ((CurrentSong != null) && (CurrentPlayList.Count > 0))
+            {
+                if (IsCurrentFirst)
+                    return Last();
+                else
+                    result = Random ? CurrentPlayList[randomIndexList[currentSongRandomIndex - 1]] : CurrentPlayList[CurrentSongIndex - 1];
+            }
+
+            CurrentSong = result;
+            if (result == null)
+                return null;
+            return new Uri(CurrentSong.FullPath);
+        }
+
+        public Uri First()
+        {
+            Song result = null;
+            if (CurrentPlayList.Count > 0)
+                result = Random ? CurrentPlayList[randomIndexList[0]] : CurrentPlayList[0];
+
+            CurrentSong = result;
+            if (result == null)
+                return null;
+            return new Uri(CurrentSong.FullPath);
+        }
+
+        public Uri Last()
+        {
+            Song result = null;
+            if (CurrentPlayList.Count > 0)
+                result = Random ? CurrentPlayList[randomIndexList[randomIndexList.Count - 1]] : CurrentPlayList[CurrentPlayList.Count - 1];
+
+            CurrentSong = result;
+            if (result == null)
+                return null;
+            return new Uri(CurrentSong.FullPath);
+        }
+
+        public Uri SetCurrent(Song song)
+        {
+            CurrentSong = song;
+            if (CurrentSong == null)
+                return null;
+            return new Uri(CurrentSong.FullPath);
         }
 
         public void RemoveSong(Song song)
         {
-            if ((song == CurrentNormalSong) || (song == CurrentPreviewSong))
-                Stop();
             randomIndexList.Remove(CurrentPlayList.IndexOf(song));
             CurrentPlayList.Remove(song);
         }
@@ -81,7 +115,6 @@ namespace MusicTagger2.Core
         {
             try
             {
-                Stop();
                 if (filterTags.Count == 0)
                     CurrentPlayList = new ObservableCollection<Song>(Core.Instance.Songs);
                 else
@@ -129,7 +162,7 @@ namespace MusicTagger2.Core
                         if (song.tags.Contains(tag))
                             finds[finds.Count - 1] = true;
                 }
-                
+
                 var matches = true;
                 foreach (var result in finds)
                 {
@@ -185,182 +218,6 @@ namespace MusicTagger2.Core
                 int rnd = random.Next(0, tmpList.Count);
                 randomIndexList.Add(tmpList[rnd]);
                 tmpList.RemoveAt(rnd);
-            }
-        }
-
-
-
-
-
-
-        private void SetCurrentSong(Song song)
-        {
-            CurrentNormalSong = song;
-
-            if (song != null)
-            {
-                if (File.Exists(song.FullPath))
-                {
-                    mp.FileName = song.FullPath;
-                    mp.Pause();
-                    
-                }
-                else
-                    Next();
-            }
-        }
-
-        public void Play()
-        {
-            supposedToBePlaying = true;
-            if ((CurrentNormalSong == null) && (CurrentPlayList.Count > 0))
-                if (Random && (CurrentPlayList.Count > 0))
-                    SetCurrentSong(CurrentPlayList[randomIndexList[0]]);
-                else
-                    SetCurrentSong(CurrentPlayList[0]);
-            if ((CurrentNormalSong != null) || (CurrentPreviewSong != null))
-                mp.Play();
-            else
-                supposedToBePlaying = false;
-        }
-
-
-        public void Pause()
-        {
-            supposedToBePlaying = false;
-            mp.Pause();
-        }
-
-        public void PlaySong(Song song)
-        {
-            SetCurrentSong(song);
-            Play();
-        }
-
-        public void Next()
-        {
-            if ((CurrentNormalSong != null) && (CurrentPlayList.Count > 0) && (CurrentPreviewSong == null))
-            {
-                mp.Stop();
-
-                if (IsCurrentLast)
-                {
-                    if (Repeat)
-                        First();
-                    else
-                        Stop();
-                }
-                else
-                {
-                    if (Random)
-                        SetCurrentSong(CurrentPlayList[randomIndexList[currentSongRandomIndex + 1]]);
-                    else
-                        SetCurrentSong(CurrentPlayList[CurrentSongIndex + 1]);
-                }
-            }
-            if (CurrentPreviewSong != null)
-                Stop();
-        }
-
-        public void Previous()
-        {
-            if ((CurrentNormalSong != null) && (CurrentPlayList.Count > 0) && (CurrentPreviewSong == null))
-            {
-                if (mp.CurrentPosition < 1)
-                {
-                    mp.Stop();
-
-                    if (IsCurrentFirst)
-                        Last();
-                    else
-                    {
-                        if (Random)
-                            SetCurrentSong(CurrentPlayList[randomIndexList[currentSongRandomIndex - 1]]);
-                        else
-                            SetCurrentSong(CurrentPlayList[CurrentSongIndex - 1]);
-                    }
-                }
-                else
-                    CurrentPosition = 0;
-            }
-            if (CurrentPreviewSong != null)
-                CurrentPosition = 0;
-        }
-
-        public void First()
-        {
-            if ((CurrentPlayList.Count > 0) && (CurrentPreviewSong == null))
-            {
-                if (Random)
-                    SetCurrentSong(CurrentPlayList[randomIndexList[0]]);
-                else
-                    SetCurrentSong(CurrentPlayList[0]);
-            }
-            if (CurrentPreviewSong != null)
-                CurrentPosition = 0;
-        }
-
-        public void Last()
-        {
-            if ((CurrentPlayList.Count) > 0 && (CurrentPreviewSong == null))
-            {
-                if (Random)
-                    SetCurrentSong(CurrentPlayList[randomIndexList[randomIndexList.Count - 1]]);
-                else
-                    SetCurrentSong(CurrentPlayList[CurrentPlayList.Count - 1]);
-            }
-            if (CurrentPreviewSong != null)
-                Stop();
-        }
-
-        public void Stop()
-        {
-            if (CurrentNormalSong != null)
-            {
-                supposedToBePlaying = false;
-                mp.Stop();
-                SetCurrentSong(null);
-            }
-            if (CurrentPreviewSong != null)
-            {
-                supposedToBePlaying = false;
-                mp.Stop();
-                CurrentPreviewSong = null;
-            }
-        }
-
-
-        
-
-       
-        
-
-
-        public void CheckIsTimeForNext()
-        {
-            if (mp.PlayState == MediaPlayer.MPPlayStateConstants.mpStopped)
-            {
-                if (supposedToBePlaying)
-                    Next();
-                else
-                    CurrentPreviewSong = null;
-            }
-        }
-
-        
-
-        
-
-
-        public void PlayPreview(Song song)
-        {
-            if (File.Exists(song.FullPath))
-            {
-                supposedToBePlaying = false;
-                CurrentPreviewSong = song;
-                mp.Stop();
-                mp.FileName = song.FullPath;
-                mp.Play();
             }
         }
     }
