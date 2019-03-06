@@ -198,6 +198,9 @@ namespace MusicTagger2.GUI
             StopButton.IsEnabled = IsSongPlayerPlaying;
         }
 
+        /// <summary>
+        /// Fires 10 times per second and ensures progress bar and play panel texts are being updated.
+        /// </summary>
         private void infoTimer_Tick(object sender, EventArgs e) => UpdatePlayingSongInfo();
 
         /// <summary>
@@ -302,6 +305,9 @@ namespace MusicTagger2.GUI
         #endregion
 
         #region Get first selected functions...
+        /// <summary>
+        /// Gets the first tag from all tags which is currently selected.
+        /// </summary>
         private SongTag GetFirstSelectedTag()
         {
             if (selectedTags.Count < 1)
@@ -312,6 +318,9 @@ namespace MusicTagger2.GUI
             return null;
         }
 
+        /// <summary>
+        /// Gets the first song in playlist from all songs which is currently selected.
+        /// </summary>
         private Song GetFirstSelectedPlaylistSong()
         {
             if (selectedPlaylistSongs.Count < 1)
