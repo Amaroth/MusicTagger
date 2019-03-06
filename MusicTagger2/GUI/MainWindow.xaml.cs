@@ -17,13 +17,9 @@ namespace MusicTagger2.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.5.1";
+        private string CurrentVersionSignature = "Music Tagger 2.5.2";
         private string CurrentFilePath = "";
         private Core.Core core = Core.Core.Instance;
-
-        private List<SongTag> selectedTags = new List<SongTag>();
-        private List<Song> selectedImportSongs = new List<Song>();
-        private List<Song> selectedPlaylistSongs = new List<Song>();
 
         private double currentSongLength;
         private DispatcherTimer infoTimer = new DispatcherTimer();
@@ -58,6 +54,7 @@ namespace MusicTagger2.GUI
             infoTimer.Tick += new EventHandler(infoTimer_Tick);
             infoTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             infoTimer.Start();
+            ReloadViews();
             UpdateButtons();
         }
 
@@ -174,6 +171,7 @@ namespace MusicTagger2.GUI
         {
             ImportListView.ItemsSource = core.ImportList;
             TagListView.ItemsSource = core.SongTags;
+            PlayListView.ItemsSource = core.CurrentPlayList;
             var playView = (CollectionView)CollectionViewSource.GetDefaultView(TagListView.ItemsSource);
             var groupDescription = new PropertyGroupDescription("Category");
             playView.GroupDescriptions.Clear();
@@ -196,6 +194,24 @@ namespace MusicTagger2.GUI
             NextButton.IsEnabled = (CurrentSongUri != null) && !isPreviewPlaying;
             LastButton.IsEnabled = (CurrentSongUri != null) && !isPreviewPlaying;
             StopButton.IsEnabled = IsSongPlayerPlaying;
+        }
+
+        /// <summary>
+        /// If song from playlist is playing or being paused, mark it with red in playlist.
+        /// </summary>
+        private void MarkPlaying()
+        {
+            if (PlayListView.Items.Count > 0)
+            {
+                for (var i = 0; i < PlayListView.Items.Count; i++)
+                {
+                    if (((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.CurrentPlayList[i])) != null)
+                        ((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.CurrentPlayList[i])).Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF042271"));
+                }
+                if (core.GetCurrentSongIndex() > -1 && core.GetCurrentSongIndex() < PlayListView.Items.Count)
+                    if (((ListViewItem)(PlayListView.ItemContainerGenerator.ContainerFromIndex(core.GetCurrentSongIndex()))) != null)
+                        ((ListViewItem)(PlayListView.ItemContainerGenerator.ContainerFromIndex(core.GetCurrentSongIndex()))).Foreground = new SolidColorBrush(Colors.Red);
+            }
         }
 
         /// <summary>
@@ -226,23 +242,7 @@ namespace MusicTagger2.GUI
             }
         }
 
-        /// <summary>
-        /// If song from playlist is playing or being paused, mark it with red in playlist.
-        /// </summary>
-        private void MarkPlaying()
-        {
-            if (PlayListView.Items.Count > 0)
-            {
-                for (var i = 0; i < PlayListView.Items.Count; i++)
-                {
-                    if (((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.CurrentPlayList[i])) != null)
-                        ((ListViewItem)PlayListView.ItemContainerGenerator.ContainerFromItem(core.CurrentPlayList[i])).Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FF042271"));
-                }
-                if (core.GetCurrentSongIndex() > -1 && core.GetCurrentSongIndex() < PlayListView.Items.Count)
-                    if (((ListViewItem)(PlayListView.ItemContainerGenerator.ContainerFromIndex(core.GetCurrentSongIndex()))) != null)
-                        ((ListViewItem)(PlayListView.ItemContainerGenerator.ContainerFromIndex(core.GetCurrentSongIndex()))).Foreground = new SolidColorBrush(Colors.Red);
-            }
-        }
+        private void TagListView_SelectionChanged(object sender, SelectionChangedEventArgs e) => LoadTagAdministrationFields(GetFirstSelectedTag());
 
         /// <summary>
         /// Updates fields in tag administration form depending on tag currently selected.
@@ -312,11 +312,11 @@ namespace MusicTagger2.GUI
         /// </summary>
         private SongTag GetFirstSelectedTag()
         {
-            if (selectedTags.Count < 1)
+            if (TagListView.SelectedItems.Count < 1)
                 return null;
-            foreach (var t in core.SongTags)
-                if (selectedTags.Contains(t))
-                    return t;
+            foreach (var t in TagListView.Items)
+                if (TagListView.SelectedItems.Contains(t))
+                    return t as SongTag;
             return null;
         }
 
@@ -325,11 +325,11 @@ namespace MusicTagger2.GUI
         /// </summary>
         private Song GetFirstSelectedPlaylistSong()
         {
-            if (selectedPlaylistSongs.Count < 1)
+            if (PlayListView.SelectedItems.Count < 1)
                 return null;
-            foreach (var s in core.CurrentPlayList)
-                if (selectedPlaylistSongs.Contains(s))
-                    return s;
+            foreach (var s in PlayListView.Items)
+                if (PlayListView.SelectedItems.Contains(s))
+                    return s as Song;
             return null;
         }
         #endregion
@@ -572,7 +572,10 @@ namespace MusicTagger2.GUI
                 else
                     filter = Core.Core.FilterType.Or;
 
-                core.GenerateFilteredPlayList(selectedTags, filter);
+                var selected = new List<SongTag>();
+                foreach (var t in TagListView.SelectedItems)
+                    selected.Add(t as SongTag);
+                core.GenerateFilteredPlayList(selected, filter);
             }
             catch (Exception ex)
             {
@@ -590,7 +593,10 @@ namespace MusicTagger2.GUI
         {
             try
             {
-                core.AddIntoImport(selectedPlaylistSongs);
+                var selected = new List<string>();
+                foreach (Song s in PlayListView.SelectedItems)
+                    selected.Add(s.FullPath);
+                core.AddIntoImport(selected);
             }
             catch (Exception ex)
             {
@@ -604,7 +610,7 @@ namespace MusicTagger2.GUI
         /// </summary>
         private void RenameSongButton_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedPlaylistSongs.Count > 0)
+            if (PlayListView.SelectedItems.Count > 0)
             {
                 Song selectedSong = GetFirstSelectedPlaylistSong();
                 using (var inputDialog = new StringInputDialog("Change name and/or path of the first selected song:", selectedSong.FullPath))
@@ -627,14 +633,17 @@ namespace MusicTagger2.GUI
         /// </summary>
         private void MoveSongsButton_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedPlaylistSongs.Count > 0)
+            if (PlayListView.SelectedItems.Count > 0)
             {
                 using (var inputDialog = new StringInputDialog("Choose new path of selected songs:", Path.GetDirectoryName(GetFirstSelectedPlaylistSong().FullPath)))
                     if (inputDialog.ShowDialog() == true)
                     {
                         try
                         {
-                            core.MoveSongsToDir(selectedPlaylistSongs, inputDialog.Answer + "\\");
+                            var selected = new List<Song>();
+                            foreach (Song s in PlayListView.SelectedItems)
+                                selected.Add(s);
+                            core.MoveSongsToDir(selected, inputDialog.Answer + "\\");
                         }
                         catch (Exception ex)
                         {
@@ -697,7 +706,10 @@ namespace MusicTagger2.GUI
         {
             try
             {
-                core.RemoveFromImport(selectedImportSongs);
+                var selected = new List<Song>();
+                foreach (Song s in ImportListView.SelectedItems)
+                    selected.Add(s);
+                core.RemoveFromImport(selected);
             }
             catch (Exception ex)
             {
@@ -712,7 +724,13 @@ namespace MusicTagger2.GUI
         {
             try
             {
-                core.AssignTags(selectedImportSongs, selectedTags, (bool)RemoveFromImportCheckbox.IsChecked, (bool)OverwriteTagsCheckbox.IsChecked);
+                var selectedTags = new List<SongTag>();
+                var selectedSongs = new List<Song>();
+                foreach (SongTag t in TagListView.SelectedItems)
+                    selectedTags.Add(t);
+                foreach (Song s in ImportListView.SelectedItems)
+                    selectedSongs.Add(s);
+                core.AssignTags(selectedSongs, selectedTags, (bool)RemoveFromImportCheckbox.IsChecked, (bool)OverwriteTagsCheckbox.IsChecked);
             }
             catch (Exception ex)
             {
@@ -725,29 +743,32 @@ namespace MusicTagger2.GUI
         #endregion
 
         #region Play list view event handlers...
+        /// <summary>
+        /// Plays selected song in playlist after double clicking it.
+        /// </summary>
         private void PlayListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (PlayListView.SelectedItems.Count > 0)
                 JumpTo(GetFirstSelectedPlaylistSong());
         }
 
-        private void PlayListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        /*private void PlayListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             foreach (Song item in e.RemovedItems)
                 selectedPlaylistSongs.Remove(item);
             foreach (Song item in e.AddedItems)
                 selectedPlaylistSongs.Add(item);
-        }
+        }*/
         #endregion
 
         #region Import list view event handlers...
-        private void ImportListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        /*private void ImportListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             foreach (Song item in e.RemovedItems)
                 selectedImportSongs.Remove(item);
             foreach (Song item in e.AddedItems)
                 selectedImportSongs.Add(item);
-        }
+        }*/
 
         private void ImportListView_Drop(object sender, DragEventArgs e)
         {
@@ -773,15 +794,7 @@ namespace MusicTagger2.GUI
         #endregion
 
         #region Tag list view event handlers...
-        private void TagListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            foreach (SongTag item in e.RemovedItems)
-                selectedTags.Remove(item);
-            foreach (SongTag item in e.AddedItems)
-                selectedTags.Add(item);
-            
-            LoadTagAdministrationFields(GetFirstSelectedTag());
-        }
+        
         #endregion
 
         #region Song player event handlers...

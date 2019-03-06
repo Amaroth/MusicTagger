@@ -91,7 +91,7 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="32"/>
                     </Grid.RowDefinitions>
-                    <ListView Name="PlayListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" MouseDoubleClick="PlayListView_MouseDoubleClick" SelectionChanged="PlayListView_SelectionChanged">
+                    <ListView Name="PlayListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" MouseDoubleClick="PlayListView_MouseDoubleClick">
                         <ListView.Resources>
                             <Style TargetType="{x:Type GridViewColumnHeader}">
                                 <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -122,7 +122,7 @@
                         <RowDefinition Height="32"/>
                     </Grid.RowDefinitions>
 
-                    <ListView Name="ImportListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" SelectionChanged="ImportListView_SelectionChanged" AllowDrop="True" Drop="ImportListView_Drop" MouseDoubleClick="ImportListView_MouseDoubleClick">
+                    <ListView Name="ImportListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" AllowDrop="True" Drop="ImportListView_Drop" MouseDoubleClick="ImportListView_MouseDoubleClick">
                         <ListView.Resources>
                             <Style TargetType="{x:Type GridViewColumnHeader}">
                                 <Setter Property="HorizontalContentAlignment" Value="Left" />
