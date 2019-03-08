@@ -69,6 +69,17 @@ namespace MusicTagger.Core
                 foreach (XmlNode node in xml.GetElementsByTagName("Songs")[0].ChildNodes)
                 {
                     var song = new Song(node.Attributes["FilePath"].Value);
+                    // TO BE CHANGED - search for song on different drives in case project was moved to different PC with different drive letters
+                    var drives = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                    if (!File.Exists(song.FullPath))
+                        foreach (var c in drives)
+                        {
+                            var possiblePath = string.Format("{0}{1}", c, song.FullPath.Substring(1));
+                            if (File.Exists(possiblePath))
+                                    song.FullPath = possiblePath;
+                        }
+
+
                     foreach (XmlNode songTagNode in node.ChildNodes)
                     {
                         foreach (var t in songTags)
