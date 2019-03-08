@@ -17,7 +17,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.6.5";
+        private string CurrentVersionSignature = "Music Tagger 2.6.6";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -632,6 +632,8 @@ namespace MusicTagger.GUI
                 foreach (var t in TagListView.SelectedItems)
                     selected.Add(t as SongTag);
                 core.GenerateFilteredPlayList(selected, filter);
+                if (PreviewSong == null)
+                    Stop();
             }
             catch (Exception ex)
             {
