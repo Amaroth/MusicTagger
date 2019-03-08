@@ -9,18 +9,19 @@ namespace MusicTagger.Core
         // Name of song (file name without extension).
         public string SongName { get; private set; }
         // Name of file song is saved in on drive.
-        public string FileName
+        public string FileName { get; private set; }
+        // Full path to song's file on drive.
+        private string _fullPath;
+        public string FullPath
         {
-            get => FileName;
-            private set
+            get => _fullPath;
+            set
             {
+                _fullPath = value;
                 FileName = Path.GetFileName(FullPath);
                 SongName = FileName.Substring(0, FileName.Length - 4);
-                FileName = value;
             }
         }
-        // Full path to song's file on drive.
-        public string FullPath { get; set; }
         // If song was not tagged yet since it was imported to app, do not save it to saved settings.
         public bool WasTagged { get; private set; }
         // All tags assigned to songs.
