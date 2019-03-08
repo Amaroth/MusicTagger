@@ -7,13 +7,22 @@ namespace MusicTagger.Core
     class Song
     {
         // Name of song (file name without extension).
-        public string SongName { get; set; }
+        public string SongName { get; private set; }
         // Name of file song is saved in on drive.
-        public string FileName { get; set; }
+        public string FileName
+        {
+            get => FileName;
+            private set
+            {
+                FileName = Path.GetFileName(FullPath);
+                SongName = FileName.Substring(0, FileName.Length - 4);
+                FileName = value;
+            }
+        }
         // Full path to song's file on drive.
         public string FullPath { get; set; }
         // If song was not tagged yet since it was imported to app, do not save it to saved settings.
-        public bool WasTagged { get; set; }
+        public bool WasTagged { get; private set; }
         // All tags assigned to songs.
         public HashSet<SongTag> tags = new HashSet<SongTag>();
 
@@ -56,8 +65,7 @@ namespace MusicTagger.Core
         public Song(string filePath)
         {
             FullPath = filePath;
-            UpdateDerived();
-            WasTagged = true;
+            WasTagged = false;
         }
 
         /// <summary>
@@ -71,17 +79,7 @@ namespace MusicTagger.Core
                 Directory.CreateDirectory(Path.GetDirectoryName(destination));
                 File.Move(FullPath, destination);
                 FullPath = destination;
-                UpdateDerived();
             }
-        }
-
-        /// <summary>
-        /// Update attributes derived from song's FullPath.
-        /// </summary>
-        private void UpdateDerived()
-        {
-            FileName = Path.GetFileName(FullPath);
-            SongName = FileName.Substring(0, FileName.Length - 4);
         }
 
         /// <summary>

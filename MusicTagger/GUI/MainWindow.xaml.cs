@@ -61,7 +61,7 @@ namespace MusicTagger.GUI
         private void LoadStartup()
         {
             LoadWindowTitle();
-            infoTimer.Tick += new EventHandler(infoTimer_Tick);
+            infoTimer.Tick += new EventHandler(InfoTimer_Tick);
             infoTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             infoTimer.Start();
             ReloadViews();
@@ -266,7 +266,7 @@ namespace MusicTagger.GUI
         /// <summary>
         /// Fires 10 times per second and ensures progress bar and play panel texts are being updated.
         /// </summary>
-        private void infoTimer_Tick(object sender, EventArgs e) => UpdatePlayingSongInfo();
+        private void InfoTimer_Tick(object sender, EventArgs e) => UpdatePlayingSongInfo();
 
         /// <summary>
         /// Updates progress bar and texts in play panel depending on song being played.
