@@ -21,7 +21,7 @@
 
         <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
             <Menu DockPanel.Dock="Top">
-                <MenuItem Header="_File">
+                <MenuItem Name="FileMenuItem" Header="_File">
                     <MenuItem Name="NewMenuItem" Header="_New Project" Click="NewMenuItem_Click" InputGestureText="Ctrl+N">
                         <MenuItem.InputBindings>
                             <KeyBinding Key="N" Modifiers="Ctrl"/>

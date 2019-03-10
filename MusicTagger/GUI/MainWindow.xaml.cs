@@ -17,12 +17,12 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.6.6";
+        private string CurrentVersionSignature = "Music Tagger 2.7.0";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
-        private StartupConfig StartupConfig = new StartupConfig();
-
+        private StartupConfig startupConfig = new StartupConfig();
+        
         private double currentSongLength;
         private DispatcherTimer infoTimer = new DispatcherTimer();
 
@@ -66,25 +66,43 @@ namespace MusicTagger.GUI
             infoTimer.Start();
             ReloadViews();
             UpdateButtons();
-            StartupConfig.LoadFile();
+            startupConfig.LoadFile();
 
-            RandomCheckBox.IsChecked = StartupConfig.PlayRandom;
-            RepeatCheckBox.IsChecked = StartupConfig.PlayRepeat;
+            RandomCheckBox.IsChecked = startupConfig.PlayRandom;
+            RepeatCheckBox.IsChecked = startupConfig.PlayRepeat;
 
-            StandardFilterRadio.IsChecked = (StartupConfig.SelectedFilter == Core.Core.FilterType.Standard);
-            AndFilterRadio.IsChecked = (StartupConfig.SelectedFilter == Core.Core.FilterType.And);
-            OrFilterRadio.IsChecked = (StartupConfig.SelectedFilter == Core.Core.FilterType.Or);
+            StandardFilterRadio.IsChecked = (startupConfig.SelectedFilter == Core.Core.FilterType.Standard);
+            AndFilterRadio.IsChecked = (startupConfig.SelectedFilter == Core.Core.FilterType.And);
+            OrFilterRadio.IsChecked = (startupConfig.SelectedFilter == Core.Core.FilterType.Or);
 
-            SongVolumeSlider.Value = StartupConfig.SongVolume;
-            SoundsVolumeSlider.Value = StartupConfig.SoundsVolume;
+            SongVolumeSlider.Value = startupConfig.SongVolume;
+            SoundsVolumeSlider.Value = startupConfig.SoundsVolume;
 
-            SongPlayer.IsMuted = StartupConfig.SongMute;
+            SongPlayer.IsMuted = startupConfig.SongMute;
             SongVolumeSlider.IsEnabled = !SongPlayer.IsMuted;
             SongMuteUnmuteButton.Content = SongPlayer.IsMuted ? "Unmute" : "Mute";
 
-            Width = StartupConfig.WindowWidth;
-            Height = StartupConfig.WindoHeight;
-            WindowState = StartupConfig.WindowState;
+            Width = startupConfig.WindowWidth;
+            Height = startupConfig.WindoHeight;
+            WindowState = startupConfig.WindowState;
+
+            if (FileMenuItem.Items.Count == 5)
+                FileMenuItem.Items.RemoveAt(4);
+            var recentMenuItem = new MenuItem()
+            {
+                Header = "Open _Recent",
+                IsEnabled = (startupConfig.RecentProjects.Count > 0)
+            };
+            FileMenuItem.Items.Add(recentMenuItem);
+            if (startupConfig.RecentProjects.Count > 0)
+            {
+                for (var i = startupConfig.RecentProjects.Count - 1; (i > -1) && (i > startupConfig.RecentProjects.Count - 6); i--)
+                {
+                    var newRecent = new MenuItem() { Header = startupConfig.RecentProjects[i] };
+                    newRecent.Click += OpenRecent_Click;
+                    recentMenuItem.Items.Add(newRecent);
+                }
+            }
         }
 
         /// <summary>
@@ -99,7 +117,7 @@ namespace MusicTagger.GUI
                 filterType = Core.Core.FilterType.And;
             else
                 filterType = Core.Core.FilterType.Or;
-            StartupConfig.SaveFile(RandomCheckBox.IsChecked == true, RepeatCheckBox.IsChecked == true, filterType, SongVolumeSlider.Value, SoundsVolumeSlider.Value,
+            startupConfig.SaveFile(RandomCheckBox.IsChecked == true, RepeatCheckBox.IsChecked == true, filterType, SongVolumeSlider.Value, SoundsVolumeSlider.Value,
                 SongPlayer.IsMuted, SongPlayer.IsMuted, Width, Height, WindowState);
 
         }
@@ -122,6 +140,7 @@ namespace MusicTagger.GUI
                 try
                 {
                     core.NewProject(saveFileDialog.FileName);
+                    startupConfig.AddRecentProject(saveFileDialog.FileName);
                 }
                 catch (Exception ex)
                 {
@@ -130,7 +149,7 @@ namespace MusicTagger.GUI
                 CurrentProjectFilePath = saveFileDialog.FileName;
             }
             LoadWindowTitle();
-            UpdateButtons();
+            LoadStartup();
         }
 
         /// <summary>
@@ -153,6 +172,7 @@ namespace MusicTagger.GUI
             try
             {
                 core.LoadProject(filePath);
+                startupConfig.AddRecentProject(filePath);
             }
             catch (Exception ex)
             {
@@ -531,6 +551,8 @@ namespace MusicTagger.GUI
         private void SaveMenuItem_Click(object sender, RoutedEventArgs e) => SaveFile();
 
         private void SaveAsMenuItem_Click(object sender, RoutedEventArgs e) => SaveAsFile();
+
+        private void OpenRecent_Click(object sender, RoutedEventArgs e) => OpenFile((sender as MenuItem).Header.ToString());
         #endregion
 
         #region Play panel event handlers...
