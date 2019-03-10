@@ -62,7 +62,7 @@ namespace MusicTagger.Core
         public void LoadRecentProjectList(XmlNode parentNode)
         {
            foreach (XmlNode node in parentNode.ChildNodes)
-                if (!RecentProjects.Contains(node.InnerText))
+                if (!RecentProjects.Contains(node.InnerText) && File.Exists(node.InnerText))
                     RecentProjects.Add(node.InnerText);
         }
 

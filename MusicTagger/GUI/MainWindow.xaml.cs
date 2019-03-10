@@ -17,7 +17,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.7.0";
+        private string CurrentVersionSignature = "Music Tagger 2.7.1";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -864,7 +864,7 @@ namespace MusicTagger.GUI
         #region Song player event handlers...
         private void SongPlayer_MediaOpened(object sender, RoutedEventArgs e)
         {
-            IsSongPlayerPlaying = true;
+           IsSongPlayerPlaying = true;
             currentSongLength = IsSongPlayerPlaying ? SongPlayer.NaturalDuration.TimeSpan.TotalMilliseconds : 0;
         }
 
