@@ -17,7 +17,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.8.0";
+        private string CurrentVersionSignature = "Music Tagger 2.8.1";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -87,8 +87,8 @@ namespace MusicTagger.GUI
             Height = startupConfig.WindoHeight;
             WindowState = startupConfig.WindowState;
 
-            if (FileMenuItem.Items.Count == 6)
-                FileMenuItem.Items.RemoveAt(5);
+            if (FileMenuItem.Items.Count == 5)
+                FileMenuItem.Items.RemoveAt(4);
             var recentMenuItem = new MenuItem()
             {
                 Header = "Open _Recent",
