@@ -17,7 +17,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.8.2";
+        private string CurrentVersionSignature = "Music Tagger 2.8.3";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -872,14 +872,19 @@ namespace MusicTagger.GUI
         {
             var files = (string[])e.Data.GetData(DataFormats.FileDrop);
             var importList = new List<string>();
+
             foreach (string s in files)
             {
-                if (Directory.Exists(s) && Path.GetDirectoryName(s).StartsWith(Path.GetDirectoryName(CurrentProjectFilePath)))
-                    foreach (var f in Directory.GetFiles(s, "*.*", SearchOption.AllDirectories))
-                        importList.Add(f);
-                else
-                    importList.Add(s);
+                if (Path.GetDirectoryName(s).StartsWith(Path.GetDirectoryName(CurrentProjectFilePath)))
+                {
+                    if (Directory.Exists(s))
+                        foreach (var f in Directory.GetFiles(s, "*.*", SearchOption.AllDirectories))
+                            importList.Add(f);
+                    else if (File.Exists(s))
+                        importList.Add(s);
+                }
             }
+
             core.AddIntoImport(importList);
             UpdateImportListViewColWidths();
         }
