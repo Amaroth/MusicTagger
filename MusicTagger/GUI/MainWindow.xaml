@@ -42,7 +42,6 @@
                             <KeyBinding Key="S" Modifiers="Ctrl+Shift"/>
                         </MenuItem.InputBindings>
                     </MenuItem>
-                    <MenuItem Name="ChangeRootDirMenuItem" Header="_Change Root Dir" Click="ChangeRootDirMenuItem_Click" InputGestureText="Ctrl+Shift+C"/>
                 </MenuItem>
             </Menu>
         </DockPanel>

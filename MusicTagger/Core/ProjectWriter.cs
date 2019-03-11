@@ -17,13 +17,12 @@ namespace MusicTagger.Core
         /// <param name="filePath"></param>
         /// <param name="songs"></param>
         /// <param name="songTags"></param>
-        public void WriteSettings(string filePath, string rootDir, ObservableCollection<Song> songs, ObservableCollection<SongTag> songTags)
+        public void WriteSettings(string filePath, ObservableCollection<Song> songs, ObservableCollection<SongTag> songTags)
         {
             CreateDirectory(filePath);
             CreateHeader();
-            WriteRootDir(rootDir);
             WriteSongTagData(songTags);
-            WriteSongData(songs);
+            WriteSongData(songs, Path.GetDirectoryName(filePath));
             WriteSettingsToFile(filePath);
         }
 
@@ -64,24 +63,6 @@ namespace MusicTagger.Core
         }
 
         /// <summary>
-        /// Saves root dir into Project file.
-        /// </summary>
-        /// <param name="rootDir"></param>
-        private void WriteRootDir(string rootDir)
-        {
-            try
-            {
-                XmlElement RootDirElement = outputDocument.CreateElement(string.Empty, "RootDir", string.Empty);
-                RootDirElement.InnerText = rootDir;
-                rootElement.AppendChild(RootDirElement);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Could write root dir into Project file.", e);
-            }
-        }
-
-        /// <summary>
         /// Adds song tag data into output XML.
         /// </summary>
         /// <param name="songTags"></param>
@@ -110,7 +91,7 @@ namespace MusicTagger.Core
         /// Adds song data into output XML.
         /// </summary>
         /// <param name="songs"></param>
-        private void WriteSongData(ObservableCollection<Song> songs)
+        private void WriteSongData(ObservableCollection<Song> songs, string rootPath)
         {
             try
             {
@@ -121,7 +102,7 @@ namespace MusicTagger.Core
                     if (s.WasTagged)
                     {
                         XmlElement newSong = outputDocument.CreateElement(string.Empty, "Song", string.Empty);
-                        newSong.SetAttribute("FilePath", s.FullPath);
+                        newSong.SetAttribute("FilePath", s.FullPath.Substring(rootPath.Length - 1));
                         songsElement.AppendChild(newSong);
 
                         foreach (var t in s.tags)

@@ -17,7 +17,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.7.2";
+        private string CurrentVersionSignature = "Music Tagger 2.8.0";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -141,7 +141,7 @@ namespace MusicTagger.GUI
                 UpdateElementIsEnabled(false);
                 try
                 {
-                    core.NewProject(saveFileDialog.FileName, "");
+                    core.NewProject(saveFileDialog.FileName);
                     startupConfig.AddRecentProject(saveFileDialog.FileName);
                     UpdateElementIsEnabled(true);
                 }
@@ -225,11 +225,6 @@ namespace MusicTagger.GUI
             }
             LoadWindowTitle();
         }
-
-        private void ChangeRootDir()
-        {
-
-        }
         #endregion
 
         #region Update UI elements functions...
@@ -241,7 +236,6 @@ namespace MusicTagger.GUI
         {
             SaveMenuItem.IsEnabled = isProjectLoaded;
             SaveAsMenuItem.IsEnabled = isProjectLoaded;
-            ChangeRootDirMenuItem.IsEnabled = isProjectLoaded;
             TagListView.IsEnabled = isProjectLoaded;
             ListsTabView.IsEnabled = isProjectLoaded;
             StandardFilterRadio.IsEnabled = isProjectLoaded;
@@ -580,8 +574,6 @@ namespace MusicTagger.GUI
         private void SaveAsMenuItem_Click(object sender, RoutedEventArgs e) => SaveAsFile();
 
         private void OpenRecent_Click(object sender, RoutedEventArgs e) => OpenFile((sender as MenuItem).Header.ToString());
-
-        private void ChangeRootDirMenuItem_Click(object sender, RoutedEventArgs e) => ChangeRootDir();
         #endregion
 
         #region Play panel event handlers...
@@ -873,7 +865,7 @@ namespace MusicTagger.GUI
             var importList = new List<string>();
             foreach (string s in files)
             {
-                if (Directory.Exists(s))
+                if (Directory.Exists(s) && Path.GetDirectoryName(s).StartsWith(Path.GetDirectoryName(CurrentProjectFilePath)))
                     foreach (var f in Directory.GetFiles(s, "*.*", SearchOption.AllDirectories))
                         importList.Add(f);
                 else
