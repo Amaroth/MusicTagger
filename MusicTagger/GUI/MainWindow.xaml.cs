@@ -17,7 +17,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.8.1";
+        private string CurrentVersionSignature = "Music Tagger 2.8.2";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -86,7 +86,14 @@ namespace MusicTagger.GUI
             Width = startupConfig.WindowWidth;
             Height = startupConfig.WindoHeight;
             WindowState = startupConfig.WindowState;
+            UpdateRecentMenu();
+        }
 
+        /// <summary>
+        /// Makes sure Open Recent menu item is enable only if it has at least 1 file in it, and fills it with 5 most recent files.
+        /// </summary>
+        private void UpdateRecentMenu()
+        {
             if (FileMenuItem.Items.Count == 5)
                 FileMenuItem.Items.RemoveAt(4);
             var recentMenuItem = new MenuItem()
@@ -216,6 +223,8 @@ namespace MusicTagger.GUI
                 try
                 {
                     core.SaveProject(saveFileDialog.FileName);
+                    startupConfig.AddRecentProject(saveFileDialog.FileName);
+                    UpdateRecentMenu();
                 }
                 catch (Exception ex)
                 {
