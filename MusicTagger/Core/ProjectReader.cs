@@ -9,8 +9,10 @@ namespace MusicTagger.Core
     {
         private XmlDocument xml;
 
+        public ProjectReader(string filePath) => ReadSettings(filePath);
+
         /// <summary>
-        /// Reads data from provided file.
+        /// Reads data from Project file.
         /// </summary>
         /// <param name="filePath"></param>
         public void ReadSettings(string filePath)
@@ -29,7 +31,23 @@ namespace MusicTagger.Core
         }
 
         /// <summary>
-        /// Provides song tags from its settings file.
+        /// Gets a root directory from its Project file.
+        /// </summary>
+        /// <returns></returns>
+        public string GetRootDir()
+        {
+            try
+            {
+                return "";// xml.GetElementsByTagName("RootDir")[0].InnerText;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Could not retrieve root dir. Provided Project file may be corrupted.", e);
+            }
+        }
+
+        /// <summary>
+        /// Provides song tags from its Project file.
         /// </summary>
         /// <returns></returns>
         public ObservableCollection<SongTag> GetSongTags()
@@ -57,7 +75,7 @@ namespace MusicTagger.Core
         }
 
         /// <summary>
-        /// Provides songs from its settings file.
+        /// Provides songs from its Project file.
         /// </summary>
         /// <param name="songTags"></param>
         /// <returns></returns>
@@ -70,14 +88,14 @@ namespace MusicTagger.Core
                 {
                     var song = new Song(node.Attributes["FilePath"].Value);
                     // TO BE CHANGED - search for song on different drives in case project was moved to different PC with different drive letters
-                    var drives = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                    /*var drives = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
                     if (!File.Exists(song.FullPath))
                         foreach (var c in drives)
                         {
                             var possiblePath = string.Format("{0}{1}", c, song.FullPath.Substring(1));
                             if (File.Exists(possiblePath))
                                     song.FullPath = possiblePath;
-                        }
+                        }*/
 
 
                     foreach (XmlNode songTagNode in node.ChildNodes)

@@ -17,10 +17,11 @@ namespace MusicTagger.Core
         /// <param name="filePath"></param>
         /// <param name="songs"></param>
         /// <param name="songTags"></param>
-        public void WriteSettings(string filePath, ObservableCollection<Song> songs, ObservableCollection<SongTag> songTags)
+        public void WriteSettings(string filePath, string rootDir, ObservableCollection<Song> songs, ObservableCollection<SongTag> songTags)
         {
             CreateDirectory(filePath);
             CreateHeader();
+            WriteRootDir(rootDir);
             WriteSongTagData(songTags);
             WriteSongData(songs);
             WriteSettingsToFile(filePath);
@@ -59,6 +60,24 @@ namespace MusicTagger.Core
             catch (Exception e)
             {
                 throw new Exception("Could not prepare header and/or root of Project file.", e);
+            }
+        }
+
+        /// <summary>
+        /// Saves root dir into Project file.
+        /// </summary>
+        /// <param name="rootDir"></param>
+        private void WriteRootDir(string rootDir)
+        {
+            try
+            {
+                XmlElement RootDirElement = outputDocument.CreateElement(string.Empty, "RootDir", string.Empty);
+                RootDirElement.InnerText = rootDir;
+                rootElement.AppendChild(RootDirElement);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Could write root dir into Project file.", e);
             }
         }
 

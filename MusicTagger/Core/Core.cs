@@ -23,6 +23,16 @@ namespace MusicTagger.Core
 
         public enum FilterType { Standard, And, Or }
 
+        private string _rootDir;
+        public string RootDir
+        {
+            get => _rootDir;
+            set
+            {
+                _rootDir = value;
+            }
+        }
+
         #region Singleton implementation...
         private Core() { }
 
@@ -42,11 +52,12 @@ namespace MusicTagger.Core
         /// Creates a new, blank Project in a given path.
         /// </summary>
         /// <param name="filePath"></param>
-        public void NewProject(string filePath)
+        public void NewProject(string filePath, string rootDir)
         {
             ClearAll();
             var writer = new ProjectWriter();
-            writer.WriteSettings(filePath, Songs, SongTags);
+            RootDir = rootDir;
+            writer.WriteSettings(filePath, RootDir, Songs, SongTags);
         }
 
         /// <summary>
@@ -56,8 +67,8 @@ namespace MusicTagger.Core
         public void LoadProject(string filePath)
         {
             ClearAll();
-            var reader = new ProjectReader();
-            reader.ReadSettings(filePath);
+            var reader = new ProjectReader(filePath);
+            RootDir = reader.GetRootDir();
             SongTags = reader.GetSongTags();
             Songs = reader.GetSongs(SongTags);
         }
@@ -69,7 +80,7 @@ namespace MusicTagger.Core
         public void SaveProject(string filePath)
         {
             var writer = new ProjectWriter();
-            writer.WriteSettings(filePath, Songs, SongTags);
+            writer.WriteSettings(filePath, RootDir, Songs, SongTags);
         }
 
         /// <summary>

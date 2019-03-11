@@ -17,7 +17,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.7.1";
+        private string CurrentVersionSignature = "Music Tagger 2.7.2";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -53,6 +53,7 @@ namespace MusicTagger.GUI
         public MainWindow()
         {
             InitializeComponent();
+            UpdateElementIsEnabled(false);
         }
 
         /// <summary>
@@ -86,8 +87,8 @@ namespace MusicTagger.GUI
             Height = startupConfig.WindoHeight;
             WindowState = startupConfig.WindowState;
 
-            if (FileMenuItem.Items.Count == 5)
-                FileMenuItem.Items.RemoveAt(4);
+            if (FileMenuItem.Items.Count == 6)
+                FileMenuItem.Items.RemoveAt(5);
             var recentMenuItem = new MenuItem()
             {
                 Header = "Open _Recent",
@@ -137,10 +138,12 @@ namespace MusicTagger.GUI
             var saveFileDialog = new SaveFileDialog { Filter = "Project file (*.mtg)|*.mtg" };
             if (saveFileDialog.ShowDialog() == true)
             {
+                UpdateElementIsEnabled(false);
                 try
                 {
-                    core.NewProject(saveFileDialog.FileName);
+                    core.NewProject(saveFileDialog.FileName, "");
                     startupConfig.AddRecentProject(saveFileDialog.FileName);
+                    UpdateElementIsEnabled(true);
                 }
                 catch (Exception ex)
                 {
@@ -169,10 +172,12 @@ namespace MusicTagger.GUI
         public void OpenFile(string filePath)
         {
             Stop();
+            UpdateElementIsEnabled(false);
             try
             {
                 core.LoadProject(filePath);
                 startupConfig.AddRecentProject(filePath);
+                UpdateElementIsEnabled(true);
             }
             catch (Exception ex)
             {
@@ -220,9 +225,31 @@ namespace MusicTagger.GUI
             }
             LoadWindowTitle();
         }
+
+        private void ChangeRootDir()
+        {
+
+        }
         #endregion
 
         #region Update UI elements functions...
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="isProjectLoaded"></param>
+        private void UpdateElementIsEnabled(bool isProjectLoaded)
+        {
+            SaveMenuItem.IsEnabled = isProjectLoaded;
+            SaveAsMenuItem.IsEnabled = isProjectLoaded;
+            ChangeRootDirMenuItem.IsEnabled = isProjectLoaded;
+            TagListView.IsEnabled = isProjectLoaded;
+            ListsTabView.IsEnabled = isProjectLoaded;
+            StandardFilterRadio.IsEnabled = isProjectLoaded;
+            AndFilterRadio.IsEnabled = isProjectLoaded;
+            OrFilterRadio.IsEnabled = isProjectLoaded;
+            PlayPanelGrid.IsEnabled = isProjectLoaded;
+        }
+
         /// <summary>
         /// Updates title of main window with app name, version and current file name.
         /// </summary>
@@ -553,6 +580,8 @@ namespace MusicTagger.GUI
         private void SaveAsMenuItem_Click(object sender, RoutedEventArgs e) => SaveAsFile();
 
         private void OpenRecent_Click(object sender, RoutedEventArgs e) => OpenFile((sender as MenuItem).Header.ToString());
+
+        private void ChangeRootDirMenuItem_Click(object sender, RoutedEventArgs e) => ChangeRootDir();
         #endregion
 
         #region Play panel event handlers...
@@ -864,7 +893,7 @@ namespace MusicTagger.GUI
         #region Song player event handlers...
         private void SongPlayer_MediaOpened(object sender, RoutedEventArgs e)
         {
-           IsSongPlayerPlaying = true;
+            IsSongPlayerPlaying = true;
             currentSongLength = IsSongPlayerPlaying ? SongPlayer.NaturalDuration.TimeSpan.TotalMilliseconds : 0;
         }
 
