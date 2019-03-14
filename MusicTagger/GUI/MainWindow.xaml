@@ -138,7 +138,7 @@
                             <GridView>
                                 <GridView.Columns>
                                     <GridViewColumn DisplayMemberBinding="{Binding SongName}" Header="Name" />
-                                    <GridViewColumn DisplayMemberBinding="{Binding FullPath}" Header="SubPath" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding FullPath}" Header="File path" />
                                     <GridViewColumn DisplayMemberBinding="{Binding TagIds}" Header="Tag IDs" />
                                 </GridView.Columns>
                             </GridView>
