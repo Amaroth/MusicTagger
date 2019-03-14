@@ -17,7 +17,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.8.4";
+        private string CurrentVersionSignature = "Music Tagger 2.8.5";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -59,7 +59,7 @@ namespace MusicTagger.GUI
         /// <summary>
         /// Load startup config file and set user's settings according to it, reload views and controls accordingly.
         /// </summary>
-        private void LoadStartup()
+        private void ReloadUI()
         {
             LoadWindowTitle();
             infoTimer.Tick += new EventHandler(InfoTimer_Tick);
@@ -67,6 +67,14 @@ namespace MusicTagger.GUI
             infoTimer.Start();
             ReloadViews();
             UpdateButtons();
+            UpdateRecentMenu();
+        }
+
+        /// <summary>
+        /// Loads window settings saved into startup config file and applies them.
+        /// </summary>
+        private void LoadStartup()
+        {
             startupConfig.LoadFile();
 
             RandomCheckBox.IsChecked = startupConfig.PlayRandom;
@@ -86,7 +94,6 @@ namespace MusicTagger.GUI
             Width = startupConfig.WindowWidth;
             Height = startupConfig.WindoHeight;
             WindowState = startupConfig.WindowState;
-            UpdateRecentMenu();
         }
 
         /// <summary>
@@ -130,7 +137,11 @@ namespace MusicTagger.GUI
 
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e) => LoadStartup();
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadStartup();
+            ReloadUI();
+        }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) => SaveStartup();
         #endregion
@@ -159,7 +170,7 @@ namespace MusicTagger.GUI
                 CurrentProjectFilePath = saveFileDialog.FileName;
             }
             LoadWindowTitle();
-            LoadStartup();
+            ReloadUI();
         }
 
         /// <summary>
@@ -191,7 +202,7 @@ namespace MusicTagger.GUI
                 MessageBox.Show(string.Format("Failed to load Project from {0}. Error message: {1}", filePath, ex.Message));
             }
             CurrentProjectFilePath = filePath;
-            LoadStartup();
+            ReloadUI();
         }
 
         /// <summary>
