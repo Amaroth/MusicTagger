@@ -22,26 +22,10 @@
         <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Name="FileMenuItem" Header="_File">
-                    <MenuItem Name="NewMenuItem" Header="_New Project" Click="NewMenuItem_Click" InputGestureText="Ctrl+N">
-                        <MenuItem.InputBindings>
-                            <KeyBinding Key="N" Modifiers="Ctrl"/>
-                        </MenuItem.InputBindings>
-                    </MenuItem>
-                    <MenuItem Name="OpenMenuItem" Header="_Open Project" Click="OpenMenuItem_Click" InputGestureText="Ctrl+O">
-                        <MenuItem.InputBindings>
-                            <KeyBinding Key="O" Modifiers="Ctrl"/>
-                        </MenuItem.InputBindings>
-                    </MenuItem>
-                    <MenuItem Name="SaveMenuItem" Header="_Save Project" Click="SaveMenuItem_Click" InputGestureText="Ctrl+S">
-                        <MenuItem.InputBindings>
-                            <KeyBinding Key="S" Modifiers="Ctrl"/>
-                        </MenuItem.InputBindings>
-                    </MenuItem>
-                    <MenuItem Name="SaveAsMenuItem" Header="_Save Project As" Click="SaveAsMenuItem_Click" InputGestureText="Ctrl+Shift+S">
-                        <MenuItem.InputBindings>
-                            <KeyBinding Key="S" Modifiers="Ctrl+Shift"/>
-                        </MenuItem.InputBindings>
-                    </MenuItem>
+                    <MenuItem Name="NewMenuItem" Header="_New Project" Click="NewMenuItem_Click"/>
+                    <MenuItem Name="OpenMenuItem" Header="_Open Project" Click="OpenMenuItem_Click"/>
+                    <MenuItem Name="SaveMenuItem" Header="_Save Project" Click="SaveMenuItem_Click"/>
+                    <MenuItem Name="SaveAsMenuItem" Header="_Save Project As" Click="SaveAsMenuItem_Click"/>
                 </MenuItem>
             </Menu>
         </DockPanel>
