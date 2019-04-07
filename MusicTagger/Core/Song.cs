@@ -19,7 +19,7 @@ namespace MusicTagger.Core
             {
                 _fullPath = value;
                 FileName = Path.GetFileName(FullPath);
-                SongName = FileName.Substring(0, FileName.Length - 4);
+                SongName = (FileName.Length >= 4) ? FileName.Substring(0, FileName.Length - 4) : "";
             }
         }
         // If song was not tagged yet since it was imported to app, do not save it to saved settings.

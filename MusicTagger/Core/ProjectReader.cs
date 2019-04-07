@@ -72,23 +72,25 @@ namespace MusicTagger.Core
             {
                 foreach (XmlNode node in xml.GetElementsByTagName("Songs")[0].ChildNodes)
                 {
-                    // Support both subpath (under Project file) and fullpath format of FilePath
+                    // Support both subpath (under Project file) and fullpath format of FilePath in XML
                     string songPath = node.Attributes["FilePath"].Value;
                     string altSongPath = Path.GetDirectoryName(filePath) + songPath;
-                    if (!File.Exists(songPath) && File.Exists(altSongPath))
+                    if (File.Exists(altSongPath))
                         songPath = altSongPath;
-
-                    var song = new Song(songPath);
-                    foreach (XmlNode songTagNode in node.ChildNodes)
+                    if (File.Exists(songPath))
                     {
-                        foreach (var t in songTags)
-                            if (t.ID == int.Parse(songTagNode.Attributes["ID"].Value))
-                            {
-                                t.AddSong(song);
-                                break;
-                            }
+                        var song = new Song(songPath);
+                        foreach (XmlNode songTagNode in node.ChildNodes)
+                        {
+                            foreach (var t in songTags)
+                                if (t.ID == int.Parse(songTagNode.Attributes["ID"].Value))
+                                {
+                                    t.AddSong(song);
+                                    break;
+                                }
+                        }
+                        result.Add(song);
                     }
-                    result.Add(song);
                 }
             }
             catch (Exception e)
