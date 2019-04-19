@@ -102,7 +102,7 @@ namespace MusicTagger.Core
                     if (s.WasTagged)
                     {
                         XmlElement newSong = outputDocument.CreateElement(string.Empty, "Song", string.Empty);
-                        newSong.SetAttribute("FilePath", s.FullPath.Substring(rootPath.Length));
+                        newSong.SetAttribute("FilePath", s.FullPath);
                         songsElement.AppendChild(newSong);
 
                         foreach (var t in s.tags)
