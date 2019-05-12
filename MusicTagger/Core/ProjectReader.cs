@@ -91,6 +91,10 @@ namespace MusicTagger.Core
                         }
                         result.Add(song);
                     }
+                    else
+                    {
+                        // MissingSongs
+                    }
                 }
             }
             catch (Exception e)
