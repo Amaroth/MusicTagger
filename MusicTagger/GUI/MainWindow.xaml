@@ -255,10 +255,10 @@
             <Button Grid.Row="2" Grid.Column="8" Grid.RowSpan="2" Name="NextButton" Margin="1" Click="NextButton_Click">Next</Button>
             <Button Grid.Row="2" Grid.Column="9" Grid.RowSpan="2" Name="LastButton" Margin="1" Click="LastButton_Click">Last</Button>
             <TextBlock Grid.Row="2" Grid.Column="10" VerticalAlignment="Center" TextAlignment="Right">Songs:</TextBlock>
-            <Slider Grid.Row="2" Grid.Column="11" Grid.ColumnSpan="2" Name="SongVolumeSlider" VerticalAlignment="Center" Margin="3, 0, 3, 0" Minimum="0" Maximum="100" AutoToolTipPlacement="TopLeft" ValueChanged="SongVolumeSlider_ValueChanged" MouseWheel="VolumeSlider_MouseWheel"/>
+            <Slider Grid.Row="2" Grid.Column="11" Grid.ColumnSpan="2" Name="SongVolumeSlider" VerticalAlignment="Center" Margin="3, 0, 3, 0" Minimum="0" Maximum="50" AutoToolTipPlacement="TopLeft" ValueChanged="SongVolumeSlider_ValueChanged" MouseWheel="VolumeSlider_MouseWheel" Value="25" LargeChange="0.5" SmallChange="0.05"/>
             <TextBlock Grid.Row="3" Grid.Column="10" VerticalAlignment="Center" TextAlignment="Right">Sounds:</TextBlock>
             <Button Grid.Row="2" Grid.Column="13" VerticalAlignment="Center" Name="SongMuteUnmuteButton" Margin="1,1,0,1" Click="SongMuteUnmuteButton_Click">Mute</Button>
-            <Slider Grid.Row="3" Grid.Column="11" Grid.ColumnSpan="2" Name="SoundsVolumeSlider" VerticalAlignment="Center" Margin="3, 0, 3, 0" Minimum="0" Maximum="100" AutoToolTipPlacement="TopLeft" IsEnabled="False" MouseWheel="VolumeSlider_MouseWheel"/>
+            <Slider Grid.Row="3" Grid.Column="11" Grid.ColumnSpan="2" Name="SoundsVolumeSlider" VerticalAlignment="Center" Margin="3, 0, 3, 0" Minimum="0" Maximum="50" AutoToolTipPlacement="TopLeft" IsEnabled="False" MouseWheel="VolumeSlider_MouseWheel" Value="25" LargeChange="0.5" SmallChange="0.05"/>
             <Button Grid.Row="3" Grid.Column="13" VerticalAlignment="Center" Name="SoundsMuteUnmuteButton" Margin="1,1,0,1" IsEnabled="False">Mute</Button>
         </Grid>
     </Grid>
