@@ -17,7 +17,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.8.10";
+        private string CurrentVersionSignature = "Music Tagger 2.8.11";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -629,7 +629,7 @@ namespace MusicTagger.GUI
 
         private void VolumeSlider_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            (sender as Slider).Value += (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) ? e.Delta / 12 : e.Delta / 120;
+            (sender as Slider).Value += (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) ? e.Delta / 24 : e.Delta / 120;
         }
 
         private void SongProgressBar_MouseDown(object sender, MouseButtonEventArgs e)
