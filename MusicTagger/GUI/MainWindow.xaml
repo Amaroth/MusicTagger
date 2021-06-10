@@ -26,6 +26,7 @@
                     <MenuItem Name="OpenMenuItem" Header="_Open Project" Click="OpenMenuItem_Click"/>
                     <MenuItem Name="SaveMenuItem" Header="_Save Project" Click="SaveMenuItem_Click"/>
                     <MenuItem Name="SaveAsMenuItem" Header="_Save Project As" Click="SaveAsMenuItem_Click"/>
+                    <MenuItem Name="YouTubeMenuItem" Header="Download From YouTube" Click="YouTubeMenuItem_Click"/>
                 </MenuItem>
             </Menu>
         </DockPanel>

@@ -17,12 +17,12 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.8.11";
+        private string CurrentVersionSignature = "Music Tagger 2.9.0";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
         private StartupConfig startupConfig = new StartupConfig();
-        
+
         private double currentSongLength;
         private DispatcherTimer infoTimer = new DispatcherTimer();
 
@@ -101,8 +101,9 @@ namespace MusicTagger.GUI
         /// </summary>
         private void UpdateRecentMenu()
         {
-            if (FileMenuItem.Items.Count == 5)
-                FileMenuItem.Items.RemoveAt(4);
+            if ((string)(FileMenuItem.Items[FileMenuItem.Items.Count - 1] as MenuItem).Header == "Open _Recent")
+                FileMenuItem.Items.RemoveAt(FileMenuItem.Items.Count - 1);
+
             var recentMenuItem = new MenuItem()
             {
                 Header = "Open _Recent",
@@ -244,6 +245,27 @@ namespace MusicTagger.GUI
                 CurrentProjectFilePath = saveFileDialog.FileName;
             }
             LoadWindowTitle();
+        }
+
+        /// <summary>
+        /// Opens a window for setting up the Download from YouTube function.
+        /// </summary>
+        private void YouTubeDownloadWindow()
+        {
+            using (var inputDialog = new YouTubeDownloadDialog())
+                if (inputDialog.ShowDialog() == true)
+                {
+                    try
+                    {
+                        var answers = inputDialog.GetAnswers();
+                        core.DownloadYouTubeSong(answers.Item1, answers.Item2);
+                        MessageBox.Show(string.Format("URL: {0}\nPath: {1}", answers.Item1, answers.Item2));
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }
         }
         #endregion
 
@@ -594,6 +616,8 @@ namespace MusicTagger.GUI
         private void SaveAsMenuItem_Click(object sender, RoutedEventArgs e) => SaveAsFile();
 
         private void OpenRecent_Click(object sender, RoutedEventArgs e) => OpenFile((sender as MenuItem).Header.ToString());
+
+        private void YouTubeMenuItem_Click(object sender, RoutedEventArgs e) => YouTubeDownloadWindow();
         #endregion
 
         #region Play panel event handlers...

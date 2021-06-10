@@ -266,5 +266,10 @@ namespace MusicTagger.Core
                 MessageBox.Show(string.Format("Could not edit provided tag. Error message:\n\n{0}", e.ToString()));
             }
         }
+
+        public void DownloadYouTubeSong(string URL, string path)
+        {
+
+        }
     }
 }
