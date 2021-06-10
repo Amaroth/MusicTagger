@@ -259,7 +259,8 @@ namespace MusicTagger.GUI
                     {
                         var answers = inputDialog.GetAnswers();
                         core.DownloadYouTubeSong(answers.Item1, answers.Item2);
-                        MessageBox.Show(string.Format("URL: {0}\nPath: {1}", answers.Item1, answers.Item2));
+                        if (File.Exists(answers.Item2))
+                            MessageBox.Show(string.Format("File {0} was successfully downloaded and converted!", answers.Item2));
                     }
                     catch (Exception ex)
                     {

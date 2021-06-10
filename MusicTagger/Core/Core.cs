@@ -1,8 +1,11 @@
-﻿using System;
+﻿using MediaToolkit;
+using MediaToolkit.Model;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
+using VideoLibrary;
 
 namespace MusicTagger.Core
 {
@@ -267,9 +270,44 @@ namespace MusicTagger.Core
             }
         }
 
-        public void DownloadYouTubeSong(string URL, string path)
+        public void DownloadYouTubeSong(string URL, string mp3Path)
         {
+            var mp4Path = mp3Path.Substring(0, mp3Path.Length - 1) + "4";
+            var youtube = YouTube.Default;
+            var vid = youtube.GetVideo(URL);
 
+            try
+            {
+                File.WriteAllBytes(mp4Path, vid.GetBytes());
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Could not download the MP4 file from YouTube. Message:\n" + e.Message);
+            }
+
+            using (var engine = new Engine())
+            {
+                try
+                {
+                    var mp4File = new MediaFile { Filename = mp4Path };
+                    var mp3File = new MediaFile { Filename = mp3Path };
+                    engine.GetMetadata(mp4File);
+                    engine.Convert(mp4File, mp3File);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Failed to convert the MP4 file to MP3 format. Message:\n" + e.Message);
+                }
+            }
+
+            try
+            {
+                File.Delete(mp4Path);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Failed to clean up the MP4 file. Message:\n" + e.Message);
+            }
         }
     }
 }
