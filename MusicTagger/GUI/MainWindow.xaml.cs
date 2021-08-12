@@ -17,7 +17,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.10.3";
+        private string CurrentVersionSignature = "Music Tagger 2.10.4";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -315,7 +315,7 @@ namespace MusicTagger.GUI
             UpdateTagListViewColWidths();
             UpdatePlayListViewColWidths();
             UpdateImportListViewColWidths();
-            UpdatePlayingSongInfo();
+            UpdateUIElements();
         }
 
         /// <summary>
@@ -352,12 +352,12 @@ namespace MusicTagger.GUI
         /// <summary>
         /// Fires 10 times per second and ensures progress bar and play panel texts are being updated.
         /// </summary>
-        private void InfoTimer_Tick(object sender, EventArgs e) => UpdatePlayingSongInfo();
+        private void InfoTimer_Tick(object sender, EventArgs e) => UpdateUIElements();
 
         /// <summary>
         /// Updates progress bar and texts in play panel depending on song being played.
         /// </summary>
-        private void UpdatePlayingSongInfo()
+        private void UpdateUIElements()
         {
             if ((CurrentSongUri != null) && SongPlayer.NaturalDuration.HasTimeSpan)
             {
@@ -377,6 +377,8 @@ namespace MusicTagger.GUI
                 SongProgressBar.Maximum = 1;
                 TimeTextBlock.Text = "0:00:00 / 0:00:00";
             }
+            DownloadButton.IsEnabled = !core.IsDownloading;
+            DownloadURLButton.IsEnabled = !core.IsDownloading;
         }
 
         private void TagListView_SelectionChanged(object sender, SelectionChangedEventArgs e) => LoadTagAdministrationFields(GetFirstSelectedTag());

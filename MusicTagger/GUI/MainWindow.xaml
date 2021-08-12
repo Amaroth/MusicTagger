@@ -186,7 +186,7 @@
                         <RowDefinition Height="32"/>
                     </Grid.RowDefinitions>
 
-                    <ListView Name="DownloadListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" AllowDrop="True" SelectionChanged="DownloadListView_SelectionChanged">
+                    <ListView Name="DownloadListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" SelectionChanged="DownloadListView_SelectionChanged">
                         <ListView.Resources>
                             <Style TargetType="{x:Type GridViewColumnHeader}">
                                 <Setter Property="HorizontalContentAlignment" Value="Left" />

@@ -27,7 +27,10 @@ namespace MusicTagger.Core
         public enum FilterType { Standard, And, Or }
 
         #region Singleton implementation...
-        private Core() { }
+        private Core()
+        {
+            IsDownloading = false;
+        }
 
         public static Core Instance
         {
