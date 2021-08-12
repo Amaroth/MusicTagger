@@ -209,7 +209,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0" VerticalAlignment="Center">URL:</TextBlock>
+                        <TextBlock Grid.Column="0" Margin="5,1,0,1" VerticalAlignment="Center">URL:</TextBlock>
                         <TextBox Grid.Column="1" Name="URLTextBox" Margin="5,1,0,1" TextAlignment="Left"></TextBox>
                         
                     </Grid>
@@ -220,8 +220,8 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        
-                        <TextBlock Grid.Column="0" VerticalAlignment="Center">Target path:</TextBlock>
+
+                        <TextBlock Grid.Column="0" Margin="5,1,0,1" VerticalAlignment="Center">Target path:</TextBlock>
                         <TextBox Grid.Column="1" Name="TargetPathTextBox" Margin="5,1,0,1" TextAlignment="Left"></TextBox>
                         <Button Grid.Column="2" Name="DownloadPathButton" Margin="1,1,1,1" Padding="10,0,10,0" Click="DownloadPathButton_Click">Select</Button>
                     </Grid>

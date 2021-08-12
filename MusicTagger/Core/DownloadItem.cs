@@ -9,6 +9,7 @@ namespace MusicTagger.Core
 {
     class DownloadItem : INotifyPropertyChanged
     {
+        public enum DownloadState { Waiting, Downloading, DownloadFailed, Converting, ConversionFailed, DeletingMP4, MP4CleanupFailed, Done }
         // URL of the YT video for the file to be downloaded from.
         private string _url;
         public string URL
@@ -24,8 +25,8 @@ namespace MusicTagger.Core
             }
         }
         // Current state the process is in.
-        private string _state;
-        public string State
+        private DownloadState _state;
+        public DownloadState State
         {
             get => _state;
             set
@@ -61,7 +62,7 @@ namespace MusicTagger.Core
 
         public DownloadItem()
         {
-            State = "Waiting";
+            State = DownloadState.Waiting;
         }
 
         /// <summary>
@@ -69,20 +70,23 @@ namespace MusicTagger.Core
         /// </summary>
         public void Download()
         {
-            if (State == "Done")
+            if (State == DownloadState.Done)
                 return;
+
+            if (Path.GetExtension(FilePath).ToLower() != ".mp3")
+                FilePath = Path.GetDirectoryName(FilePath) + "\\" + Path.GetFileNameWithoutExtension(FileName) + ".mp3";
             var mp4Path = FilePath.Substring(0, FilePath.Length - 1) + "4";
             var youtube = YouTube.Default;
             var vid = youtube.GetVideo(URL);
 
             try
             {
-                State = "Downloading";
+                State = DownloadState.Downloading;
                 File.WriteAllBytes(mp4Path, vid.GetBytes());
             }
             catch (Exception e)
             {
-                State = "Download failed";
+                State = DownloadState.DownloadFailed;
                 throw e;
             }
 
@@ -90,7 +94,7 @@ namespace MusicTagger.Core
             {
                 try
                 {
-                    State = "Converting";
+                    State = DownloadState.Converting;
                     var mp4File = new MediaFile { Filename = mp4Path };
                     var mp3File = new MediaFile { Filename = FilePath };
                     engine.GetMetadata(mp4File);
@@ -98,23 +102,23 @@ namespace MusicTagger.Core
                 }
                 catch (Exception e)
                 {
-                    State = "Conversion failed";
+                    State = DownloadState.ConversionFailed;
                     throw e;
                 }
             }
 
             try
             {
-                State = "Deleting MP4";
+                State = DownloadState.DeletingMP4;
                 File.Delete(mp4Path);
             }
             catch (Exception e)
             {
-                State = "MP4 cleanup failed";
+                State = DownloadState.MP4CleanupFailed;
                 throw e;
             }
 
-            State = "Done";
+            State = DownloadState.Done;
         }
     }
 }

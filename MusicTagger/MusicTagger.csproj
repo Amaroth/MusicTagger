@@ -188,10 +188,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GUI\YouTubeDownloadDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GUI\StringInputDialog.xaml.cs">
@@ -199,9 +195,6 @@
     </Compile>
     <Compile Include="GUI\OptionsInputDialog.xaml.cs">
       <DependentUpon>OptionsInputDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="GUI\YouTubeDownloadDialog.xaml.cs">
-      <DependentUpon>YouTubeDownloadDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

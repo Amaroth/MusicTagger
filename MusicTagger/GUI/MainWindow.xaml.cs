@@ -17,7 +17,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.10.4";
+        private string CurrentVersionSignature = "Music Tagger 2.10.5";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -246,29 +246,6 @@ namespace MusicTagger.GUI
             }
             LoadWindowTitle();
         }
-
-        /// <summary>
-        /// Opens a window for adding a YT video to the queue.
-        /// </summary>
-        private void YouTubeDownloadWindow()
-        {
-            using (var inputDialog = new YouTubeDownloadDialog())
-                if (inputDialog.ShowDialog() == true)
-                {
-                    try
-                    {
-                        var answers = inputDialog.GetAnswers();
-
-                        /*core.DownloadYouTubeSong(answers.Item1, answers.Item2);
-                        if (File.Exists(answers.Item2))
-                            MessageBox.Show(string.Format("File {0} was successfully downloaded and converted!", answers.Item2));*/
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
-                }
-        }
         #endregion
 
         #region Update UI elements functions...
@@ -384,7 +361,7 @@ namespace MusicTagger.GUI
         private void TagListView_SelectionChanged(object sender, SelectionChangedEventArgs e) => LoadTagAdministrationFields(GetFirstSelectedTag());
 
         /// <summary>
-        /// Updates fields in tag administration form depending on tag currently selected.
+        /// Updates fields in the tag administration form depending on tag currently selected.
         /// </summary>
         /// <param name="tag">Currently selected tag.</param>
         private void LoadTagAdministrationFields(SongTag tag)
@@ -406,7 +383,7 @@ namespace MusicTagger.GUI
         }
 
         /// <summary>
-        /// Updates widths of columns in import list to fit width of their contents.
+        /// Updates widths of columns in the import list to fit width of their contents.
         /// </summary>
         private void UpdateImportListViewColWidths()
         {
@@ -419,7 +396,7 @@ namespace MusicTagger.GUI
         }
 
         /// <summary>
-        /// Updates widths of columns in playlist to fit width of their contents.
+        /// Updates widths of columns in the playlist to fit width of their contents.
         /// </summary>
         private void UpdatePlayListViewColWidths()
         {
@@ -432,11 +409,24 @@ namespace MusicTagger.GUI
         }
 
         /// <summary>
-        /// Updates widths of columns in tag list to fit width of their contents.
+        /// Updates widths of columns in the tag list to fit width of their contents.
         /// </summary>
         private void UpdateTagListViewColWidths()
         {
             foreach (var c in (TagListView.View as GridView).Columns)
+            {
+                if (double.IsNaN(c.Width))
+                    c.Width = c.ActualWidth;
+                c.Width = double.NaN;
+            }
+        }
+
+        /// <summary>
+        /// Updates widths of columns in the download list to fit width of their contents.
+        /// </summary>
+        private void UpdateDownloadListViewColWidths()
+        {
+            foreach (var c in (DownloadListView.View as GridView).Columns)
             {
                 if (double.IsNaN(c.Width))
                     c.Width = c.ActualWidth;
@@ -955,12 +945,14 @@ namespace MusicTagger.GUI
         private void AddURLButton_Click(object sender, RoutedEventArgs e)
         {
             core.AddIntoDownload(URLTextBox.Text, TargetPathTextBox.Text);
+            UpdateDownloadListViewColWidths();
         }
 
         private void UpdateDownloadButton_Click(object sender, RoutedEventArgs e)
         {
             if (DownloadListView.SelectedItems.Count > 0)
                 core.UpdateDownloadItem(DownloadListView.SelectedItems[0] as DownloadItem, URLTextBox.Text, TargetPathTextBox.Text);
+            UpdateDownloadListViewColWidths();
         }
 
         private void RemoveURLButton_Click(object sender, RoutedEventArgs e)
@@ -969,6 +961,7 @@ namespace MusicTagger.GUI
             foreach (DownloadItem i in DownloadListView.SelectedItems)
                 selected.Add(i);
             core.RemoveFromDownload(selected);
+            UpdateDownloadListViewColWidths();
         }
 
         private void DownloadURLButton_Click(object sender, RoutedEventArgs e)
@@ -977,11 +970,13 @@ namespace MusicTagger.GUI
             foreach (DownloadItem i in DownloadListView.SelectedItems)
                 selected.Add(i);
             core.DownloadSelected(selected);
+            UpdateDownloadListViewColWidths();
         }
 
         private void DownloadButton_Click(object sender, RoutedEventArgs e)
         {
             core.DownloadAll();
+            UpdateDownloadListViewColWidths();
         }
 
         private void DownloadPathButton_Click(object sender, RoutedEventArgs e)
@@ -989,6 +984,7 @@ namespace MusicTagger.GUI
             var saveFileDialog = new SaveFileDialog() { Filter = "MP3 file (*.mp3)|*.mp3" };
             if (saveFileDialog.ShowDialog() == true)
                 TargetPathTextBox.Text = saveFileDialog.FileName;
+            UpdateDownloadListViewColWidths();
         }
 
         private void DownloadListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
