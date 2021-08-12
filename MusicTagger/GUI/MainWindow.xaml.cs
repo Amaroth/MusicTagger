@@ -17,7 +17,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.10.2";
+        private string CurrentVersionSignature = "Music Tagger 2.10.3";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -950,12 +950,6 @@ namespace MusicTagger.GUI
         #endregion
 
         #region YT > MP3 event handlers...
-        private void DownloadListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            /*if (DownloadListView.SelectedItems.Count > 0)
-                PlayPreview(DownloadListView.SelectedItems[0] as DownloadItem);*/
-        }
-
         private void AddURLButton_Click(object sender, RoutedEventArgs e)
         {
             core.AddIntoDownload(URLTextBox.Text, TargetPathTextBox.Text);
@@ -983,7 +977,10 @@ namespace MusicTagger.GUI
             core.DownloadSelected(selected);
         }
 
-        private void DownloadButton_Click(object sender, RoutedEventArgs e) => core.DownloadAll();
+        private void DownloadButton_Click(object sender, RoutedEventArgs e)
+        {
+            core.DownloadAll();
+        }
 
         private void DownloadPathButton_Click(object sender, RoutedEventArgs e)
         {

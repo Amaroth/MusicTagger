@@ -19,10 +19,10 @@ namespace MusicTagger.Core
 
         public ObservableCollection<SongTag> SongTags = new ObservableCollection<SongTag>();
         public ObservableCollection<Song> Songs = new ObservableCollection<Song>();
-
         public ObservableCollection<Song> ImportList => CurrentImportList.Songs;
         public ObservableCollection<Song> CurrentPlayList => CurrentSongPlayList.CurrentPlayList;
         public ObservableCollection<DownloadItem> DownloadList => CurrentDownloadList.DownloadItems;
+        public bool IsDownloading { get; private set; }
 
         public enum FilterType { Standard, And, Or }
 
@@ -190,22 +190,46 @@ namespace MusicTagger.Core
 
         public void DownloadAll()
         {
-            new Thread(() =>
-            {
-                Thread.CurrentThread.IsBackground = true;
-                foreach (var i in CurrentDownloadList.DownloadItems)
-                    i.Download();
-            }).Start();
+            if (!IsDownloading)
+                new Thread(() =>
+                {
+                    IsDownloading = true;
+                    Thread.CurrentThread.IsBackground = true;
+                    foreach (var i in CurrentDownloadList.DownloadItems)
+                    {
+                        try
+                        {
+                            i.Download();
+                        }
+                        catch
+                        {
+                            MessageBox.Show(string.Format("Error downloading or converting {0}:\n", i.FileName), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                    IsDownloading = false;
+                }).Start();
         }
 
         public void DownloadSelected(List<DownloadItem> downloadItems)
         {
-            new Thread(() =>
-            {
-                Thread.CurrentThread.IsBackground = true;
-                foreach (var i in downloadItems)
-                    i.Download();
-            }).Start();
+            if (!IsDownloading)
+                new Thread(() =>
+                {
+                    IsDownloading = true;
+                    Thread.CurrentThread.IsBackground = true;
+                    foreach (var i in downloadItems)
+                    {
+                        try
+                        {
+                            i.Download();
+                        }
+                        catch
+                        {
+                            MessageBox.Show(string.Format("Error downloading or converting {0}:\n", i.FileName), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                    IsDownloading = false;
+                }).Start();
         }
 
         public void RemoveFromDownload(List<DownloadItem> forRemoval) => CurrentDownloadList.RemoveFromDownloadList(forRemoval);
