@@ -17,7 +17,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.10.0";
+        private string CurrentVersionSignature = "Music Tagger 2.10.1";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -727,8 +727,6 @@ namespace MusicTagger.GUI
             {
                 MessageBox.Show(ex.Message);
             }
-            PlayListView.ItemsSource = null;
-            PlayListView.ItemsSource = core.CurrentPlayList;
             UpdatePlayListViewColWidths();
         }
 
@@ -883,12 +881,7 @@ namespace MusicTagger.GUI
                 MessageBox.Show(string.Format("Failed to add tags to songs. Error message: {0}", ex.Message));
             }
             UpdateImportListViewColWidths();
-            ImportListView.ItemsSource = null;
-            ImportListView.ItemsSource = core.ImportList;
-
             UpdatePlayListViewColWidths();
-            PlayListView.ItemsSource = null;
-            PlayListView.ItemsSource = core.CurrentPlayList;
         }
         #endregion
 

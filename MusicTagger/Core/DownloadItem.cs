@@ -9,50 +9,54 @@ namespace MusicTagger.Core
 {
     class DownloadItem : INotifyPropertyChanged
     {
-        private string url;
+        // URL of the YT video for the file to be downloaded from.
+        private string _url;
         public string URL
         {
-            get { return this.url; }
+            get => _url;
             set
             {
-                if (this.url != value)
+                if (_url != value)
                 {
-                    this.url = value;
+                    _url = value;
                     NotifyPropertyChanged("URL");
                 }
             }
         }
-        private string state;
+        // Current state the process is in.
+        private string _state;
         public string State
         {
-            get { return this.state; }
+            get => _state;
             set
             {
-                if (this.state != value)
+                if (_state != value)
                 {
-                    this.state = value;
+                    _state = value;
                     NotifyPropertyChanged("State");
                 }
             }
         }
-        private string filePath;
+        // Desired file path of the resulting mp3.
+        private string _filePath;
         public string FilePath
         {
-            get { return this.filePath; }
+            get => _filePath;
             set
             {
-                if (this.filePath != value)
+                if (_filePath != value)
                 {
-                    this.filePath = value;
+                    _filePath = value;
                     NotifyPropertyChanged("FilePath");
                     NotifyPropertyChanged("FileName");
                 }
             }
         }
+        // Desired file name of the resulting mp3, derived from the file path.
         public string FileName => Path.GetFileName(FilePath);
 
+        // Observable properties event handling.
         public event PropertyChangedEventHandler PropertyChanged;
-
         public void NotifyPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
         public DownloadItem()
@@ -60,6 +64,9 @@ namespace MusicTagger.Core
             State = "Waiting";
         }
 
+        /// <summary>
+        /// Downloads an MP4 file from the URL path and then converts it to an MP4, while changing State on the way.
+        /// </summary>
         public void Download()
         {
             var mp4Path = FilePath.Substring(0, FilePath.Length - 1) + "4";

@@ -1,15 +1,40 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 
 namespace MusicTagger.Core
 {
-    class Song
+    class Song : INotifyPropertyChanged
     {
         // Name of song (file name without extension).
-        public string SongName { get; private set; }
+        private string _songName;
+        public string SongName
+        {
+            get => _songName;
+            set
+            {
+                if (_songName != value)
+                {
+                    _songName = value;
+                    NotifyPropertyChanged("SongName");
+                }
+            }
+        }
         // Name of file song is saved in on drive.
-        public string FileName { get; private set; }
+        private string _fileName;
+        public string FileName
+        {
+            get => _fileName;
+            set
+            {
+                if (_fileName != value)
+                {
+                    _fileName = value;
+                    NotifyPropertyChanged("FileName");
+                }
+            }
+        }
         // Full path to song's file on drive.
         private string _fullPath;
         public string FullPath
@@ -17,9 +42,13 @@ namespace MusicTagger.Core
             get => _fullPath;
             set
             {
-                _fullPath = value;
-                FileName = Path.GetFileName(FullPath);
-                SongName = (FileName.Length >= 4) ? FileName.Substring(0, FileName.Length - 4) : "";
+                if (_fullPath != value)
+                {
+                    _fullPath = value;
+                    NotifyPropertyChanged("FullPath");
+                    FileName = Path.GetFileName(FullPath);
+                    SongName = (FileName.Length >= 4) ? FileName.Substring(0, FileName.Length - 4) : "";
+                }
             }
         }
         // If song was not tagged yet since it was imported to app, do not save it to saved settings.
@@ -27,40 +56,55 @@ namespace MusicTagger.Core
         // All tags assigned to songs.
         public HashSet<SongTag> tags = new HashSet<SongTag>();
 
-        /// <summary>
-        /// Returns string of comma separated IDs of all tags assigned to this song.
-        /// </summary>
+        // Observable properties event handling.
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void NotifyPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+
+        private string _tagIds;
         public string TagIds
         {
-            get
+            get => _tagIds;
+            set
             {
-                StringBuilder sb = new StringBuilder();
-                if (tags.Count > 0)
+                if (_tagIds != value)
                 {
-                    foreach (var t in tags)
-                        sb.Append(string.Format("{0}, ", t.ID));
-                    sb.Length -= 2;
+                    _tagIds = value;
+                    NotifyPropertyChanged("TagIds");
                 }
-                return sb.ToString();
             }
         }
-
-        /// <summary>
-        /// Returns string of comma separated names of all tags assigned to this song.
-        /// </summary>
+        private string _tagNames;
         public string TagNames
         {
-            get
+            get => _tagNames;
+            set
             {
-                StringBuilder sb = new StringBuilder();
-                if (tags.Count > 0)
+                if (_tagNames != value)
                 {
-                    foreach (var t in tags)
-                        sb.Append(string.Format("{0}, ", t.Name));
-                    sb.Length -= 2;
+                    _tagNames = value;
+                    NotifyPropertyChanged("TagNames");
                 }
-                return sb.ToString();
             }
+        }
+        private void UpdateTags()
+        {
+            StringBuilder sbIds = new StringBuilder();
+            if (tags.Count > 0)
+            {
+                foreach (var t in tags)
+                    sbIds.Append(string.Format("{0}, ", t.ID));
+                sbIds.Length -= 2;
+            }
+            TagIds = sbIds.ToString();
+
+            StringBuilder sbNames = new StringBuilder();
+            if (tags.Count > 0)
+            {
+                foreach (var t in tags)
+                    sbNames.Append(string.Format("{0}, ", t.Name));
+                sbNames.Length -= 2;
+            }
+            TagNames = sbIds.ToString();
         }
 
         public Song(string filePath)
@@ -91,6 +135,7 @@ namespace MusicTagger.Core
         {
             tags.Add(tag);
             WasTagged = true;
+            UpdateTags();
         }
 
         /// <summary>
@@ -101,6 +146,7 @@ namespace MusicTagger.Core
             foreach (var t in tags)
                 t.songs.Remove(this);
             tags.Clear();
+            UpdateTags();
         }
 
         public override string ToString()
