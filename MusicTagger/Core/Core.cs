@@ -1,11 +1,9 @@
-﻿using MediaToolkit;
-using MediaToolkit.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading;
 using System.Windows;
-using VideoLibrary;
 
 namespace MusicTagger.Core
 {
@@ -192,14 +190,22 @@ namespace MusicTagger.Core
 
         public void DownloadAll()
         {
-            foreach (var i in CurrentDownloadList.DownloadItems)
-                i.Download();
+            new Thread(() =>
+            {
+                Thread.CurrentThread.IsBackground = true;
+                foreach (var i in CurrentDownloadList.DownloadItems)
+                    i.Download();
+            }).Start();
         }
 
         public void DownloadSelected(List<DownloadItem> downloadItems)
         {
-            foreach (var i in downloadItems)
-                i.Download();
+            new Thread(() =>
+            {
+                Thread.CurrentThread.IsBackground = true;
+                foreach (var i in downloadItems)
+                    i.Download();
+            }).Start();
         }
 
         public void RemoveFromDownload(List<DownloadItem> forRemoval) => CurrentDownloadList.RemoveFromDownloadList(forRemoval);

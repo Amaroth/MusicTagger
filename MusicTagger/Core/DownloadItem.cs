@@ -69,6 +69,8 @@ namespace MusicTagger.Core
         /// </summary>
         public void Download()
         {
+            if (State == "Done")
+                return;
             var mp4Path = FilePath.Substring(0, FilePath.Length - 1) + "4";
             var youtube = YouTube.Default;
             var vid = youtube.GetVideo(URL);
