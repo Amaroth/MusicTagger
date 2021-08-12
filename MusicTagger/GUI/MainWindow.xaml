@@ -26,7 +26,6 @@
                     <MenuItem Name="OpenMenuItem" Header="_Open Project" Click="OpenMenuItem_Click"/>
                     <MenuItem Name="SaveMenuItem" Header="_Save Project" Click="SaveMenuItem_Click"/>
                     <MenuItem Name="SaveAsMenuItem" Header="_Save Project As" Click="SaveAsMenuItem_Click"/>
-                    <MenuItem Name="YouTubeMenuItem" Header="Download From YouTube" Click="YouTubeMenuItem_Click"/>
                 </MenuItem>
             </Menu>
         </DockPanel>
@@ -175,6 +174,72 @@
                         <Button Grid.Column="0" Margin="1" Name="CreateTagButton" Click="CreateTagButton_Click">Create new</Button>
                         <Button Grid.Column="1" Margin="1" Name="UpdateTagButton" Click="UpdateTagButton_Click" IsEnabled="False">Update selected</Button>
                         <Button Grid.Column="2" Margin="1" Name="RemoveTagButton" Click="RemoveTagButton_Click" IsEnabled="False">Remove selected</Button>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="YT > MP3">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="32"/>
+                    </Grid.RowDefinitions>
+
+                    <ListView Name="DownloadListView" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="True" AllowDrop="True" SelectionChanged="DownloadListView_SelectionChanged" MouseDoubleClick="DownloadListView_MouseDoubleClick">
+                        <ListView.Resources>
+                            <Style TargetType="{x:Type GridViewColumnHeader}">
+                                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                            </Style>
+                        </ListView.Resources>
+                        <ListView.View>
+                            <GridView>
+                                <GridView.Columns>
+                                    <GridViewColumn DisplayMemberBinding="{Binding URL}" Header="URL" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding FileName}" Header="File Name" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding State}" Header="State" />
+                                </GridView.Columns>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center">URL:</TextBlock>
+                        <TextBox Grid.Column="1" Name="URLTextBox" Margin="5,1,0,1" TextAlignment="Left"></TextBox>
+                        
+                    </Grid>
+
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center">Target path:</TextBlock>
+                        <TextBox Grid.Column="1" Name="TargetPathTextBox" Margin="5,1,0,1" TextAlignment="Left"></TextBox>
+                        <Button Grid.Column="2" Name="DownloadPathButton" Margin="1,1,1,1" Padding="10,0,10,0" Click="DownloadPathButton_Click">Select</Button>
+                    </Grid>
+                    
+                    <Grid Grid.Row="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <Button Name="AddURLButton" Grid.Column="0" Margin="0,2,1,0" Padding="10,0,10,0" Click="AddURLButton_Click">Add Item</Button>
+                        <Button Name="UpdateDownloadButton" Grid.Column="1" Margin="0,2,1,0" Padding="10,0,10,0" Click="UpdateDownloadButton_Click">Update Item</Button>
+                        <Button Name="RemoveURLButton" Grid.Column="2" Margin="1,2,1,0" Padding="10,0,10,0" Click="RemoveURLButton_Click">Remove Item</Button>
+                        <Button Name="DownloadButton" Grid.Column="3" Margin="1,2,1,0" Padding="10,0,10,0" Click="DownloadURLButton_Click">Download Selected</Button>
+                        <Button Name="DownloadURLButton" Grid.Column="4" Margin="1,2,0,0" Padding="10,0,10,0" Click="DownloadButton_Click">Download All</Button>
                     </Grid>
                 </Grid>
             </TabItem>

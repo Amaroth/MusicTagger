@@ -162,6 +162,8 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Core\Core.cs" />
+    <Compile Include="Core\DownloadItem.cs" />
+    <Compile Include="Core\DownloadList.cs" />
     <Compile Include="Core\ImportList.cs" />
     <Compile Include="Core\SongPlayList.cs" />
     <Compile Include="Core\ProjectReader.cs" />

@@ -17,12 +17,14 @@ namespace MusicTagger.Core
         private static Core instance;
         private SongPlayList CurrentSongPlayList = new SongPlayList();
         private ImportList CurrentImportList = new ImportList();
+        private DownloadList CurrentDownloadList = new DownloadList();
 
         public ObservableCollection<SongTag> SongTags = new ObservableCollection<SongTag>();
         public ObservableCollection<Song> Songs = new ObservableCollection<Song>();
 
         public ObservableCollection<Song> ImportList => CurrentImportList.Songs;
         public ObservableCollection<Song> CurrentPlayList => CurrentSongPlayList.CurrentPlayList;
+        public ObservableCollection<DownloadItem> DownloadList => CurrentDownloadList.DownloadItems;
 
         public enum FilterType { Standard, And, Or }
 
@@ -185,7 +187,31 @@ namespace MusicTagger.Core
         public void RemoveFromImport(List<Song> forRemoval) => CurrentImportList.RemoveFromImport(forRemoval);
         #endregion
 
+        #region Download management...
+        public void AddIntoDownload(string URL, string filePath) => CurrentDownloadList.AddToDownloadList(URL, filePath);
 
+        public void DownloadAll()
+        {
+            foreach (var i in CurrentDownloadList.DownloadItems)
+                i.Download();
+        }
+
+        public void DownloadSelected(List<DownloadItem> downloadItems)
+        {
+            foreach (var i in downloadItems)
+                i.Download();
+        }
+
+        public void RemoveFromDownload(List<DownloadItem> forRemoval) => CurrentDownloadList.RemoveFromDownloadList(forRemoval);
+
+        public void UpdateDownloadItem(DownloadItem item, string url, string path)
+        {
+            item.URL = url;
+            item.FilePath = path;
+        }
+        #endregion
+
+        #region Tags management...
         public int GetNextFreeTagID()
         {
             var id = -1;
@@ -269,45 +295,8 @@ namespace MusicTagger.Core
                 MessageBox.Show(string.Format("Could not edit provided tag. Error message:\n\n{0}", e.ToString()));
             }
         }
+        #endregion
 
-        public void DownloadYouTubeSong(string URL, string mp3Path)
-        {
-            var mp4Path = mp3Path.Substring(0, mp3Path.Length - 1) + "4";
-            var youtube = YouTube.Default;
-            var vid = youtube.GetVideo(URL);
 
-            try
-            {
-                File.WriteAllBytes(mp4Path, vid.GetBytes());
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("Could not download the MP4 file from YouTube. Message:\n" + e.Message);
-            }
-
-            using (var engine = new Engine())
-            {
-                try
-                {
-                    var mp4File = new MediaFile { Filename = mp4Path };
-                    var mp3File = new MediaFile { Filename = mp3Path };
-                    engine.GetMetadata(mp4File);
-                    engine.Convert(mp4File, mp3File);
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show("Failed to convert the MP4 file to MP3 format. Message:\n" + e.Message);
-                }
-            }
-
-            try
-            {
-                File.Delete(mp4Path);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("Failed to clean up the MP4 file. Message:\n" + e.Message);
-            }
-        }
     }
 }

@@ -17,7 +17,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.9.1";
+        private string CurrentVersionSignature = "Music Tagger 2.10.0";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -248,7 +248,7 @@ namespace MusicTagger.GUI
         }
 
         /// <summary>
-        /// Opens a window for setting up the Download from YouTube function.
+        /// Opens a window for adding a YT video to the queue.
         /// </summary>
         private void YouTubeDownloadWindow()
         {
@@ -258,9 +258,10 @@ namespace MusicTagger.GUI
                     try
                     {
                         var answers = inputDialog.GetAnswers();
-                        core.DownloadYouTubeSong(answers.Item1, answers.Item2);
+
+                        /*core.DownloadYouTubeSong(answers.Item1, answers.Item2);
                         if (File.Exists(answers.Item2))
-                            MessageBox.Show(string.Format("File {0} was successfully downloaded and converted!", answers.Item2));
+                            MessageBox.Show(string.Format("File {0} was successfully downloaded and converted!", answers.Item2));*/
                     }
                     catch (Exception ex)
                     {
@@ -305,6 +306,7 @@ namespace MusicTagger.GUI
             ImportListView.ItemsSource = core.ImportList;
             TagListView.ItemsSource = core.SongTags;
             PlayListView.ItemsSource = core.CurrentPlayList;
+            DownloadListView.ItemsSource = core.DownloadList;
             var playView = (CollectionView)CollectionViewSource.GetDefaultView(TagListView.ItemsSource);
             var groupDescription = new PropertyGroupDescription("Category");
             playView.GroupDescriptions.Clear();
@@ -617,8 +619,6 @@ namespace MusicTagger.GUI
         private void SaveAsMenuItem_Click(object sender, RoutedEventArgs e) => SaveAsFile();
 
         private void OpenRecent_Click(object sender, RoutedEventArgs e) => OpenFile((sender as MenuItem).Header.ToString());
-
-        private void YouTubeMenuItem_Click(object sender, RoutedEventArgs e) => YouTubeDownloadWindow();
         #endregion
 
         #region Play panel event handlers...
@@ -954,6 +954,59 @@ namespace MusicTagger.GUI
         }
 
 
+        #endregion
+
+        #region YT > MP3 event handlers...
+        private void DownloadListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            /*if (DownloadListView.SelectedItems.Count > 0)
+                PlayPreview(DownloadListView.SelectedItems[0] as DownloadItem);*/
+        }
+
+        private void AddURLButton_Click(object sender, RoutedEventArgs e)
+        {
+            core.AddIntoDownload(URLTextBox.Text, TargetPathTextBox.Text);
+        }
+
+        private void UpdateDownloadButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DownloadListView.SelectedItems.Count > 0)
+                core.UpdateDownloadItem(DownloadListView.SelectedItems[0] as DownloadItem, URLTextBox.Text, TargetPathTextBox.Text);
+        }
+
+        private void RemoveURLButton_Click(object sender, RoutedEventArgs e)
+        {
+            List<DownloadItem> selected = new List<DownloadItem>();
+            foreach (DownloadItem i in DownloadListView.SelectedItems)
+                selected.Add(i);
+            core.RemoveFromDownload(selected);
+        }
+
+        private void DownloadURLButton_Click(object sender, RoutedEventArgs e)
+        {
+            List<DownloadItem> selected = new List<DownloadItem>();
+            foreach (DownloadItem i in DownloadListView.SelectedItems)
+                selected.Add(i);
+            core.DownloadSelected(selected);
+        }
+
+        private void DownloadButton_Click(object sender, RoutedEventArgs e) => core.DownloadAll();
+
+        private void DownloadPathButton_Click(object sender, RoutedEventArgs e)
+        {
+            var saveFileDialog = new SaveFileDialog() { Filter = "MP3 file (*.mp3)|*.mp3" };
+            if (saveFileDialog.ShowDialog() == true)
+                TargetPathTextBox.Text = saveFileDialog.FileName;
+        }
+
+        private void DownloadListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (DownloadListView.SelectedItems.Count > 0)
+            {
+                URLTextBox.Text = (DownloadListView.SelectedItems[0] as DownloadItem).URL;
+                TargetPathTextBox.Text = (DownloadListView.SelectedItems[0] as DownloadItem).FilePath;
+            }
+        }
         #endregion
     }
 }
