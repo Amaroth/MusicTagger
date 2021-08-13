@@ -242,6 +242,16 @@ namespace MusicTagger.Core
             item.URL = url;
             item.FilePath = path;
         }
+
+        public void CleanDownloadList()
+        {
+            var toBeDeleted = new List<DownloadItem>();
+            foreach (var i in CurrentDownloadList.DownloadItems)
+                if (i.State == DownloadItem.DownloadState.Done)
+                    toBeDeleted.Add(i);
+            foreach (var i in toBeDeleted)
+                CurrentDownloadList.DownloadItems.Remove(i);
+        }
         #endregion
 
         #region Tags management...
