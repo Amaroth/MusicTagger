@@ -233,6 +233,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         
@@ -240,8 +241,9 @@
                         <Button Name="UpdateDownloadButton" Grid.Column="1" Margin="0,2,1,0" Padding="10,0,10,0" Click="UpdateDownloadButton_Click">Update Item</Button>
                         <Button Name="RemoveURLButton" Grid.Column="2" Margin="1,2,1,0" Padding="10,0,10,0" Click="RemoveURLButton_Click">Remove Item</Button>
                         <Button Name="CleanDownloadButton" Grid.Column="3" Margin="1,2,1,0" Padding="10,0,10,0" Click="CleanDownloadButton_Click">Clean List</Button>
-                        <Button Name="DownloadButton" Grid.Column="4" Margin="1,2,1,0" Padding="10,0,10,0" Click="DownloadURLButton_Click">Download Selected</Button>
-                        <Button Name="DownloadURLButton" Grid.Column="5" Margin="1,2,0,0" Padding="10,0,10,0" Click="DownloadButton_Click">Download All</Button>
+                        <Button Name="DownloadToImportButton" Grid.Column="4" Margin="1,2,1,0" Padding="10,0,10,0" Click="DownloadToImportButton_Click">To Tag List</Button>
+                        <Button Name="DownloadButton" Grid.Column="5" Margin="1,2,1,0" Padding="10,0,10,0" Click="DownloadURLButton_Click">Download Selected</Button>
+                        <Button Name="DownloadURLButton" Grid.Column="6" Margin="1,2,0,0" Padding="10,0,10,0" Click="DownloadButton_Click">Download All</Button>
                     </Grid>
                 </Grid>
             </TabItem>

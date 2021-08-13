@@ -17,7 +17,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.10.6";
+        private string CurrentVersionSignature = "Music Tagger 2.10.7";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -356,6 +356,7 @@ namespace MusicTagger.GUI
             }
             DownloadButton.IsEnabled = !core.IsDownloading;
             DownloadURLButton.IsEnabled = !core.IsDownloading;
+            DownloadToImportButton.IsEnabled = !core.IsDownloading;
         }
 
         private void TagListView_SelectionChanged(object sender, SelectionChangedEventArgs e) => LoadTagAdministrationFields(GetFirstSelectedTag());
@@ -957,7 +958,7 @@ namespace MusicTagger.GUI
 
         private void RemoveURLButton_Click(object sender, RoutedEventArgs e)
         {
-            List<DownloadItem> selected = new List<DownloadItem>();
+            var selected = new List<DownloadItem>();
             foreach (DownloadItem i in DownloadListView.SelectedItems)
                 selected.Add(i);
             core.RemoveFromDownload(selected);
@@ -966,7 +967,7 @@ namespace MusicTagger.GUI
 
         private void DownloadURLButton_Click(object sender, RoutedEventArgs e)
         {
-            List<DownloadItem> selected = new List<DownloadItem>();
+            var selected = new List<DownloadItem>();
             foreach (DownloadItem i in DownloadListView.SelectedItems)
                 selected.Add(i);
             core.DownloadSelected(selected);
@@ -997,6 +998,14 @@ namespace MusicTagger.GUI
         }
 
         private void CleanDownloadButton_Click(object sender, RoutedEventArgs e) => core.CleanDownloadList();
+        
+        private void DownloadToImportButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selected = new List<string>();
+            foreach (DownloadItem i in DownloadListView.SelectedItems)
+                selected.Add(i.FilePath);
+            core.AddIntoImport(selected);
+        }
         #endregion
     }
 }
