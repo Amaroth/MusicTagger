@@ -18,7 +18,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.10.8";
+        private string CurrentVersionSignature = "Music Tagger 2.10.9";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
