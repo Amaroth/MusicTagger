@@ -109,7 +109,7 @@ namespace MusicTagger.Core
         public string GetCurrentSongTagNames()
         {
             if (CurrentSongPlayList.CurrentSong != null)
-                return CurrentSongPlayList.CurrentSong.TagNames;
+                return CurrentSongPlayList.CurrentSong.TagSignature;
             return "";
         }
 

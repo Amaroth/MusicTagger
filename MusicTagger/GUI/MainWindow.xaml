@@ -91,7 +91,7 @@
                             <GridView>
                                 <GridView.Columns>
                                     <GridViewColumn DisplayMemberBinding="{Binding SongName}" Header="Name" />
-                                    <GridViewColumn DisplayMemberBinding="{Binding TagNames}" Header="Tag Names" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding TagSignature}" Header="Tags" />
                                 </GridView.Columns>
                             </GridView>
                         </ListView.View>
@@ -123,7 +123,7 @@
                                 <GridView.Columns>
                                     <GridViewColumn DisplayMemberBinding="{Binding SongName}" Header="Name" />
                                     <GridViewColumn DisplayMemberBinding="{Binding FullPath}" Header="File path" />
-                                    <GridViewColumn DisplayMemberBinding="{Binding TagIds}" Header="Tag IDs" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding TagSignature}" Header="Tags" />
                                 </GridView.Columns>
                             </GridView>
                         </ListView.View>

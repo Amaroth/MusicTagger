@@ -60,51 +60,29 @@ namespace MusicTagger.Core
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
 
-        private string _tagIds;
-        public string TagIds
+        private string _tagSignature;
+        public string TagSignature
         {
-            get => _tagIds;
+            get => _tagSignature;
             set
             {
-                if (_tagIds != value)
+                if (_tagSignature != value)
                 {
-                    _tagIds = value;
-                    NotifyPropertyChanged("TagIds");
-                }
-            }
-        }
-        private string _tagNames;
-        public string TagNames
-        {
-            get => _tagNames;
-            set
-            {
-                if (_tagNames != value)
-                {
-                    _tagNames = value;
+                    _tagSignature = value;
                     NotifyPropertyChanged("TagNames");
                 }
             }
         }
         private void UpdateTags()
         {
-            StringBuilder sbIds = new StringBuilder();
+            var sb = new StringBuilder();
             if (tags.Count > 0)
             {
                 foreach (var t in tags)
-                    sbIds.Append(string.Format("{0}, ", t.ID));
-                sbIds.Length -= 2;
+                    sb.Append(string.Format("{0}({1}), ", t.Name, t.ID));
+                sb.Length -= 2;
             }
-            TagIds = sbIds.ToString();
-
-            StringBuilder sbNames = new StringBuilder();
-            if (tags.Count > 0)
-            {
-                foreach (var t in tags)
-                    sbNames.Append(string.Format("{0}, ", t.Name));
-                sbNames.Length -= 2;
-            }
-            TagNames = sbIds.ToString();
+            TagSignature = sb.ToString();
         }
 
         public Song(string filePath)
