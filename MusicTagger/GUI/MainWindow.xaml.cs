@@ -2,6 +2,7 @@
 using MusicTagger.Core;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,7 +18,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.10.7";
+        private string CurrentVersionSignature = "Music Tagger 2.10.8";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -967,16 +968,16 @@ namespace MusicTagger.GUI
 
         private void DownloadURLButton_Click(object sender, RoutedEventArgs e)
         {
-            var selected = new List<DownloadItem>();
+            var selected = new ObservableCollection<DownloadItem>();
             foreach (DownloadItem i in DownloadListView.SelectedItems)
                 selected.Add(i);
-            core.DownloadSelected(selected);
+            core.DownloadItems(selected);
             UpdateDownloadListViewColWidths();
         }
 
         private void DownloadButton_Click(object sender, RoutedEventArgs e)
         {
-            core.DownloadAll();
+            core.DownloadItems();
             UpdateDownloadListViewColWidths();
         }
 

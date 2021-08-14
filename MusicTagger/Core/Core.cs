@@ -191,48 +191,35 @@ namespace MusicTagger.Core
         #region Download management...
         public void AddIntoDownload(string URL, string filePath) => CurrentDownloadList.AddToDownloadList(URL, filePath);
 
-        public void DownloadAll()
-        {
-            if (!IsDownloading)
-                new Thread(() =>
-                {
-                    IsDownloading = true;
-                    Thread.CurrentThread.IsBackground = true;
-                    foreach (var i in CurrentDownloadList.DownloadItems)
-                    {
-                        try
-                        {
-                            i.Download();
-                        }
-                        catch
-                        {
-                            MessageBox.Show(string.Format("Error downloading or converting {0}:\n", i.FileName), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                    }
-                    IsDownloading = false;
-                }).Start();
-        }
+        public void DownloadItems() => DownloadItems(CurrentDownloadList.DownloadItems);
 
-        public void DownloadSelected(List<DownloadItem> downloadItems)
+        public void DownloadItems(ObservableCollection<DownloadItem> downloadItems)
         {
-            if (!IsDownloading)
-                new Thread(() =>
-                {
-                    IsDownloading = true;
-                    Thread.CurrentThread.IsBackground = true;
-                    foreach (var i in downloadItems)
+            try
+            {
+                if (!IsDownloading)
+                    new Thread(() =>
                     {
-                        try
+                        IsDownloading = true;
+                        Thread.CurrentThread.IsBackground = true;
+                        foreach (var i in downloadItems)
                         {
-                            i.Download();
+                            try
+                            {
+                                i.Download();
+                            }
+                            catch (Exception e)
+                            {
+                                MessageBox.Show(string.Format("Error downloading or converting {0}:\n{1}", i.FileName, e.ToString()), "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            }
                         }
-                        catch
-                        {
-                            MessageBox.Show(string.Format("Error downloading or converting {0}:\n", i.FileName), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                    }
-                    IsDownloading = false;
-                }).Start();
+                        IsDownloading = false;
+                    }).Start();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(string.Format("Something went wrong during the download process. Exception:\n{0}", e.ToString()), "Critical Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public void RemoveFromDownload(List<DownloadItem> forRemoval) => CurrentDownloadList.RemoveFromDownloadList(forRemoval);
