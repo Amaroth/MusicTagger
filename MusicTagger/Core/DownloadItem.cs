@@ -9,7 +9,7 @@ namespace MusicTagger.Core
 {
     class DownloadItem : INotifyPropertyChanged
     {
-        public enum DownloadState { Waiting, Downloading, DownloadFailed, Converting, ConversionFailed, DeletingMP4, MP4CleanupFailed, Done }
+        public enum DownloadState { Waiting, Scheduled, Downloading, DownloadFailed, Converting, ConversionFailed, DeletingMP4, MP4CleanupFailed, Done }
         // URL of the YT video for the file to be downloaded from.
         private string _url;
         public string URL

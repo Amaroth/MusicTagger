@@ -202,6 +202,9 @@ namespace MusicTagger.Core
         public void DownloadItems(ObservableCollection<DownloadItem> downloadItems)
         {
             if (!IsDownloading)
+            {
+                foreach (var i in downloadItems)
+                    i.State = DownloadItem.DownloadState.Scheduled;
                 new Thread(() =>
                 {
                     IsDownloading = true;
@@ -219,6 +222,7 @@ namespace MusicTagger.Core
                     }
                     IsDownloading = false;
                 }).Start();
+            }
         }
 
         public void RemoveFromDownload(List<DownloadItem> forRemoval) => CurrentDownloadList.RemoveFromDownloadList(forRemoval);
