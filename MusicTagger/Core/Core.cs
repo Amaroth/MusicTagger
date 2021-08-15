@@ -204,7 +204,8 @@ namespace MusicTagger.Core
             if (!IsDownloading)
             {
                 foreach (var i in downloadItems)
-                    i.State = DownloadItem.DownloadState.Scheduled;
+                    if (i.State != DownloadItem.DownloadState.Done || !File.Exists(i.FilePath))
+                        i.State = DownloadItem.DownloadState.Scheduled;
                 new Thread(() =>
                 {
                     IsDownloading = true;
