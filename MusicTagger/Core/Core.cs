@@ -186,6 +186,13 @@ namespace MusicTagger.Core
         public void ClearImport() => CurrentImportList.ClearImport();
 
         public void RemoveFromImport(List<Song> forRemoval) => CurrentImportList.RemoveFromImport(forRemoval);
+
+        public void RemoveEntirely(List<Song> forRemoval)
+        {
+            CurrentImportList.RemoveFromImport(forRemoval);
+            foreach (var s in forRemoval)
+                RemoveSong(s, true);
+        }
         #endregion
 
         #region Download management...

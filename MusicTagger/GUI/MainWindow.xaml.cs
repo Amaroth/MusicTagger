@@ -18,7 +18,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.10.12";
+        private string CurrentVersionSignature = "Music Tagger 2.10.13";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -876,6 +876,24 @@ namespace MusicTagger.GUI
             }
             UpdateImportListViewColWidths();
             UpdatePlayListViewColWidths();
+        }
+
+        private void RemoveCompletelyButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want to delete the files entirely from both project AND drive?", "Are you sure?", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    var selected = new List<Song>();
+                    foreach (Song s in ImportListView.SelectedItems)
+                        selected.Add(s);
+                    core.RemoveEntirely(selected);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(string.Format("Failed to remove selected songs from import. Error message: {0}", ex.Message));
+                }
+            }
         }
         #endregion
 

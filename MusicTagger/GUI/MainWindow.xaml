@@ -96,13 +96,21 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <StackPanel Orientation="Horizontal" Grid.Row="1">
-                        <Button Grid.Column="0" Name="BuildPlaylistButton" Padding="10,0,10,0" Margin="0,2,1,0" Click="BuildPlaylistButton_Click" Grid.ColumnSpan="2">Build playlist by tags</Button>
-                        <Button Grid.Column="1" Name="RetagSongsButton" Padding="10,0,10,0" Margin="1,2,1,0" Click="RetagSongsButton_Click" Grid.ColumnSpan="2">Retag songs</Button>
-                        <Button Grid.Column="2" Name="RenameSongButton" Padding="10,0,10,0" Margin="1,2,1,0" Click="RenameSongButton_Click" Grid.ColumnSpan="2">Move/rename</Button>
-                        <Button Grid.Column="3" Name="MoveSongsButton" Padding="10,0,10,0" Margin="1,2,1,0" Click="MoveSongsButton_Click" Grid.ColumnSpan="2">Move to dir</Button>
-                        <Button Grid.Column="4" Name="RemoveSongsButton" Padding="10,0,10,0" Margin="1,2,1,0"  Click="RemoveSongsButton_Click" Grid.ColumnSpan="2">Remove</Button>
-                    </StackPanel>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="1" Name="MoveSongsButton" Padding="10,0,10,0" Margin="1,2,1,0" Click="MoveSongsButton_Click">Move to dir</Button>
+                        <Button Grid.Column="2" Name="RenameSongButton" Padding="10,0,10,0" Margin="1,2,1,0" Click="RenameSongButton_Click">Move/rename</Button>
+                        <Button Grid.Column="3" Name="RemoveSongsButton" Padding="10,0,10,0" Margin="1,2,1,0"  Click="RemoveSongsButton_Click">Remove</Button>
+                        <Button Grid.Column="4" Name="RetagSongsButton" Padding="10,0,10,0" Margin="1,2,1,0" Click="RetagSongsButton_Click">Retag songs</Button>
+                        <Button Grid.Column="5" Name="BuildPlaylistButton" Padding="10,0,10,0" Margin="0,2,1,0" Click="BuildPlaylistButton_Click">Build playlist by tags</Button>
+                    </Grid>
                 </Grid>
             </TabItem>
             <TabItem Header="Tag songs">
@@ -137,12 +145,14 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <CheckBox Name="OverwriteTagsCheckbox" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,3,0">Overwrite</CheckBox>
                         <CheckBox Name="RemoveFromImportCheckbox" Grid.Column="2" VerticalAlignment="Center" Margin="0,0,3,0" IsChecked="True">Assign+Remove</CheckBox>
                         <Button Name="ClearImportButton" Grid.Column="3" Margin="0,2,1,0" Padding="10,0,10,0" Click="ClearImportButton_Click">Clear</Button>
                         <Button Name="RemoveFromImportButton" Grid.Column="4" Margin="1,2,1,0" Padding="10,0,10,0" Click="RemoveFromImportButton_Click">Remove</Button>
-                        <Button Name="AssignButton" Grid.Column="5" Margin="1,2,0,0" Padding="10,0,10,0" Click="AssignButton_Click">Assign</Button>
+                        <Button Name="RemoveCompletelyButton" Grid.Column="5" Margin="1,2,1,0" Padding="10,0,10,0" Click="RemoveCompletelyButton_Click">Remove Completely</Button>
+                        <Button Name="AssignButton" Grid.Column="6" Margin="1,2,0,0" Padding="10,0,10,0" Click="AssignButton_Click">Assign Tags to Songs</Button>
                     </Grid>
                 </Grid>
             </TabItem>
