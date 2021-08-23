@@ -18,7 +18,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.10.14";
+        private string CurrentVersionSignature = "Music Tagger 2.11.1";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -868,6 +868,8 @@ namespace MusicTagger.GUI
                 var selected = new List<Song>();
                 foreach (Song s in ImportListView.SelectedItems)
                     selected.Add(s);
+                if (PreviewSong != null && selected.Contains(PreviewSong))
+                    Stop();
                 core.RemoveFromImport(selected);
             }
             catch (Exception ex)
@@ -908,6 +910,8 @@ namespace MusicTagger.GUI
                     var selected = new List<Song>();
                     foreach (Song s in ImportListView.SelectedItems)
                         selected.Add(s);
+                    if (PreviewSong != null && selected.Contains(PreviewSong))
+                        Stop();
                     core.RemoveEntirely(selected);
                 }
                 catch (Exception ex)
