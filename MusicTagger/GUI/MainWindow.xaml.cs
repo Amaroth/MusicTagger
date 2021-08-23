@@ -18,7 +18,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.11.1";
+        private string CurrentVersionSignature = "Music Tagger 2.11.2";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -646,7 +646,7 @@ namespace MusicTagger.GUI
 
         private void SongVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            SongPlayer.Volume = SongVolumeSlider.Value / 100;
+            SongPlayer.Volume = SongVolumeSlider.Value / 2000;
         }
 
         private void VolumeSlider_MouseWheel(object sender, MouseWheelEventArgs e)

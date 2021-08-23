@@ -359,6 +359,8 @@ namespace MusicTagger.Core
                     if (s.Category == c)
                         SongTags.Add(s);
             }
+            foreach (var s in Songs)
+                s.ReorderTags();
         }
 
         public void ReindexTags()
@@ -367,6 +369,9 @@ namespace MusicTagger.Core
                 SongTags[i].ID = i;
             foreach (var s in Songs)
                 s.UpdateTagSignature();
+
+            foreach (var s in Songs)
+                s.ReorderTags();
         }
         #endregion
 

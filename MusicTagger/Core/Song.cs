@@ -127,6 +127,22 @@ namespace MusicTagger.Core
             UpdateTagSignature();
         }
 
+
+        /// <summary>
+        /// Reorders the tag references by ID asc
+        /// </summary>
+        public void ReorderTags()
+        {
+            var songTags = new List<SongTag>();
+            foreach (var t in tags)
+                songTags.Add(t);
+            songTags.Sort((x, y) => { return x.ID - y.ID; });
+            tags.Clear();
+            foreach (var t in songTags)
+                tags.Add(t);
+            UpdateTagSignature();
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
