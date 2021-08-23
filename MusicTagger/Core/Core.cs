@@ -336,6 +336,38 @@ namespace MusicTagger.Core
                 MessageBox.Show(string.Format("Could not edit provided tag. Error message:\n\n{0}", e.ToString()));
             }
         }
+
+        public void OrderTags()
+        {
+            var tags = new List<SongTag>();
+            var categories = new List<string>();
+
+            foreach (var t in SongTags)
+            {
+                if (!categories.Contains(t.Category))
+                    categories.Add(t.Category);
+            }
+
+            foreach (var s in SongTags)
+                tags.Add(s);
+            tags.Sort((x, y) => string.Compare(x.Name, y.Name));
+
+            SongTags.Clear();
+            foreach (var c in categories)
+            {
+                foreach (var s in tags)
+                    if (s.Category == c)
+                        SongTags.Add(s);
+            }
+        }
+
+        public void ReindexTags()
+        {
+            for (var i = 0; i < SongTags.Count; i++)
+                SongTags[i].ID = i;
+            foreach (var s in Songs)
+                s.UpdateTagSignature();
+        }
         #endregion
 
 

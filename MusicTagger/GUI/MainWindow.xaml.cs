@@ -18,7 +18,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.10.13";
+        private string CurrentVersionSignature = "Music Tagger 2.10.14";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -285,11 +285,14 @@ namespace MusicTagger.GUI
             TagListView.ItemsSource = core.SongTags;
             PlayListView.ItemsSource = core.CurrentPlayList;
             DownloadListView.ItemsSource = core.DownloadList;
+
             var playView = (CollectionView)CollectionViewSource.GetDefaultView(TagListView.ItemsSource);
             var groupDescription = new PropertyGroupDescription("Category");
             playView.GroupDescriptions.Clear();
             playView.GroupDescriptions.Add(groupDescription);
+
             LoadTagAdministrationFields(GetFirstSelectedTag());
+
             UpdateTagListViewColWidths();
             UpdatePlayListViewColWidths();
             UpdateImportListViewColWidths();
@@ -691,6 +694,24 @@ namespace MusicTagger.GUI
         {
             core.RemoveTag(GetFirstSelectedTag());
             UpdateTagListViewColWidths();
+        }
+
+        /// <summary>
+        /// Orders the tags in the project A-Z.
+        /// </summary>
+        private void OrderTagsButton_Click(object sender, RoutedEventArgs e)
+        {
+            core.OrderTags();
+            ReloadViews();
+        }
+
+        /// <summary>
+        /// Changes tag IDs according to their order in the tag list.
+        /// </summary>
+        private void ReindexTagsButton_Click(object sender, RoutedEventArgs e)
+        {
+            core.ReindexTags();
+            ReloadViews();
         }
         #endregion
 

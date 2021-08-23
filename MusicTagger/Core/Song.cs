@@ -69,11 +69,11 @@ namespace MusicTagger.Core
                 if (_tagSignature != value)
                 {
                     _tagSignature = value;
-                    NotifyPropertyChanged("TagNames");
+                    NotifyPropertyChanged("TagSignature");
                 }
             }
         }
-        private void UpdateTags()
+        public void UpdateTagSignature()
         {
             var sb = new StringBuilder();
             if (tags.Count > 0)
@@ -113,7 +113,7 @@ namespace MusicTagger.Core
         {
             tags.Add(tag);
             WasTagged = true;
-            UpdateTags();
+            UpdateTagSignature();
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace MusicTagger.Core
             foreach (var t in tags)
                 t.songs.Remove(this);
             tags.Clear();
-            UpdateTags();
+            UpdateTagSignature();
         }
 
         public override string ToString()
