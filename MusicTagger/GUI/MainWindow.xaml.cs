@@ -18,7 +18,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.11.2";
+        private string CurrentVersionSignature = "Music Tagger 2.12.0";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -989,14 +989,18 @@ namespace MusicTagger.GUI
         #region YT > MP3 event handlers...
         private void AddURLButton_Click(object sender, RoutedEventArgs e)
         {
-            core.AddIntoDownload(URLTextBox.Text, TargetPathTextBox.Text);
+            if (!TargetPathTextBox.Text.EndsWith("\\"))
+                TargetPathTextBox.Text += "\\";
+            core.AddIntoDownload(URLTextBox.Text, TargetPathTextBox.Text + TargetNameTextBox.Text);
             UpdateDownloadListViewColWidths();
         }
 
         private void UpdateDownloadButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!TargetPathTextBox.Text.EndsWith("\\"))
+                TargetPathTextBox.Text += "\\";
             if (DownloadListView.SelectedItems.Count > 0)
-                core.UpdateDownloadItem(DownloadListView.SelectedItems[0] as DownloadItem, URLTextBox.Text, TargetPathTextBox.Text);
+                core.UpdateDownloadItem(DownloadListView.SelectedItems[0] as DownloadItem, URLTextBox.Text, TargetPathTextBox.Text + TargetNameTextBox.Text);
             UpdateDownloadListViewColWidths();
         }
 
@@ -1026,18 +1030,20 @@ namespace MusicTagger.GUI
 
         private void DownloadPathButton_Click(object sender, RoutedEventArgs e)
         {
-            var saveFileDialog = new SaveFileDialog() { Filter = "MP3 file (*.mp3)|*.mp3" };
-            if (saveFileDialog.ShowDialog() == true)
-                TargetPathTextBox.Text = saveFileDialog.FileName;
-            UpdateDownloadListViewColWidths();
+            SaveFileDialog sf = new SaveFileDialog() { FileName = "Save here" };
+            if (sf.ShowDialog() == true)
+                TargetPathTextBox.Text = Path.GetDirectoryName(sf.FileName) + "\\";
         }
+
+        private void GetVideoNameButton_Click(object sender, RoutedEventArgs e) => TargetNameTextBox.Text = core.GetYTVideoName(URLTextBox.Text);
 
         private void DownloadListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (DownloadListView.SelectedItems.Count > 0)
             {
                 URLTextBox.Text = (DownloadListView.SelectedItems[0] as DownloadItem).URL;
-                TargetPathTextBox.Text = (DownloadListView.SelectedItems[0] as DownloadItem).FilePath;
+                TargetPathTextBox.Text = (DownloadListView.SelectedItems[0] as DownloadItem).DirectoryPath;
+                TargetNameTextBox.Text = (DownloadListView.SelectedItems[0] as DownloadItem).FileName;
             }
         }
 
@@ -1051,5 +1057,7 @@ namespace MusicTagger.GUI
             core.AddIntoImport(selected);
         }
         #endregion
+
+
     }
 }

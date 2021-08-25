@@ -196,7 +196,6 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="32"/>
                     </Grid.RowDefinitions>
 
@@ -219,28 +218,29 @@
 
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="70"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0" Margin="5,1,0,1" VerticalAlignment="Center">URL:</TextBlock>
-                        <TextBox Grid.Column="1" Name="URLTextBox" Margin="5,1,0,1" TextAlignment="Left"></TextBox>
-                        
-                    </Grid>
-
-                    <Grid Grid.Row="2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Column="0" Margin="5,1,0,1" VerticalAlignment="Center">Target path:</TextBlock>
-                        <TextBox Grid.Column="1" Name="TargetPathTextBox" Margin="5,1,0,1" TextAlignment="Left"></TextBox>
-                        <Button Grid.Column="2" Name="DownloadPathButton" Margin="1,1,1,1" Padding="10,0,10,0" Click="DownloadPathButton_Click">Select</Button>
+                        <TextBlock Grid.Column="0" Grid.Row="0" Margin="5,1,0,1" VerticalAlignment="Center">URL:</TextBlock>
+                        <TextBlock Grid.Column="0" Grid.Row="1" Margin="5,1,0,1" VerticalAlignment="Center">Target dir:</TextBlock>
+                        <TextBlock Grid.Column="0" Grid.Row="2" Margin="5,1,0,1" VerticalAlignment="Center">File name:</TextBlock>
+
+                        <TextBox Grid.Column="1" Grid.Row="0" Name="URLTextBox" Margin="5,1,0,1" TextAlignment="Left"></TextBox>
+                        <TextBox Grid.Column="1" Grid.Row="1" Name="TargetPathTextBox" Margin="5,1,0,1" TextAlignment="Left"></TextBox>
+                        <TextBox Grid.Column="1" Grid.Row="2" Name="TargetNameTextBox" Margin="5,1,0,1" TextAlignment="Left"></TextBox>
+
+                        <Button Grid.Column="2" Grid.Row="0" Name="GetVideoNameButton" Margin="1,1,1,1" Padding="10,0,10,0" Width="76" Click="GetVideoNameButton_Click">Get Name</Button>
+                        <Button Grid.Column="2" Grid.Row="1" Name="DownloadPathButton" Margin="1,1,1,1" Padding="10,0,10,0" Width="76" Click="DownloadPathButton_Click">Select</Button>
                     </Grid>
-                    
-                    <Grid Grid.Row="3">
+
+                    <Grid Grid.Row="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>

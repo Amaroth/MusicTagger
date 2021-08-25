@@ -56,6 +56,8 @@ namespace MusicTagger.Core
         // Desired file name of the resulting mp3, derived from the file path.
         public string FileName => Path.GetFileName(FilePath);
 
+        public string DirectoryPath => Path.GetDirectoryName(FilePath);
+
         // Observable properties event handling.
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));

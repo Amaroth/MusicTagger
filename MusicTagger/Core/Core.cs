@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading;
 using System.Windows;
+using VideoLibrary;
 
 namespace MusicTagger.Core
 {
@@ -196,8 +197,6 @@ namespace MusicTagger.Core
         #endregion
 
         #region Download management...
-        public void AddIntoDownload(string URL, string filePath) => CurrentDownloadList.AddToDownloadList(URL, filePath);
-
         public void DownloadItems()
         {
             var allItems = new ObservableCollection<DownloadItem>();
@@ -233,6 +232,8 @@ namespace MusicTagger.Core
             }
         }
 
+        public void AddIntoDownload(string URL, string filePath) => CurrentDownloadList.AddToDownloadList(URL, filePath);
+
         public void RemoveFromDownload(List<DownloadItem> forRemoval) => CurrentDownloadList.RemoveFromDownloadList(forRemoval);
 
         public void UpdateDownloadItem(DownloadItem item, string url, string path)
@@ -249,6 +250,23 @@ namespace MusicTagger.Core
                     toBeDeleted.Add(i);
             foreach (var i in toBeDeleted)
                 CurrentDownloadList.DownloadItems.Remove(i);
+        }
+
+        public string GetYTVideoName(string URL)
+        {
+            var videoName = "";
+            try
+            {
+                var youtube = YouTube.Default;
+                var vid = youtube.GetVideo(URL);
+                videoName = vid.FullName.Replace("mp4", "mp3");
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(string.Format("Error getting a video name for {0}:\n{1}", URL, e.ToString()), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            return videoName;
         }
         #endregion
 
