@@ -18,7 +18,7 @@ namespace MusicTagger.GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string CurrentVersionSignature = "Music Tagger 2.12.0";
+        private string CurrentVersionSignature = "Music Tagger 2.12.1";
         private string CurrentProjectFilePath = "";
 
         private Core.Core core = Core.Core.Instance;
@@ -755,7 +755,7 @@ namespace MusicTagger.GUI
                 var selected = new List<string>();
                 foreach (Song s in PlayListView.SelectedItems)
                     selected.Add(s.FullPath);
-                core.AddIntoImport(selected);
+                core.AddIntoImport(selected, Path.GetDirectoryName(CurrentProjectFilePath));
             }
             catch (Exception ex)
             {
@@ -951,7 +951,7 @@ namespace MusicTagger.GUI
                 }
             }
 
-            core.AddIntoImport(importList);
+            core.AddIntoImport(importList, Path.GetDirectoryName(CurrentProjectFilePath));
             UpdateImportListViewColWidths();
         }
 
@@ -1054,7 +1054,7 @@ namespace MusicTagger.GUI
             var selected = new List<string>();
             foreach (DownloadItem i in DownloadListView.SelectedItems)
                 selected.Add(i.FilePath);
-            core.AddIntoImport(selected);
+            core.AddIntoImport(selected, Path.GetDirectoryName(CurrentProjectFilePath));
         }
         #endregion
 

@@ -79,7 +79,7 @@ namespace MusicTagger.Core
                         songPath = altSongPath;
                     if (File.Exists(songPath))
                     {
-                        var song = new Song(songPath);
+                        var song = new Song(Path.GetDirectoryName(filePath), songPath);
                         foreach (XmlNode songTagNode in node.ChildNodes)
                         {
                             foreach (var t in songTags)

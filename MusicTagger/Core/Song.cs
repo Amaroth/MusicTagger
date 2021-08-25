@@ -12,7 +12,7 @@ namespace MusicTagger.Core
         public string SongName
         {
             get => _songName;
-            set
+            private set
             {
                 if (_songName != value)
                 {
@@ -26,7 +26,7 @@ namespace MusicTagger.Core
         public string FileName
         {
             get => _fileName;
-            set
+            private set
             {
                 if (_fileName != value)
                 {
@@ -40,7 +40,7 @@ namespace MusicTagger.Core
         public string FullPath
         {
             get => _fullPath;
-            set
+            private set
             {
                 if (_fullPath != value)
                 {
@@ -48,6 +48,19 @@ namespace MusicTagger.Core
                     NotifyPropertyChanged("FullPath");
                     FileName = Path.GetFileName(FullPath);
                     SongName = (FileName.Length >= 4) ? FileName.Substring(0, FileName.Length - 4) : "";
+                }
+            }
+        }
+        private string _subPath;
+        public string SubPath
+        {
+            get => _subPath;
+            private set
+            {
+                if (_subPath != value)
+                {
+                    _subPath = value;
+                    NotifyPropertyChanged("SubPath");
                 }
             }
         }
@@ -85,9 +98,15 @@ namespace MusicTagger.Core
             TagSignature = sb.ToString();
         }
 
-        public Song(string filePath)
+        public void SetFilePaths(string rootPath, string fileFullPath)
         {
-            FullPath = filePath;
+            FullPath = fileFullPath;
+            SubPath = fileFullPath.Replace(rootPath, "");
+        }
+
+        public Song(string rootPath, string fileFullPath)
+        {
+            SetFilePaths(rootPath, fileFullPath);
             WasTagged = false;
         }
 

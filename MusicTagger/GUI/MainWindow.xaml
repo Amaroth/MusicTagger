@@ -129,8 +129,7 @@
                         <ListView.View>
                             <GridView>
                                 <GridView.Columns>
-                                    <GridViewColumn DisplayMemberBinding="{Binding SongName}" Header="Name" />
-                                    <GridViewColumn DisplayMemberBinding="{Binding FullPath}" Header="File path" />
+                                    <GridViewColumn DisplayMemberBinding="{Binding SubPath}" Header="File path" />
                                     <GridViewColumn DisplayMemberBinding="{Binding TagSignature}" Header="Tags" />
                                 </GridView.Columns>
                             </GridView>
@@ -324,6 +323,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+            
             <ProgressBar Grid.ColumnSpan="14" Name="SongProgressBar" Margin="0,2,0,2" MouseDown="SongProgressBar_MouseDown"/>
 
             <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="6" Name="NameTextBlock" Margin="3,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
@@ -332,16 +332,19 @@
             
             <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Name="RandomCheckBox" Checked="RandomCheckBox_Checked" Unchecked="RandomCheckBox_Checked">Random</CheckBox>
             <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Name="RepeatCheckBox" Checked="RepeatCheckBox_Checked" Unchecked="RepeatCheckBox_Checked">Repeat</CheckBox>
+            
             <Button Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Name="StopButton" Margin="1" Click="StopButton_Click">Stop</Button>
             <Button Grid.Row="2" Grid.Column="4" Grid.RowSpan="2" Name="FirstButton" Margin="1" Click="FirstButton_Click">First</Button>
             <Button Grid.Row="2" Grid.Column="5" Grid.RowSpan="2" Name="PreviousButton" Margin="1" Click="PreviousButton_Click">Prev</Button>
             <Button Grid.Row="2" Grid.Column="6" Grid.RowSpan="2" Grid.ColumnSpan="2" Name="PlayPauseButton" Margin="1" Click="PlayPauseButton_Click">Play</Button>
             <Button Grid.Row="2" Grid.Column="8" Grid.RowSpan="2" Name="NextButton" Margin="1" Click="NextButton_Click">Next</Button>
             <Button Grid.Row="2" Grid.Column="9" Grid.RowSpan="2" Name="LastButton" Margin="1" Click="LastButton_Click">Last</Button>
+            
             <TextBlock Grid.Row="2" Grid.Column="10" VerticalAlignment="Center" TextAlignment="Right">Songs:</TextBlock>
             <Slider Grid.Row="2" Grid.Column="11" Grid.ColumnSpan="2" Name="SongVolumeSlider" VerticalAlignment="Center" Margin="3, 0, 3, 0" Minimum="0" Maximum="1000" AutoToolTipPlacement="TopLeft" ValueChanged="SongVolumeSlider_ValueChanged" MouseWheel="VolumeSlider_MouseWheel" Value="25" LargeChange="0.5" SmallChange="0.05"/>
-            <TextBlock Grid.Row="3" Grid.Column="10" VerticalAlignment="Center" TextAlignment="Right">Sounds:</TextBlock>
             <Button Grid.Row="2" Grid.Column="13" VerticalAlignment="Center" Name="SongMuteUnmuteButton" Margin="1,1,0,1" Click="SongMuteUnmuteButton_Click">Mute</Button>
+
+            <TextBlock Grid.Row="3" Grid.Column="10" VerticalAlignment="Center" TextAlignment="Right">Sounds:</TextBlock>
             <Slider Grid.Row="3" Grid.Column="11" Grid.ColumnSpan="2" Name="SoundsVolumeSlider" VerticalAlignment="Center" Margin="3, 0, 3, 0" Minimum="0" Maximum="50" AutoToolTipPlacement="TopLeft" IsEnabled="False" MouseWheel="VolumeSlider_MouseWheel" Value="25" LargeChange="0.5" SmallChange="0.05"/>
             <Button Grid.Row="3" Grid.Column="13" VerticalAlignment="Center" Name="SoundsMuteUnmuteButton" Margin="1,1,0,1" IsEnabled="False">Mute</Button>
         </Grid>

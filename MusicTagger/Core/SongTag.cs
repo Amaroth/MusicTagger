@@ -18,9 +18,9 @@ namespace MusicTagger.Core
         /// Create a new song with this tag assigned.
         /// </summary>
         /// <param name="filePath"></param>
-        public void CreateSong(string filePath)
+        public void CreateSong(string rootPath, string filePath)
         {
-            var newSong = new Song(filePath);
+            var newSong = new Song(rootPath, filePath);
             newSong.tags.Add(this);
             songs.Add(newSong);
         }

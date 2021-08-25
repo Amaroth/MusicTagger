@@ -23,7 +23,7 @@ namespace MusicTagger.Core
         /// For valid file paths, creates new songs and adds them into import. For paths to songs already existing in project adds respective songs to import.
         /// </summary>
         /// <param name="filePaths">Paths to files being imported.</param>
-        public void AddIntoImport(List<string> filePaths)
+        public void AddIntoImport(List<string> filePaths, string rootPath)
         {
             var existingSongs = new Dictionary<string, Song>();
             foreach (var s in Core.Instance.Songs)
@@ -39,7 +39,7 @@ namespace MusicTagger.Core
                     }
                     else
                     {
-                        var newSong = new Song(filePath);
+                        var newSong = new Song(rootPath, filePath);
                         Songs.Add(newSong);
                         Core.Instance.Songs.Add(newSong);
                     }
